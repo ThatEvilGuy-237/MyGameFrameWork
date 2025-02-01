@@ -51,8 +51,8 @@ namespace MyGameFrameWork.Framework
             base.OnRenderFrame(e);
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            EvilUtils.SetColor(1.0f, 100.0f, 100.0f, 100.0f);
+            GL.Viewport(0, 0, windowWidth, windowHeight);
+            EvilUtils.SetColor(1.0f, 0.0f, 100.0f, 100.0f);
 
             float x = 0f;
             float y = 0f;
@@ -60,10 +60,13 @@ namespace MyGameFrameWork.Framework
             float height = 0.5f;
 
             // Now draw the rectangle centered at (centerX, centerY)
-            EvilUtils.DrawRectangle(x, y, width, height);
-            EvilUtils.DrawLine(0f, 0.0f, 800.0f, 100.0f);
-            EvilUtils.DrawLine(0f, 0.0f, 800.0f, -100.0f);
+            //EvilUtils.DrawRectangle(x, y, width, height);
+            //EvilUtils.DrawLine(0f, 0.0f, 800.0f, 100.0f);
 
+            //EvilUtils.DrawLine(0f, 10.0f, 200.0f, 100.0f);
+
+            //EvilUtils.DrawRectangle(200f, 200f, 200.0f, 200.0f);
+            EvilUtils.DrawCube();
             SwapBuffers();  // Swap the buf
         }
 
