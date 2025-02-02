@@ -39,8 +39,6 @@ namespace MyGameFrameWork.Framework
             // Set Modelview to identity to ensure no transformations are applied
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
-
-            EvilUtils.SetDpi();
         }
 
 
@@ -52,24 +50,31 @@ namespace MyGameFrameWork.Framework
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Viewport(0, 0, windowWidth, windowHeight);
-            EvilUtils.SetColor(1.0f, 0.0f, 100.0f, 100.0f);
 
             float x = 0f;
             float y = 0f;
             float width = 0.5f;
             float height = 0.5f;
 
-            // Now draw the rectangle centered at (centerX, centerY)
-            //EvilUtils.DrawRectangle(x, y, width, height);
-            //EvilUtils.DrawLine(0f, 0.0f, 800.0f, 100.0f);
-
-            //EvilUtils.DrawLine(0f, 10.0f, 200.0f, 100.0f);
-
-            //EvilUtils.DrawRectangle(200f, 200f, 200.0f, 200.0f);
-            EvilUtils.DrawCube();
-            SwapBuffers();  // Swap the buf
+            TestDawing();
+            SwapBuffers();
         }
-
+        float r = 0;
+        private void TestDawing()
+        {
+            EvilUtils.SetColor(1.0f, 0.0f, 10.0f, 100.0f);
+            EvilUtils.NewPush();
+            EvilUtils.PushTranslate(100,100);
+            EvilUtils.PushRotate(0, 0, -r);
+            EvilUtils.DrawRectangle(0, 0, 100.0f, 100.0f);
+            EvilUtils.PushTranslate(100, 100);
+            EvilUtils.NewPush();
+            EvilUtils.PushTranslate(100, 100);
+            EvilUtils.PushRotate(0, 0, -r);
+            EvilUtils.DrawRectangle(-50f, -50f, 100.0f, 100.0f);
+            EvilUtils.PopOrgin();
+            EvilUtils.PopOrgin();
+        }
         protected override void OnFramebufferResize(FramebufferResizeEventArgs e)
         {
             base.OnFramebufferResize(e);
@@ -80,7 +85,9 @@ namespace MyGameFrameWork.Framework
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-
+            r += 0.01f;
+            Console.WriteLine(r);
+            if (r >= 360) r = 0;
             // Add your game logic here
         }
 

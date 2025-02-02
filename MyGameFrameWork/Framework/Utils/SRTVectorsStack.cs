@@ -43,19 +43,21 @@ namespace MyGameFrameWork.Framework.Utils
         }
         public static SRTVector operator +(SRTVector a, SRTVector b)
         {
-            a.Scale += b.Scale;
-            a.Rotate += b.Rotate;
-            a.Translate += b.Translate;
-
-            return a;
+            return new SRTVector
+            {
+                Scale = a.Scale == Vector3.One && b.Scale == Vector3.One ? Vector3.One : a.Scale + b.Scale,
+                Rotate = a.Rotate + b.Rotate,
+                Translate = a.Translate + b.Translate
+            };
         }
         public static SRTVector operator *(SRTVector a, SRTVector b)
         {
-            a.Scale *= b.Scale;
-            a.Rotate *= b.Rotate;
-            a.Translate *= b.Translate;
-
-            return a;
+            return new SRTVector
+            {
+                Scale = a.Scale * b.Scale,
+                Rotate = a.Rotate * b.Rotate,
+                Translate = a.Translate * b.Translate
+            };
         }
 
         public Matrix4 GetSRTMatrix()
@@ -100,7 +102,10 @@ namespace MyGameFrameWork.Framework.Utils
         {
             m_StackVectors.Push(new SRTVector(scale, rotate, translate));
         }
-
+        public void Add(SRTVector sRTVector)
+        {
+            m_StackVectors.Push(new SRTVector(sRTVector));
+        }
         public void Add()
         {
             Add(new Vector3(0, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 0, 0));
@@ -139,6 +144,20 @@ namespace MyGameFrameWork.Framework.Utils
         public bool Exitst()
         {
             return m_StackVectors.Count > 0;
+        }
+        public SRTVector SumAll()
+        {
+            if (m_StackVectors == null)
+                throw new Exception("The stack dusnt exist.");
+
+            SRTVector result = new SRTVector();
+
+            foreach (var item in m_StackVectors)
+            {
+                result += item;
+            }
+
+            return result;
         }
 
         public SRTVector GetLast()
