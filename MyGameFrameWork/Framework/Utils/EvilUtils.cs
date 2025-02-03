@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
+
 
 namespace MyGameFrameWork.Framework.Utils
 {
@@ -10,8 +10,11 @@ namespace MyGameFrameWork.Framework.Utils
         private static ShadersHandeler? _ShadersHandeler;
         private static SRTVectorsStack _SRTVectorsStack = new SRTVectorsStack();
         private static SRTVector _CurrentSRTVector;
+        private static SRTVector _TotaalSRTVector;
+        private static int _SRTDepth;
         public static void AssignWindow(Window window)
         {
+            _SRTDepth = 0;
             _CurrentWindow = window;
             _ShadersHandeler = new ShadersHandeler();
             _ShadersHandeler.SetWindowSize(_CurrentWindow.windowWidth, _CurrentWindow._windowHeight);
@@ -27,23 +30,57 @@ namespace MyGameFrameWork.Framework.Utils
         //translations
         public static void NewPush()
         {
+            _SRTDepth++;
+            if (_SRTDepth <= 1) return;
             _SRTVectorsStack.Add(_CurrentSRTVector);
             _CurrentSRTVector = new SRTVector();
         }
         public static void PopOrgin()
         {
+            _SRTDepth--;
+            if (_SRTDepth < 0) _SRTDepth = 0;
+            _CurrentSRTVector = _SRTVectorsStack.GetLast();
             _SRTVectorsStack.Pop();
         }
         private static void ApplySRTMatrix()
         {
             SRTVector totaal = new SRTVector();
-            if (_SRTVectorsStack.Exitst())
+
+            GetFullTranslation();
+            _ShadersHandeler!.ApplySRTMatrix(_TotaalSRTVector.GetSRTMatrix());
+        }
+        public static void GetFullTranslation()
+        {
+            SRTVector totaalSRT = new SRTVector();
+            Stack<SRTVector> vectorsStack = _SRTVectorsStack.GetStack();
+
+            // Start by adding the transformations from the stack
+            for (int i = 0; i < vectorsStack.Count; i++)
             {
-                totaal = _SRTVectorsStack.SumAll();
+                SRTVector vector = vectorsStack.ElementAt(i);
+
+                totaalSRT.Translate += vector.Translate;
+                totaalSRT.Rotate += vector.Rotate;
             }
-            _ShadersHandeler!.ApplySRTMatrix(totaal.GetSRTMatrix());
+            SRTVector currentVector = new SRTVector(_CurrentSRTVector);
+            currentVector.Translate = AddRotationTranslate(currentVector.Translate, totaalSRT.Rotate.Z);
+            totaalSRT.Translate += currentVector.Translate;
+
+            totaalSRT.Rotate += currentVector.Rotate;
+            _TotaalSRTVector = totaalSRT;
         }
 
+        public static Vector3 AddRotationTranslate(Vector3 vector, float deg)
+        {
+            float rad = MathF.PI / 180f * deg;
+
+            float newX = vector.X * MathF.Cos(rad) - vector.Y * MathF.Sin(rad);
+            float newY = vector.Y * MathF.Cos(rad) + vector.X * MathF.Sin(rad);
+            vector.X = newX;
+            vector.Y = newY;
+            vector.Z = 0;
+            return vector;
+        }
         // Translate
         #region Translate-SRT
         public static void PushTranslate(Vector3 translate)
@@ -57,25 +94,17 @@ namespace MyGameFrameWork.Framework.Utils
         #endregion
         //Rotate
         #region Rotate-SRT
-        public static void PushRotate(Vector3 rotate, bool inRadians = true)
+        public static void PushRotate(Vector3 rotate)
         {
-            if (!inRadians)
-            {
-                rotate = new Vector3(
-                    rotate.X * MathF.PI / 180f,
-                    rotate.Y * MathF.PI / 180f,
-                    rotate.Z * MathF.PI / 180f
-                );
-            }
             _CurrentSRTVector.Rotate += rotate;
         }
-        public static void PushRotate(float rotate, bool inRadians = true)
+        public static void PushRotate(float rotate)
         {
-            PushRotate(new Vector3(rotate, rotate, rotate), inRadians);
+            PushRotate(new Vector3(rotate, rotate, rotate));
         }
-        public static void PushRotate(float x = 0f, float y = 0f, float z = 0f, bool inRadians = true)
+        public static void PushRotate(float x = 0f, float y = 0f, float z = 0f)
         {
-            PushRotate(new Vector3(x, y, z), inRadians);
+            PushRotate(new Vector3(x, y, z));
         }
         #endregion
 
@@ -104,7 +133,6 @@ namespace MyGameFrameWork.Framework.Utils
 
         // DRAWING 
         #region Scale-SRT
-
         public static void DrawRectangle(float x, float y, float width, float height)
         {
             if (_CurrentWindow == null)

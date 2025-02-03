@@ -165,7 +165,7 @@ namespace MyGameFrameWork.Framework.Utils
             return GetLastSRTVector();
         }
 
-        public Stack<SRTVector> GetList()
+        public Stack<SRTVector> GetStack()
         {
             return m_StackVectors;
         }

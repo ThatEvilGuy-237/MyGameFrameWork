@@ -51,11 +51,6 @@ namespace MyGameFrameWork.Framework
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Viewport(0, 0, windowWidth, windowHeight);
 
-            float x = 0f;
-            float y = 0f;
-            float width = 0.5f;
-            float height = 0.5f;
-
             TestDawing();
             SwapBuffers();
         }
@@ -63,15 +58,20 @@ namespace MyGameFrameWork.Framework
         private void TestDawing()
         {
             EvilUtils.SetColor(1.0f, 0.0f, 10.0f, 100.0f);
+
+
             EvilUtils.NewPush();
-            EvilUtils.PushTranslate(100,100);
-            EvilUtils.PushRotate(0, 0, -r);
-            EvilUtils.DrawRectangle(0, 0, 100.0f, 100.0f);
-            EvilUtils.PushTranslate(100, 100);
+            EvilUtils.PushTranslate(400, 400f);
             EvilUtils.NewPush();
-            EvilUtils.PushTranslate(100, 100);
             EvilUtils.PushRotate(0, 0, -r);
+            EvilUtils.DrawRectangle(-50f, -50, 100.0f, 100.0f);
+            EvilUtils.NewPush();
+
+            EvilUtils.PushTranslate(150, 0);
+            EvilUtils.SetColor(100.0f, 1.0f, 0.0f, 100.0f);
             EvilUtils.DrawRectangle(-50f, -50f, 100.0f, 100.0f);
+
+            EvilUtils.PopOrgin();
             EvilUtils.PopOrgin();
             EvilUtils.PopOrgin();
         }
@@ -85,7 +85,7 @@ namespace MyGameFrameWork.Framework
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            r += 0.01f;
+            r += 100 * (float)e.Time;
             Console.WriteLine(r);
             if (r >= 360) r = 0;
             // Add your game logic here
