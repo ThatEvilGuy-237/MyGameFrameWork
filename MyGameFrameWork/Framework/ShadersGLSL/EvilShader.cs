@@ -10,8 +10,8 @@ namespace MyGameFrameWork.Framework.ShadersGLSL
         protected int _fragmentShader;
         protected bool _isProgramUsed;
 
-        private const string VertexShaderPath = @"Framework\ShadersGLSL\VertexShader.glsl";
-        private const string FragmentShaderPath = @"Framework\ShadersGLSL\FragmentShader.glsl";
+        private const string VertexShaderPath = @"Framework\ShadersGLSL\glsl\VertexShader.glsl";
+        private const string FragmentShaderPath = @"Framework\ShadersGLSL\glsl\FragmentShader.glsl";
 
         public EvilShader()
         {

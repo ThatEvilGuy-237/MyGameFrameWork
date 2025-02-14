@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL;
 // video coolors https://www.youtube.com/watch?v=eAQzayHICWA
 using MyGameFrameWork.Framework.Utils;
 using OpenTK.Mathematics;
+using MyGameFrameWork.Framework.Utils.DrawingShapes;
 namespace MyGameFrameWork.Framework
 {
     internal class Window : GameWindow
@@ -51,30 +52,67 @@ namespace MyGameFrameWork.Framework
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Viewport(0, 0, windowWidth, windowHeight);
 
-            TestDawing();
+            TestDrawing();
             SwapBuffers();
         }
         float r = 0;
-        private void TestDawing()
+        public void TestDrawing()
         {
-            EvilUtils.SetColor(1.0f, 0.0f, 10.0f, 100.0f);
-
-
+            // RED RECT
             EvilUtils.NewPush();
-            EvilUtils.PushTranslate(400, 400f);
+            EvilUtils.SetColor(1.0f, 0.0f, 0.0f, 100.0f);
+            EvilUtils.PushTranslate(_windowWidth/2, _windowHeight/2);
             EvilUtils.NewPush();
-            EvilUtils.PushRotate(0, 0, -r);
-            EvilUtils.DrawRectangle(-50f, -50, 100.0f, 100.0f);
-            EvilUtils.NewPush();
-
-            EvilUtils.PushTranslate(150, 0);
-            EvilUtils.SetColor(100.0f, 1.0f, 0.0f, 100.0f);
-            EvilUtils.DrawRectangle(-50f, -50f, 100.0f, 100.0f);
-
+            EvilUtils.PushTranslate(-200, -200);
+            EvilUtils.PushRotate(0, 0, r);
+            EvilUtils.DrawingTestRect(-50f, -50f, 100.0f, 100.0f);
             EvilUtils.PopOrgin();
+
+            // GREEN RECT
+            EvilUtils.SetColor(0.0f, 1.0f, 0.0f, 100.0f);
+            EvilUtils.NewPush();
+            EvilUtils.PushTranslate(200, -200);
+            EvilUtils.PushRotate(0, 0, -(r * 2));
+            EvilUtils.DrawingTestRect(-50f, -50f, 100.0f, 100.0f);
+            EvilUtils.PopOrgin();
+
+            // BLUE AND YELLO IN THE SAME TRANSLATION
+            // BLUE RECT
+            EvilUtils.NewPush();
+            EvilUtils.SetColor(0.0f, 0.0f, 1.0f, 100.0f);
+            EvilUtils.PushTranslate(0, 100);
+            EvilUtils.PushRotate(0, 0, -(r));
+            EvilUtils.DrawingTestRect(-50f, -50f, 100.0f, 100.0f);
+
+            //YELLOW RECT
+            EvilUtils.NewPush();
+            EvilUtils.SetColor(1.0f, 1.0f, 0.0f, 100.0f);  // Yellow
+            EvilUtils.PushTranslate(0, 150); // Move it down a bit from the origin
+            EvilUtils.PushRotate(0, 0, (r));
+
+            List<Vector3> Vertices = new List<Vector3>
+            {
+                new Vector3(0, 0, 0),     // Point 1
+                new Vector3(100, 0, 0),     // Point 2
+                new Vector3(100, 100, 0),     // Point 3
+                new Vector3(0, 100, 0),     // Point 4
+                new Vector3(50f, 50f, 0), // Point 5
+                new Vector3(20f, 20f, 0), // Point 6
+                new Vector3(0, 0, 0),
+                new Vector3(0, 0, 0),
+            };
+            Shape shape = new Shape(Vertices,new Vector4(1,1,1,1));
+
+
+            EvilUtils.Draw(shape);
+           // EvilUtils.DrawRectangle(-50f, -25f, 100.0f, 50.0f); // 100x100 rectangle
+            EvilUtils.PopOrgin(); EvilUtils.PopOrgin();
+
+            // Reset and finish
             EvilUtils.PopOrgin();
             EvilUtils.PopOrgin();
         }
+
         protected override void OnFramebufferResize(FramebufferResizeEventArgs e)
         {
             base.OnFramebufferResize(e);

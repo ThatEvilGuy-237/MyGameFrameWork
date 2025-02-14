@@ -1,10 +1,9 @@
-﻿using MyGameFrameWork.Framework.ShadersGLSL;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.IO;
 
-namespace MyGameFrameWork.Framework.Utils
+namespace MyGameFrameWork.Framework.ShadersGLSL
 {
     public class ShadersHandeler : EvilShader
     {
@@ -41,5 +40,28 @@ namespace MyGameFrameWork.Framework.Utils
             }
             GL.UniformMatrix4(transformLoc, false, ref transformationMatrix);
         }
+        // Add texture
+        public void SetTexture(int textureID)
+        {
+            Use();
+            GL.ActiveTexture(TextureUnit.Texture0);
+
+            if (textureID > 0)
+            {
+                GL.BindTexture(TextureTarget.Texture2D, textureID);
+            }
+            else
+            {
+                GL.BindTexture(TextureTarget.Texture2D, 0); // Unbind texture
+            }
+
+            int textureLoc = GL.GetUniformLocation(_shaderProgram, "texture1");
+            if (textureLoc == -1)
+            {
+                throw new Exception("Uniform 'texture1' not found in shader program.");
+            }
+            GL.Uniform1(textureLoc, 0);
+        }
+
     }
 }
