@@ -1,67 +1,50 @@
-﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyGameFrameWork.Framework.Utils.Structs;
+using OpenTK.Mathematics;
 
 namespace MyGameFrameWork.Framework.Utils.DrawingShapes
 {
     public struct Shape
     {
         public List<Vector3> Vertices { get; set; }
-        public Vector4 SourceRect { get; set; }
         public Shape()
         {
             Vertices = new List<Vector3>();
-            SourceRect = new Vector4(0, 0, 1, 1);
         }
 
-        public Shape(List<Vector3> vertices, Vector4 sourceRect)
+        public Shape(List<Vector3> vertices)
         {
             this.Vertices = vertices;
-            this.SourceRect = sourceRect; 
         }
         public float[] GetFloatArray()
         {
             int vertexCount = Vertices.Count;
-
             if (vertexCount < 3)
             {
-                return new float[0];
+                return Array.Empty<float>(); // Not enough points for a valid shape
             }
 
-            // If the vertex count is not a multiple of 3, duplicate the first point until the count is a multiple of 3
-            while (vertexCount % 3 != 0)
+            // Use a temporary list to avoid modifying the original shape
+            List<Vector3> tempVertices = new List<Vector3>(Vertices);
+
+            // Ensure vertex count is a multiple of 3 for proper rendering
+            while (tempVertices.Count % 3 != 0)
             {
-                Vertices.Add(Vertices[0]);
-                vertexCount++;
+                tempVertices.Add(tempVertices[0]);
             }
 
-            // Now, create the float[] array. Each vertex has 3 components (x, y, z), no texture coordinates
-            float[] result = new float[vertexCount * 5]; 
+            vertexCount = tempVertices.Count;
+            float[] result = new float[vertexCount * 3]; // 3 for position, no need for texture coords here
 
-            // Calculate the texture coordinates based on the full size (0 to 1)
-            float texWidth = SourceRect.Z;
-            float texHeight = SourceRect.W;
-            float texX = SourceRect.X;
-            float texY = SourceRect.Y; 
-
-            // Populate the result array with both vertices and texture coordinates
+            // Assign vertex position data
             for (int i = 0; i < vertexCount; i++)
             {
-                result[i * 5] = Vertices[i].X;
-                result[i * 5 + 1] = Vertices[i].Y;
-                result[i * 5 + 2] = Vertices[i].Z; 
-
-                // Texture coordinates for top-right corner mapping
-                result[i * 5 + 3] = texX + (texWidth);
-                result[i * 5 + 4] = texY + (texHeight);
+                result[i * 3] = tempVertices[i].X; // X position
+                result[i * 3 + 1] = tempVertices[i].Y; // Y position
+                result[i * 3 + 2] = tempVertices[i].Z; // Z position
             }
 
             return result;
         }
-
 
         public void ExtendShape(Shape other)
         {
@@ -74,6 +57,47 @@ namespace MyGameFrameWork.Framework.Utils.DrawingShapes
         public void Add(Vector2 vector)
         {
             Vertices.Add(new Vector3(vector.X,vector.Y,0));
+        }
+
+        public RectF GetBoundingRectangle()
+        {
+            if (Vertices.Count == 0)
+                return new RectF();
+
+            // Initialize the bounding box to the first vertex
+            float minX = Vertices[0].X;
+            float maxX = Vertices[0].X;
+            float minY = Vertices[0].Y;
+            float maxY = Vertices[0].Y;
+
+            foreach (var vertex in Vertices)
+            {
+                minX = Math.Min(minX, vertex.X);
+                maxX = Math.Max(maxX, vertex.X);
+                minY = Math.Min(minY, vertex.Y);
+                maxY = Math.Max(maxY, vertex.Y);
+            }
+
+            return new RectF(minX, minY, maxX - minX, maxY - minY);
+        }
+        public void CenterAroundOrigin()
+        {
+            // Calculate the center of the shape
+            float centerX = 0, centerY = 0;
+            foreach (var vertex in Vertices)
+            {
+                centerX += vertex.X;
+                centerY += vertex.Y;
+            }
+
+            centerX /= Vertices.Count;
+            centerY /= Vertices.Count;
+
+            // Translate all vertices by subtracting the center to center them around (0,0)
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Vertices[i] = new Vector3(Vertices[i].X - centerX, Vertices[i].Y - centerY, Vertices[i].Z);
+            }
         }
         public static bool operator ==(Shape a, Shape b)
         {

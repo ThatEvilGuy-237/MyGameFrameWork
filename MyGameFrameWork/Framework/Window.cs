@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using MyGameFrameWork.Framework.Utils;
 using OpenTK.Mathematics;
 using MyGameFrameWork.Framework.Utils.DrawingShapes;
+using MyGameFrameWork.Framework.Utils.Structs;
 namespace MyGameFrameWork.Framework
 {
     internal class Window : GameWindow
@@ -59,13 +60,15 @@ namespace MyGameFrameWork.Framework
         public void TestDrawing()
         {
             // RED RECT
+            //EvilUtils.SetTexture("C:\\Users\\brits\\Downloads\\cute.png");
+            EvilUtils.SetTexture("C:\\Users\\brits\\Downloads\\ModHammer--correct.png", new Rect(0, 0,640,358 ));
             EvilUtils.NewPush();
             EvilUtils.SetColor(1.0f, 0.0f, 0.0f, 100.0f);
             EvilUtils.PushTranslate(_windowWidth/2, _windowHeight/2);
             EvilUtils.NewPush();
             EvilUtils.PushTranslate(-200, -200);
             EvilUtils.PushRotate(0, 0, r);
-            EvilUtils.DrawingTestRect(-50f, -50f, 100.0f, 100.0f);
+            EvilUtils.DrawRectanlge(new RectF(-50,-50,100,100));
             EvilUtils.PopOrgin();
 
             // GREEN RECT
@@ -73,7 +76,7 @@ namespace MyGameFrameWork.Framework
             EvilUtils.NewPush();
             EvilUtils.PushTranslate(200, -200);
             EvilUtils.PushRotate(0, 0, -(r * 2));
-            EvilUtils.DrawingTestRect(-50f, -50f, 100.0f, 100.0f);
+            EvilUtils.DrawRectanlge(-50f, -50f, 100.0f, 200.0f);
             EvilUtils.PopOrgin();
 
             // BLUE AND YELLO IN THE SAME TRANSLATION
@@ -82,28 +85,33 @@ namespace MyGameFrameWork.Framework
             EvilUtils.SetColor(0.0f, 0.0f, 1.0f, 100.0f);
             EvilUtils.PushTranslate(0, 100);
             EvilUtils.PushRotate(0, 0, -(r));
-            EvilUtils.DrawingTestRect(-50f, -50f, 100.0f, 100.0f);
+            EvilUtils.PushScale(1, 1, 20f);
+            EvilUtils.DrawRectanlge(-25f, -25f, 50.0f, 50.0f);
 
             //YELLOW RECT
             EvilUtils.NewPush();
             EvilUtils.SetColor(1.0f, 1.0f, 0.0f, 100.0f);  // Yellow
             EvilUtils.PushTranslate(0, 150); // Move it down a bit from the origin
             EvilUtils.PushRotate(0, 0, (r));
-
-            List<Vector3> Vertices = new List<Vector3>
-            {
-                new Vector3(0, 0, 0),     // Point 1
-                new Vector3(100, 0, 0),     // Point 2
-                new Vector3(100, 100, 0),     // Point 3
-                new Vector3(0, 100, 0),     // Point 4
-                new Vector3(50f, 50f, 0), // Point 5
-                new Vector3(20f, 20f, 0), // Point 6
-                new Vector3(0, 0, 0),
-                new Vector3(0, 0, 0),
-            };
-            Shape shape = new Shape(Vertices,new Vector4(1,1,1,1));
-
-
+            
+            Shape Vertices = new Shape(new List<Vector3> {
+                new Vector3(100, 120, 0),
+                new Vector3(150, 200, 0),
+                new Vector3(200, 250, 0),
+                new Vector3(50, 170, 0),
+                new Vector3(180, 90, 0),
+                new Vector3(120, 60, 0),
+                new Vector3(110, 180, 0),
+                new Vector3(160, 140, 0),
+                new Vector3(220, 190, 0),
+                new Vector3(130, 210, 0)
+            });
+            Vertices.CenterAroundOrigin();
+            RectF bounds = Vertices.GetBoundingRectangle();
+            Console.WriteLine($"Bounding Rect: X={bounds.X}, Y={bounds.Y}, Width={bounds.Width}, Height={bounds.Height}");
+            EvilUtils.SetTexture("C:\\Users\\brits\\Downloads\\ModHammer--correct.png", new Rect(0, 0, 100, 100));
+            //Shape shape = new Shape(Vertices,new Vector4(1,1,1,1));
+            Shape shape = new Shape(Vertices.Vertices);
             EvilUtils.Draw(shape);
            // EvilUtils.DrawRectangle(-50f, -25f, 100.0f, 50.0f); // 100x100 rectangle
             EvilUtils.PopOrgin(); EvilUtils.PopOrgin();

@@ -1,5 +1,6 @@
 ﻿using MyGameFrameWork.Framework.ShadersGLSL;
 using MyGameFrameWork.Framework.Utils.DrawingShapes;
+using MyGameFrameWork.Framework.Utils.Structs;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
@@ -50,6 +51,7 @@ namespace MyGameFrameWork.Framework.Utils
 
             GetFullTranslation();
             _ShadersHandeler!.ApplySRTMatrix(_TotaalSRTVector.GetSRTMatrix());
+            _TotaalSRTVector = new SRTVector();
         }
         public static void GetFullTranslation()
         {
@@ -63,12 +65,14 @@ namespace MyGameFrameWork.Framework.Utils
 
                 totaalSRT.Translate += vector.Translate;
                 totaalSRT.Rotate += vector.Rotate;
+                totaalSRT.Scale *= vector.Scale;
             }
             SRTVector currentVector = new SRTVector(_CurrentSRTVector);
             currentVector.Translate = AddRotationTranslate(currentVector.Translate, totaalSRT.Rotate.Z);
             totaalSRT.Translate += currentVector.Translate;
 
             totaalSRT.Rotate += currentVector.Rotate;
+            totaalSRT.Scale *= currentVector.Scale;
             _TotaalSRTVector = totaalSRT;
         }
 
@@ -112,9 +116,10 @@ namespace MyGameFrameWork.Framework.Utils
 
         //Scale
         #region Scale-SRT
+        //#-FIX
         public static void PushScale(Vector3 scale)
         {
-            _CurrentSRTVector.Scale += scale;
+            _CurrentSRTVector.Scale *= scale;
         }
         public static void PushScale(float scale)
         {
@@ -135,10 +140,19 @@ namespace MyGameFrameWork.Framework.Utils
                 _ShadersHandeler.SetColor(r, g, b, a);
             }
         }
-        public static void SetTexture()
-        {
+        static int _CurrentTextureID = 0;
+        //static Vector4 _CurrentSourceRect = new Vector4();
 
+        public static void SetTexture(string texturePath, Rect sourceRect)
+        {
+            // Load the texture
+            TextureHandeler.LoadTexture(texturePath);
+            _CurrentTextureID = TextureHandeler.LoadTexture(texturePath);
+
+            // Set the normalized SourceRect for the shader
+            //_CurrentSourceRect = new Vector4(sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height);
         }
+
         private static void StartDraw()
         {
             if (_CurrentWindow == null)
@@ -160,11 +174,13 @@ namespace MyGameFrameWork.Framework.Utils
         public static void Draw(Shape shape)
         {
             StartDraw();
+
             List<Vector3> verticesList = shape.Vertices;
 
             // Convert the List<Vector3> to a float array for OpenGL
             float[] vertices = shape.GetFloatArray();
-
+            RectF bound = shape.GetBoundingRectangle();
+            _ShadersHandeler?.SetTexture(_CurrentTextureID, new Vector4(bound.X, bound.Y, bound.Width, bound.Height));
             // Generate a new buffer for the vertices and bind it
             int vertexBuffer = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
@@ -179,92 +195,55 @@ namespace MyGameFrameWork.Framework.Utils
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);  // Set pointer to the vertex positions
 
             // Draw the shape (assuming the shape is a polygon with vertices defined)
-            GL.DrawArrays(PrimitiveType.Triangles, 0, verticesList.Count);
-
+            GL.DrawArrays(PrimitiveType.Triangles, 0, shape.Vertices.Count);
             // Cleanup
             StopDrawing(vertexBuffer, vao);
         }
-
-        public static void DrawTexture(Shape shape, int textureID)
+        public static void DrawRectanlge(Rect rect)
         {
-            StartDraw();
-            textureID = TextureHandeler.LoadTexture("C:\\Users\\brits\\Downloads\\ModHammer--correct.png");
-            // Set the texture
-            _ShadersHandeler?.SetTexture(textureID);  // Set the texture using the textureID (texture handler)
-
-            // Define the vertices of the rectangle (two triangles)
-            List<Vector3> verticesList = shape.Vertices;
-            float[] vertices = shape.GetFloatArray();
-
-            // Generate a new buffer for the vertices and bind it
-            int vertexBuffer = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
-            // Create and bind VAO (Vertex Array Object)
-            int vao = GL.GenVertexArray();
-            GL.BindVertexArray(vao);
-
-            // Enable the vertex array
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);  // Set pointer to the vertex positions
-
-            // Enable the texture coordinates (assuming you have texture coordinates in the shape)
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);  // Texture coordinate pointer
-
-            // Draw the shape (assuming the shape is a polygon with vertices defined)
-            GL.DrawArrays(PrimitiveType.Triangles, 0, verticesList.Count);
-
-            // Cleanup
-            StopDrawing(vertexBuffer, vao);
+            Draw(ToShape(rect));
+        }
+        public static void DrawRectanlge(RectF rect)
+        {
+            Draw(ToShape(rect));
+        }
+        public static void DrawRectanlge(RectD rect)
+        {
+            Draw(ToShape(rect));
+        }
+        public static void DrawRectanlge(float x, float y, float width, float height)
+        {
+            DrawRectanlge(new RectF(x, y, width, height));
         }
 
-        public static void DrawingTestRect(float x, float y, float width, float height)
+        #endregion
+
+        // SHAPES CONVERTER 
+        #region CONVERTER
+        public static Shape ToShape<T>(IRectangle<T> rect) where T : struct
         {
-            // Ensure the shader program is active
-            _ShadersHandeler?.Use();  // Activate shader program
-            ApplySRTMatrix();
+            Shape shape = new Shape();
 
-            // Load texture
-            int textureId = TextureHandeler.LoadTexture("C:\\Users\\brits\\Downloads\\ModHammer--correct.png");
+            // Convert values to float (shape is float)
+            float x = Convert.ToSingle(rect.X);
+            float y = Convert.ToSingle(rect.Y);
+            float width = Convert.ToSingle(rect.Width);
+            float height = Convert.ToSingle(rect.Height);
 
-            // Define the vertices & texture coordinates (two triangles)
-            float[] vertices = {
-                // Positions          // Texture Coords
-                x, y, 0.0f,          0.0f, 1.0f,  // Bottom-left
-                x + width, y, 0.0f,  1.0f, 1.0f,  // Bottom-right
-                x + width, y + height, 0.0f,  1.0f, 0.0f,  // Top-right
+            // First triangle:
+            shape.Vertices.Add(new Vector3(x, y, 0)); // Top-left
+            shape.Vertices.Add(new Vector3(x + width, y, 0)); // Top-right
+            shape.Vertices.Add(new Vector3(x, y + height, 0)); // Bottom-left
 
-                x, y, 0.0f,          0.0f, 1.0f,  // Bottom-left
-                x + width, y + height, 0.0f,  1.0f, 0.0f,  // Top-right
-                x, y + height, 0.0f,  0.0f, 0.0f   // Top-left
-            };
+            // Second triangle:
+            shape.Vertices.Add(new Vector3(x + width, y, 0)); // Top-right
+            shape.Vertices.Add(new Vector3(x + width, y + height, 0)); // Bottom-right
+            shape.Vertices.Add(new Vector3(x, y + height, 0)); // Bottom-left
 
-            // Generate & bind buffer
-            int vertexBuffer = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
-            // Create & bind VAO
-            int vao = GL.GenVertexArray();
-            GL.BindVertexArray(vao);
-
-            // Enable position attribute (location 0)
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-            // Enable texture coordinate attribute (location 1)
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-
-            // Bind texture
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, textureId);
-
-            // Draw rectangle (two triangles)
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+            return shape;
         }
+
+
 
         #endregion
     }

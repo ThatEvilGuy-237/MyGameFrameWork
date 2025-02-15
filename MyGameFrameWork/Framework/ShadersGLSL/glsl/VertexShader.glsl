@@ -1,7 +1,10 @@
 ﻿#version 330 core
 
 layout(location = 0) in vec3 aPosition; // Vertex position
+out vec2 texCoords; // Output texture coordinates
+
 uniform vec2 ViewportSize;
+uniform vec4 ObjectRectSize; // The portion of the texture to use (x, y, width, height)
 uniform mat4 u_Transformation; // Transformation matrix passed from the CPU
 
 void main()
@@ -15,4 +18,10 @@ void main()
 
     // Set the final position for rendering
     gl_Position = vec4(nx, -ny, transformedPosition.z, 1.0);
+
+    // Use SourceRect to adjust texCoords for texture mapping
+    texCoords = vec2(
+        (aPosition.x - ObjectRectSize.x) / ObjectRectSize.z,  // Normalize x based on SourceRect
+       1.0 -  (aPosition.y - ObjectRectSize.y) / ObjectRectSize.w   // Normalize y based on SourceRect
+    );
 }
