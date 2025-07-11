@@ -9,7 +9,7 @@ uniform vec4 u_Color; // Color to use if texture is transparent
 void main()
 {
     // Sample the texture at texCoords
-    vec4 texColor = texture(texture1, texCoords);
+    vec4 texColor = texture(texture1, texCoords) * u_Color;
     
     // If texture is fully transparent (alpha == 0), use u_Color
     if (texColor.a == 0.0)

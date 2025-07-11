@@ -22,6 +22,6 @@ void main()
     // Use SourceRect to adjust texCoords for texture mapping
     texCoords = vec2(
         (aPosition.x - ObjectRectSize.x) / ObjectRectSize.z,  // Normalize x based on SourceRect
-       1.0 -  (aPosition.y - ObjectRectSize.y) / ObjectRectSize.w   // Normalize y based on SourceRect
+         (aPosition.y - ObjectRectSize.y) / ObjectRectSize.w   // Normalize y based on SourceRect
     );
 }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Drawing;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using OpenTK.Graphics.OpenGL4;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using MyGameFrameWork.Framework.ShadersGLSL;
 using OpenTK.Mathematics;
 using MyGameFrameWork.Framework.Utils.Structs;
 
@@ -60,7 +57,7 @@ namespace MyGameFrameWork.Framework.Utils
             // Check if the cutout is already cached
             if (_cutoutCache.ContainsKey(filePath) && _cutoutCache[filePath].ContainsKey(sourceRect))
             {
-                return _cutoutCache[filePath][sourceRect]; // Return the cached cutout ID
+                return _cutoutCache[filePath][sourceRect]; // Return the cached cuto    ut ID
             }
             else
             {
@@ -79,7 +76,7 @@ namespace MyGameFrameWork.Framework.Utils
             {
                 throw new ArgumentException("SourceRect is out of bounds of the image.");
             }
-
+    
             // Create a new image that contains just the region defined by the sourceRect
             var cutoutImage = image.Clone(x => x.Crop(new SixLabors.ImageSharp.Rectangle((int)sourceRect.X, (int)sourceRect.Y, (int)sourceRect.Width, (int)sourceRect.Height)));
 

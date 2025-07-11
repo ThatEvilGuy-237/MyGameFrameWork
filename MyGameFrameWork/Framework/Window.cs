@@ -1,13 +1,12 @@
-﻿using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-// more about OpenTK https://opentk.net/learn/chapter1
+﻿// more about OpenTK https://opentk.net/learn/chapter1
 // video coolors https://www.youtube.com/watch?v=eAQzayHICWA
 using MyGameFrameWork.Framework.Utils;
-using OpenTK.Mathematics;
 using MyGameFrameWork.Framework.Utils.DrawingShapes;
 using MyGameFrameWork.Framework.Utils.Structs;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 namespace MyGameFrameWork.Framework
 {
     internal class Window : GameWindow
@@ -60,8 +59,8 @@ namespace MyGameFrameWork.Framework
         public void TestDrawing()
         {
             // RED RECT
-            //EvilUtils.SetTexture("C:\\Users\\brits\\Downloads\\cute.png");
-            EvilUtils.SetTexture("C:\\Users\\brits\\Downloads\\ModHammer--correct.png", new Rect(0, 0,640,358 ));
+            //EvilUtils.SetTexture("C:...\\Downloads\\cute.png");
+            //EvilUtils.SetTexture("!#need image path", new Rect(200, 200,370 -200,370-200 ));
             EvilUtils.NewPush();
             EvilUtils.SetColor(1.0f, 0.0f, 0.0f, 100.0f);
             EvilUtils.PushTranslate(_windowWidth/2, _windowHeight/2);
@@ -109,7 +108,7 @@ namespace MyGameFrameWork.Framework
             Vertices.CenterAroundOrigin();
             RectF bounds = Vertices.GetBoundingRectangle();
             Console.WriteLine($"Bounding Rect: X={bounds.X}, Y={bounds.Y}, Width={bounds.Width}, Height={bounds.Height}");
-            EvilUtils.SetTexture("C:\\Users\\brits\\Downloads\\ModHammer--correct.png", new Rect(0, 0, 100, 100));
+           //EvilUtils.SetTexture("!#need image path", new Rect(0, 0, 370, 370));
             //Shape shape = new Shape(Vertices,new Vector4(1,1,1,1));
             Shape shape = new Shape(Vertices.Vertices);
             EvilUtils.Draw(shape);
@@ -131,7 +130,7 @@ namespace MyGameFrameWork.Framework
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            r += 100 * (float)e.Time;
+           r += 100 * (float)e.Time;
             Console.WriteLine(r);
             if (r >= 360) r = 0;
             // Add your game logic here

@@ -45,7 +45,6 @@ namespace MyGameFrameWork.Framework.ShadersGLSL
         public void SetTexture(int textureID, Vector4 objectRectSize)
         {
             Use();  // Ensure the shader program is active
-            PrintAllUniforms();
             GL.ActiveTexture(TextureUnit.Texture0); // Use the first texture unit
 
             if (textureID > 0)
@@ -73,7 +72,7 @@ namespace MyGameFrameWork.Framework.ShadersGLSL
             }
             GL.Uniform4(objRectSize, objectRectSize); // Set the SourceRect (x, y, width, height)
         }
-        void PrintAllUniforms()
+        public void PrintAllUniforms()
         {
             GL.GetProgram(_shaderProgram, GetProgramParameterName.ActiveUniforms, out int uniformCount);
 

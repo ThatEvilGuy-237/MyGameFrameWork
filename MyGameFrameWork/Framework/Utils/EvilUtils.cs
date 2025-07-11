@@ -147,7 +147,7 @@ namespace MyGameFrameWork.Framework.Utils
         {
             // Load the texture
             TextureHandeler.LoadTexture(texturePath);
-            _CurrentTextureID = TextureHandeler.LoadTexture(texturePath);
+            _CurrentTextureID = TextureHandeler.GetCutout(texturePath,sourceRect);
 
             // Set the normalized SourceRect for the shader
             //_CurrentSourceRect = new Vector4(sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height);
