@@ -31,7 +31,7 @@ In this project, I wanted to try something different: drawing objects that stay 
 
 ```C#
 EvilUtils.SetColor(0.0f, 1.0f, 0.0f, 100.0f);
-
+EvilUtils.SetTexture("!#need image path", new Rect(200, 200,370 -200,370-200 ));
 EvilUtils.NewPush();                         // Start group A
 EvilUtils.PushTranslate(5, 5);               // Move group A
 EvilUtils.PushRotate(0, 0, (r * 2));         // Rotate group A
