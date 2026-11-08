@@ -15,8 +15,8 @@ internal sealed class RecordingSink : ITriangleSink
 
 internal static class Fakes
 {
-    public static Texture2D Texture(int width, int height, string name = "fake") =>
-        new(0, width, height, name, TextureFilter.Nearest, ownsHandle: false);
+    public static Texture2D Texture(int width, int height, string name = "fake", TextureFilter filter = TextureFilter.Nearest) =>
+        new(0, width, height, name, filter, ownsHandle: false);
 
     public static (Canvas Canvas, RecordingSink Sink, Texture2D White) Canvas()
     {

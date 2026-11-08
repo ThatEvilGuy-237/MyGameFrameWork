@@ -2,7 +2,8 @@ namespace Evil.Engine.Textures;
 
 public sealed class TextureLibrary : IDisposable
 {
-    private readonly Dictionary<string, Texture2D> _files = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, Texture2D> _files =
+        new(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
     private readonly List<Texture2D> _created = [];
 
     internal TextureLibrary(string root, TextureFilter defaultFilter)
@@ -24,7 +25,7 @@ public sealed class TextureLibrary : IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         var fullPath = Path.GetFullPath(Path.Combine(Root, path));
         var key = $"{fullPath}|{filter}";
-        if (_files.TryGetValue(key, out var cached))
+        if (_files.TryGetValue(key, out var cached) && !cached.IsDisposed)
         {
             return cached;
         }

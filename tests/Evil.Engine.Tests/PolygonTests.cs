@@ -88,6 +88,19 @@ internal static class PolygonTests
         Check.Near(Vector2.Zero, rect.CenteredOnOrigin().Centroid, "centered");
     }
 
+    [Test]
+    public static void ShapesFarFromTheOriginKeepTheirArea()
+    {
+        var near = new Polygon(new(0f, 0f), new(1.5f, 0f), new(1.5f, 0.3f), new(0.3f, 0.3f), new(0.3f, 1.5f), new(0f, 1.5f));
+        var far = near.Translate(new Vector2(20000f, 15000f));
+        Check.Near(near.Area, far.Area, "area", 0.01f);
+        Check.Near(far.Area, TriangleArea(far), "covered area", 0.05f);
+        Check.Near(near.Centroid + new Vector2(20000f, 15000f), far.Centroid, "centroid", 0.05f);
+
+        var star = Polygon.Star(new Vector2(8000f, 6000f), 16f, 7f, 5);
+        Check.Near(new Vector2(8000f, 6000f), star.Centroid, "small star centroid", 0.05f);
+    }
+
     private static float TriangleArea(Polygon polygon)
     {
         var total = 0f;

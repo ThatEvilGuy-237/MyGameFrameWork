@@ -67,11 +67,19 @@ internal sealed class EngineWindow : GameWindow
         }
 
         _frame++;
-        if (game.IsExiting || game.Scenes.Count == 0)
+        if (!game.IsExiting && game.Scenes.Count > 0)
         {
-            _closing = true;
-            Close();
+            return;
         }
+
+        if (game.HasPendingCaptures && game.Scenes.Count > 0)
+        {
+            _closeAfterRender = true;
+            return;
+        }
+
+        _closing = true;
+        Close();
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
@@ -108,13 +116,21 @@ internal sealed class EngineWindow : GameWindow
     protected override void OnKeyDown(KeyboardKeyEventArgs e)
     {
         base.OnKeyDown(e);
-        _keyboard.Press((Key)(int)e.Key, e.IsRepeat);
+        var key = (Key)(int)e.Key;
+        if (Enum.IsDefined(key))
+        {
+            _keyboard.Press(key, e.IsRepeat);
+        }
     }
 
     protected override void OnKeyUp(KeyboardKeyEventArgs e)
     {
         base.OnKeyUp(e);
-        _keyboard.Release((Key)(int)e.Key);
+        var key = (Key)(int)e.Key;
+        if (Enum.IsDefined(key))
+        {
+            _keyboard.Release(key);
+        }
     }
 
     protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -149,11 +165,17 @@ internal sealed class EngineWindow : GameWindow
 
     protected override void OnUnload()
     {
-        _game?.Scenes.ExitAll();
-        _textures?.Dispose();
-        _white?.Dispose();
-        _renderer?.Dispose();
-        base.OnUnload();
+        try
+        {
+            _game?.Scenes.ExitAll();
+        }
+        finally
+        {
+            _textures?.Dispose();
+            _white?.Dispose();
+            _renderer?.Dispose();
+            base.OnUnload();
+        }
     }
 
     private static GameWindowSettings GameSettings(WindowSettings window) => new()

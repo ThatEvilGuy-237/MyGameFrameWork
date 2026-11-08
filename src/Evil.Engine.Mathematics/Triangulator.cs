@@ -42,12 +42,16 @@ public static class Triangulator
 
     public static float SignedArea(ReadOnlySpan<Vector2> points)
     {
-        var sum = 0f;
-        for (var i = 0; i < points.Length; i++)
+        if (points.Length < 3)
         {
-            var a = points[i];
-            var b = points[(i + 1) % points.Length];
-            sum += a.X * b.Y - b.X * a.Y;
+            return 0f;
+        }
+
+        var anchor = points[0];
+        var sum = 0f;
+        for (var i = 1; i < points.Length - 1; i++)
+        {
+            sum += Cross(points[i] - anchor, points[i + 1] - anchor);
         }
 
         return sum / 2f;

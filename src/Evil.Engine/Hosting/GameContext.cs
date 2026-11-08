@@ -42,6 +42,8 @@ public sealed class GameContext
         _captures.Enqueue(Path.GetFullPath(path));
     }
 
+    internal bool HasPendingCaptures => _captures.Count > 0;
+
     internal bool TryTakeCapture([NotNullWhen(true)] out string? path) => _captures.TryDequeue(out path);
 }
 

@@ -1,3 +1,4 @@
+using System.Numerics;
 using Evil.Engine.Graphics;
 using Evil.Engine.Hosting;
 using Evil.Engine.Mathematics;
@@ -71,6 +72,18 @@ internal static class SceneTests
     }
 
     [Test]
+    public static void AnOverlayStartsFromAClearTransform()
+    {
+        var scenes = new SceneStack(null);
+        scenes.Push(new CameraScene());
+        scenes.Push(new LoggingScene("pause", [], overlay: true));
+        scenes.ApplyChanges();
+        var (canvas, sink, _) = Fakes.Canvas();
+        scenes.Draw(canvas);
+        Check.Near(Vector2.Zero, sink.Batches[^1].Vertices[0].Position, "the overlay is not moved by the camera below");
+    }
+
+    [Test]
     public static void ASceneThatForgetsPopIsNamed()
     {
         var scenes = new SceneStack(null);
@@ -104,6 +117,15 @@ internal static class SceneTests
         protected override void Draw(Canvas canvas)
         {
             log.Add($"{name}.draw");
+            canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.White);
+        }
+    }
+
+    private sealed class CameraScene : Scene
+    {
+        protected override void Draw(Canvas canvas)
+        {
+            canvas.Translate(-300f, -200f);
             canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.White);
         }
     }

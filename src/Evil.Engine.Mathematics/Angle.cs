@@ -9,6 +9,11 @@ public static class Angle
     public static float Wrap(float degrees)
     {
         var wrapped = degrees % 360f;
-        return wrapped < 0f ? wrapped + 360f : wrapped;
+        if (wrapped < 0f)
+        {
+            wrapped += 360f;
+        }
+
+        return wrapped >= 360f ? 0f : wrapped;
     }
 }

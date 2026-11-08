@@ -47,7 +47,11 @@ internal sealed class BatchRenderer : ITriangleSink, IDisposable
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
-        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        GL.BlendFuncSeparate(
+            BlendingFactorSrc.SrcAlpha,
+            BlendingFactorDest.OneMinusSrcAlpha,
+            BlendingFactorSrc.One,
+            BlendingFactorDest.OneMinusSrcAlpha);
         _shader.Use();
         _shader.Set("u_viewport", viewport);
         _shader.Set("u_texture", 0);
@@ -105,8 +109,7 @@ internal sealed class BatchRenderer : ITriangleSink, IDisposable
         GL.BindTexture(TextureTarget.Texture2D, _texture.Handle);
         GL.BindVertexArray(_vertexArray);
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBuffer);
-        GL.BufferData(BufferTarget.ArrayBuffer, Capacity * Vertex.SizeInBytes, IntPtr.Zero, BufferUsageHint.StreamDraw);
-        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, _count * Vertex.SizeInBytes, _vertices);
+        GL.BufferData(BufferTarget.ArrayBuffer, _count * Vertex.SizeInBytes, _vertices, BufferUsageHint.StreamDraw);
         GL.DrawArrays(PrimitiveType.Triangles, 0, _count);
         DrawCalls++;
         Triangles += _count / 3;

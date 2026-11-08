@@ -13,6 +13,7 @@ internal static class MathTests
         Check.Near(270f, Angle.Wrap(-90f), "wrap -90");
         Check.Near(0f, Angle.Wrap(720f), "wrap 720");
         Check.Near(10f, Angle.Wrap(370f), "wrap 370");
+        Check.True(Angle.Wrap(-1e-5f) < 360f, "a tiny negative angle never wraps to 360");
     }
 
     [Test]
@@ -37,6 +38,8 @@ internal static class MathTests
         Check.Equal(new RectF(0f, 0f, 15f, 15f), a.Union(b), "union");
         Check.True(!a.Intersects(new RectF(10f, 0f, 5f, 5f)), "touching edges do not intersect");
         Check.Equal(RectF.Empty, a.Intersect(new RectF(20f, 20f, 1f, 1f)), "no overlap");
+        Check.Equal(new RectF(100f, 100f, 10f, 10f), RectF.Empty.Union(new RectF(100f, 100f, 10f, 10f)), "empty does not pull in the origin");
+        Check.Equal(a, a.Union(RectF.Empty), "union with empty");
     }
 
     [Test]

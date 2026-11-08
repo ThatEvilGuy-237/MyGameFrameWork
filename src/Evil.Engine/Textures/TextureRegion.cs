@@ -9,8 +9,10 @@ public sealed class TextureRegion
     {
         Texture = texture;
         Source = source;
-        UvMin = new Vector2(source.Left / (float)texture.Width, source.Top / (float)texture.Height);
-        UvMax = new Vector2(source.Right / (float)texture.Width, source.Bottom / (float)texture.Height);
+        var size = new Vector2(texture.Width, texture.Height);
+        var inset = InsetFor(texture, source);
+        UvMin = (new Vector2(source.Left, source.Top) + inset) / size;
+        UvMax = (new Vector2(source.Right, source.Bottom) - inset) / size;
     }
 
     public Texture2D Texture { get; }
@@ -36,5 +38,11 @@ public sealed class TextureRegion
         }
 
         return new TextureRegion(Texture, placed);
+    }
+
+    private static Vector2 InsetFor(Texture2D texture, RectI source)
+    {
+        var wholeTexture = source == new RectI(0, 0, texture.Width, texture.Height);
+        return texture.Filter == TextureFilter.Linear && !wholeTexture ? new Vector2(0.5f) : Vector2.Zero;
     }
 }

@@ -38,7 +38,7 @@ Everything still loaded is freed when the game ends.
 | `Grid(cellWidth, cellHeight)` | every cell of a sheet, row by row |
 | `region.Region(RectI)` | a part of a part, relative to it |
 
-`TextureFilter.Nearest` keeps pixel art sharp; `Linear` smooths.
+`TextureFilter.Nearest` keeps pixel art sharp; `Linear` smooths. With `Linear`, a region (not the whole texture) samples half a pixel inside its edges, so a cell never blurs into its neighbour on the sheet.
 
 > [!note] Different from the old cutouts
 > MyGameFrameWork loaded the image again from disk and made a new GPU texture for every cutout. A region now

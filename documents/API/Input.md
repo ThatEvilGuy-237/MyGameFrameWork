@@ -36,4 +36,4 @@ if (Game.Mouse.WasPressed(MouseButton.Left) && tile.Contains(Game.Mouse.Position
 > driven check in [[Run the Sample]] found it.
 
 `Key` has letters, digits, F1-F12, arrows, the keypad, modifiers and the usual punctuation, with the same codes
-as GLFW. `InputTests.EveryKeyMatchesOpenTK` keeps them in line.
+as GLFW. Keys outside that list are ignored. `InputTests.EveryKeyMatchesOpenTK` keeps them in line.

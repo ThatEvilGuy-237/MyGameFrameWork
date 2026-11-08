@@ -142,16 +142,17 @@ public sealed class Polygon
             return sum / points.Length;
         }
 
+        var anchor = points[0];
         var centroid = Vector2.Zero;
-        for (var i = 0; i < points.Length; i++)
+        for (var i = 1; i < points.Length - 1; i++)
         {
-            var a = points[i];
-            var b = points[(i + 1) % points.Length];
+            var a = points[i] - anchor;
+            var b = points[i + 1] - anchor;
             var cross = a.X * b.Y - b.X * a.Y;
             centroid += (a + b) * cross;
         }
 
-        return centroid / (6f * signedArea);
+        return anchor + centroid / (6f * signedArea);
     }
 
     private static bool MeasureConvex(ReadOnlySpan<Vector2> points)

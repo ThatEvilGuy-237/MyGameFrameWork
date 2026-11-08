@@ -168,6 +168,8 @@ public sealed class Canvas
         _transforms.Reset();
     }
 
+    internal void ResetTransform() => _transforms.Reset();
+
     internal void End()
     {
         var depth = _transforms.Depth;

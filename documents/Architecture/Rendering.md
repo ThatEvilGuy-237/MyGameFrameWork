@@ -43,7 +43,7 @@ three folders above `bin/`. That broke on Linux and in any published build.
 
 ## Window and context
 
-OpenGL 3.3 core, forward compatible (works on Windows, Linux and macOS). Blending is on (straight alpha). The
+OpenGL 3.3 core, forward compatible (works on Windows, Linux and macOS). Blending is on: colours blend by their alpha, while the screen's own alpha stays opaque (`BlendFuncSeparate`). The
 viewport follows the framebuffer, and drawing uses window coordinates, so resizing and Windows display scaling
 keep working. The old engine kept drawing at the starting size.
 

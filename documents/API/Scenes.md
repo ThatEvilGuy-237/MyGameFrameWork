@@ -38,6 +38,7 @@ internal sealed class BattleScene : Scene
 | `Game.Scenes.Switch(scene)` | replace the top one (menu to map) |
 
 Changes wait until the update has finished, so a scene never disappears halfway through its own `Update`.
+Every scene starts drawing from a clean transform: a camera move in the map never shifts the overlay above it.
 
 > [!warning] Loud on mistakes
 > A scene that leaves a `Push()` without `Pop()` stops the game with its name:

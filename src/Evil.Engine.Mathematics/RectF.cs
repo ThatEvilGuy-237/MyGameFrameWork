@@ -52,6 +52,16 @@ public readonly record struct RectF(float X, float Y, float Width, float Height)
 
     public RectF Union(RectF other)
     {
+        if (IsEmpty)
+        {
+            return other;
+        }
+
+        if (other.IsEmpty)
+        {
+            return this;
+        }
+
         var left = MathF.Min(Left, other.Left);
         var top = MathF.Min(Top, other.Top);
         var right = MathF.Max(Right, other.Right);

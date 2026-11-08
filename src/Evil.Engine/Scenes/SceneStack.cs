@@ -77,6 +77,7 @@ public sealed class SceneStack
         for (var i = first; i < _scenes.Count; i++)
         {
             var scene = _scenes[i];
+            canvas.ResetTransform();
             scene.RunDraw(canvas);
             if (canvas.Depth != 0)
             {

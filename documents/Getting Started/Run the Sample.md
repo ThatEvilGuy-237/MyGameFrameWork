@@ -45,7 +45,7 @@ What is on screen:
 4. Runs it again and drives it with real input (`scripts/drive.sh`: `xdotool` presses Space, finds the yellow
    star on screen, moves the mouse onto it, presses P) and saves `documents/screenshots/sample-driven.png`.
 
-**Done when** the script prints `57 of 57 tests passed` and both screenshots exist. The driven one must show a
+**Done when** the script prints `60 of 60 tests passed` and both screenshots exist. The driven one must show a
 dimmed scene, the pause bars and an orange (dimmed: brown) star.
 
 ![[sample-driven.png]]
