@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Evil Engine core: game time, colours and the small shared types every part of the engine and the game rules use. No dependencies.</Description>
+  </PropertyGroup>
+
+</Project>

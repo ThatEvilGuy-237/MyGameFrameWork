@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Godot.props" />
+
+  <PropertyGroup>
+    <Description>Evil Engine: the game builder, the game loop on Godot and scenes. Reference this one package to make a game.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\00_Core\Evil.Engine.Core\Evil.Engine.Core.csproj" />
+    <ProjectReference Include="..\..\01_Mathematics\Evil.Engine.Mathematics\Evil.Engine.Mathematics.csproj" />
+    <ProjectReference Include="..\..\02_Platform\Evil.Engine.Platform\Evil.Engine.Platform.csproj" />
+    <ProjectReference Include="..\..\03_World\Evil.Engine.World\Evil.Engine.World.csproj" />
+    <ProjectReference Include="..\..\04_Cameras\Evil.Engine.Cameras\Evil.Engine.Cameras.csproj" />
+    <ProjectReference Include="..\..\05_Lighting\Evil.Engine.Lighting\Evil.Engine.Lighting.csproj" />
+    <ProjectReference Include="..\..\07_Screen\Evil.Engine.Screen\Evil.Engine.Screen.csproj" />
+  </ItemGroup>
+
+</Project>

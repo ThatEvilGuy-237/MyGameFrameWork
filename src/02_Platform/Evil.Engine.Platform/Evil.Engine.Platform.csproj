@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Godot.props" />
+
+  <PropertyGroup>
+    <Description>Evil Engine platform glue: the one place that converts between Evil Engine types and Godot types.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\00_Core\Evil.Engine.Core\Evil.Engine.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Godot.props" />
+
+  <PropertyGroup>
+    <Description>Evil Engine cameras: the camera a scene looks through, and camera rigs for a turn-based view.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\03_World\Evil.Engine.World\Evil.Engine.World.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,24 +1,25 @@
 # MyGameFrameWork: the Evil Engine
 
-Our own 2D game engine SDK in C# (packages `Evil.Engine` and `Evil.Engine.Mathematics`), grown from the owner's
-MyGameFrameWork (original code: commit `8b1fb3f`). It is the base for the turn-based game. Read `README.md`,
-then `documents/Home.md`; why things are the way they are is in `documents/Decisions.md`.
+Our own game engine SDK in C#. Since 0.2.0 it is a set of class libraries over **Godot 4.7.2 (.NET)** for a
+full 3D game; 0.1.0 (tag `v0.1.0`) was the owner's OpenTK 2D engine. Read `README.md`, then
+`documents/Home.md`. The build plan and progress live in `documents/LOOP.md` (a loop round every 30 minutes);
+why things are the way they are is in `documents/Decisions.md`.
 
 ## Rules
 
-- `scripts/check.sh` is canonical: Release build with warnings as errors, the test runner, a still frame and a
-  frame driven with real keys and mouse under xvfb. A change is done when it is green and the screenshots in
-  `documents/screenshots/` look right (open them, do not trust the exit code alone).
-- Every engine change gets a test in `tests/Evil.Engine.Tests` (a static method with `[Test]`, `Check.*`).
-  The runner has no packages because xunit is still `review` in `evil-packages`; move to xunit only after the
-  owner approves it.
-- 2D only for now (owner, 2026-11-08). Math that game rules may need goes in `Evil.Engine.Mathematics`, which
-  never references OpenTK or OpenGL. Games never see OpenTK types: wrap them (see `Key`, `MouseButton`).
-- One folder is one namespace. GL objects stay `internal`. The builder takes values or settings records,
-  never lambdas; the engine reads no config and no environment variable. Fail early with the call's name.
+- `scripts/check.sh` is the gate: build with warnings as errors, the pure test runner, then the OrbitDemo in
+  Godot under xvfb with a captured frame in `documents/screenshots/`. A round is done when it is green and the
+  screenshot looks right (open it, do not trust the exit code alone).
+- Godot binary: `/mnt/hdd/tools/godot-4.7.2` (came in through `evil-repo-check intake`, SHA-512 checked).
+  Run projects with `scripts/godot.sh <project> -- <args>` (compatibility renderer, 2 GB cap, xvfb).
+- Numbered libraries in `src/NN_Area/Evil.Engine.Area`; a library only references lower numbers. Core and
+  Mathematics never reference Godot. In the others Godot types stay `internal`: games see Evil Engine types and
+  `System.Numerics` only. A game's only Godot line is `Main : GameMain`.
+- The builder takes values or settings records, never lambdas; the engine reads no config and no environment
+  variable. Fail early with the call's name. No code comments.
 - Packages only from the checked list (`evil-packages one nuget <name> <version> --save`), exact versions in
-  `Directory.Packages.props`, lock files committed. .NET 10 for everything.
-- Release: bump `<Version>` in `Directory.Build.props` (both packages share it), commit, `./scripts/pack.sh`
-  (feed `/mnt/hdd/projects/MyGameFrameWork-data/feed`), push. A version in the feed never changes.
-- No code comments. No real names in code, tests or data: the handle is Thatevilguy. Short commit subjects,
-  the user's git identity only, no trailers. No GitHub Actions.
+  `Directory.Packages.props`, lock files committed; game projects pin Godot through `Godot.NET.Sdk/4.7.2`.
+- Release: bump `<Version>` in `Directory.Build.props`, commit, `./scripts/pack.sh`, push. Running anything on
+  the owner's Windows PC (Windows lab) needs the owner's OK first.
+- No real names in code, tests or data: the handle is Thatevilguy. Short commit subjects, the user's git
+  identity only, no trailers. No GitHub Actions.

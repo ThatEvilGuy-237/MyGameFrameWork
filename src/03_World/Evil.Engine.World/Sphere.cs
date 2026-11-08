@@ -1,0 +1,26 @@
+using Godot;
+using Color = Evil.Engine.Core.Color;
+
+namespace Evil.Engine.World;
+
+public sealed class Sphere : ShapeObject
+{
+    public Sphere()
+        : this(0.5f, Color.White)
+    {
+    }
+
+    public Sphere(float radius, Color color)
+        : base(new SphereMesh(), color) => Radius = radius;
+
+    public float Radius
+    {
+        get => ((SphereMesh)Mesh).Radius;
+        set
+        {
+            var mesh = (SphereMesh)Mesh;
+            mesh.Radius = value;
+            mesh.Height = value * 2f;
+        }
+    }
+}

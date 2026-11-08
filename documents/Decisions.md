@@ -7,6 +7,10 @@ aliases: [ADR, Why]
 
 Why the engine is built the way it is. Change a decision here first, then the code.
 
+> [!note] Two engines in one table
+> Rows 1-17 were made for 0.1.0, the OpenTK 2D engine (tag `v0.1.0`). Rows 1-4, 12-13 and 16-17 still hold; the
+> OpenTK rendering rows (5-11, 14) describe that engine only. Rows 18 and up are the Godot SDK (0.2.0).
+
 | # | Decision | Why | Instead of |
 |---|---|---|---|
 | 1 | **Two packages**: Mathematics apart from the engine | game rules and tests use the math without a window or OpenGL | one package with folders |
@@ -26,3 +30,10 @@ Why the engine is built the way it is. Change a decision here first, then the co
 | 15 | A **package-free test runner** | xunit is still marked review in `evil-packages`; switch when the owner approves it | blocking tests on approval |
 | 16 | **.NET 10**, warnings as errors, lock files | one .NET for every app; restores are repeatable | net8.0 |
 | 17 | **2D only** for now | the owner's scope (2026-11-08); the turn-based game needs 2D first | 3D cameras and depth |
+| 18 | **Godot 4.7.2 underneath**, our API on top | full 3D (camera, lights, shadows, models) without writing a renderer; free, MIT, text scene files | our own OpenTK renderer (0.1.0) |
+| 19 | Games see only **Evil Engine types and System.Numerics** | game code does not depend on Godot's API; wrappers keep nodes `internal`, constructors `private protected` | exposing `Node3D` and friends |
+| 20 | **Numbered class libraries** 00-08 | one job per library; a library only uses lower numbers | one big library |
+| 21 | **Each scene owns a world and a camera** | popping a scene removes its objects; overlays keep the world below visible | one shared world |
+| 22 | One Godot line in a game: **`Main : GameMain`** | Godot needs a script on the main scene; everything else goes through the builder | games writing Godot nodes |
+| 23 | Server checks use the **compatibility renderer** under xvfb | llvmpipe has OpenGL, not Vulkan; the PC renders with Forward+ | no screenshots on the server |
+| 24 | Game projects pin Godot packages **through `Godot.NET.Sdk/4.7.2`** (central versions off there) | the SDK adds its packages itself (NU1009 otherwise) | duplicating versions |

@@ -1,0 +1,20 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <PackageTags>evil;engine;godot;3d;game</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Evil.Engine.Platform" />
+    <InternalsVisibleTo Include="Evil.Engine.World" />
+    <InternalsVisibleTo Include="Evil.Engine.Cameras" />
+    <InternalsVisibleTo Include="Evil.Engine.Lighting" />
+    <InternalsVisibleTo Include="Evil.Engine.Input" />
+    <InternalsVisibleTo Include="Evil.Engine.Screen" />
+    <InternalsVisibleTo Include="Evil.Engine" />
+    <InternalsVisibleTo Include="Evil.Engine.Tests" />
+    <InternalsVisibleTo Include="Evil.Engine.GodotTests" />
+  </ItemGroup>
+</Project>

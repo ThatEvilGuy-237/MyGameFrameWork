@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Evil.Engine\Evil.Engine.csproj" />
-    <ProjectReference Include="..\..\src\Evil.Engine.Mathematics\Evil.Engine.Mathematics.csproj" />
+    <ProjectReference Include="..\..\src\00_Core\Evil.Engine.Core\Evil.Engine.Core.csproj" />
+    <ProjectReference Include="..\..\src\01_Mathematics\Evil.Engine.Mathematics\Evil.Engine.Mathematics.csproj" />
   </ItemGroup>
 
 </Project>

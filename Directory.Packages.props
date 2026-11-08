@@ -1,7 +1,6 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="OpenTK.Graphics" Version="4.9.4" />
-    <PackageVersion Include="OpenTK.Windowing.Desktop" Version="4.9.4" />
-    <PackageVersion Include="StbImageSharp" Version="2.30.16" />
+    <PackageVersion Include="GodotSharp" Version="4.7.2" />
+    <PackageVersion Include="Godot.SourceGenerators" Version="4.7.2" />
   </ItemGroup>
 </Project>
