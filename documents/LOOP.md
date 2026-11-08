@@ -270,3 +270,13 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   handler became game keys and window keys; files sit in World/, Actions/, Hud/, Camera/, Audio/, Options/ with
   their Godot `.uid` files. The driven run clicked Move and Attack through the new classes (arrived, hit sound,
   done). Run the Sample's reading guide follows the folders. R20 stays open for the tests (parts b to d).
+- 2026-11-09 00:40 R20 parts b and c (the pure tests): every test is a `TestCase`; a `[Test]` method runs as a `MethodTest`,
+  and a property is a class `Property<TCase>` with `Generate` and `Verify` that the runner finds by itself, instead
+  of `Property.ForAll` with two lambdas and a tuple. The 39 pure properties became classes with named case records,
+  in folders by meaning (Core/EaseCurves, Core/Colors, Mathematics/Angles, Bounds, GoalSmoothing, Orbits, Polygons,
+  Poses, Rays, Rectangles, Transforms, Turns, Validators); folder names avoid engine type names because a namespace
+  `Rotations` would hide the `Rotations` class next to it. A `Triangulation` helper object replaces three loose
+  helper functions; the validator tests name every refused call (`RayFromBrokenOrigin`, `WrapNaN`, ...). The runner
+  itself is an object and lost its LINQ. Proof: 83 tests green (the validators now four tests), 2 more seeds at
+  20,000 cases green, a planted failing property printed FAIL with its seed and value and exit code 1. Clean code
+  154 -> 87. Godot tests (part d) still use `Property.ForAll`, which goes when they move.

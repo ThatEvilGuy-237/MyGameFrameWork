@@ -68,5 +68,3 @@ internal static class Check
         throw new CheckFailed($"expected {typeof(TException).Name}, nothing was thrown");
     }
 }
-
-internal sealed class CheckFailed(string message) : Exception(message);

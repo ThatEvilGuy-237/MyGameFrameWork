@@ -1,19 +1,18 @@
 {
  ".::Check.cs": {
-  "delegate": 1,
-  "types per file": 1
+  "delegate": 1
  },
+ ".::CheckFailed.cs": {},
  ".::Gen.cs": {},
+ ".::MethodTest.cs": {},
  ".::Property.cs": {
-  "delegate": 2,
-  "linq": 1
+  "delegate": 2
  },
- ".::TestRunner.cs": {
-  "lambda": 5,
-  "linq": 6,
-  "tuple": 2,
-  "types per file": 1
- },
+ ".::PropertyOfCase.cs": {},
+ ".::PropertyRun.cs": {},
+ ".::TestAttribute.cs": {},
+ ".::TestCase.cs": {},
+ ".::TestRunner.cs": {},
  "samples/OrbitDemo::ActionBar.cs": {},
  "samples/OrbitDemo::ActionRunner.cs": {},
  "samples/OrbitDemo::ActionStarted.cs": {},
@@ -193,9 +192,7 @@
   "lambda": 3,
   "tuple": 1
  },
- "tests/Evil.Engine.GodotTests::Runner.cs": {
-  "linq": 1
- },
+ "tests/Evil.Engine.GodotTests::Runner.cs": {},
  "tests/Evil.Engine.GodotTests::SceneStackTests.cs": {
   "duplicate": 2,
   "lambda": 1,
@@ -218,55 +215,97 @@
  "tests/Evil.Engine.GodotTests::WorldObjectTests.cs": {
   "lambda": 5
  },
- "tests/Evil.Engine.Tests::AngleAndSmoothingProperties.cs": {
-  "tuple": 3
- },
+ "tests/Evil.Engine.Tests::ARayHitsABoxWhereWalkingAlongItFindsIt.cs": {},
+ "tests/Evil.Engine.Tests::ARayHitsAPlaneOnThePlaneOrNotAtAll.cs": {},
+ "tests/Evil.Engine.Tests::ARayHitsASphereOnItsSurface.cs": {},
+ "tests/Evil.Engine.Tests::AStarHasDentsOnlyWhenItsInnerCornersSinkPastTheOuterEdges.cs": {},
+ "tests/Evil.Engine.Tests::ATransformTurnsAndScalesAroundItsOrigin.cs": {},
+ "tests/Evil.Engine.Tests::AnOrbitSitsAtItsDistanceAndLooksAtTheTarget.cs": {},
+ "tests/Evil.Engine.Tests::AxisTurn.cs": {},
+ "tests/Evil.Engine.Tests::BoundsFromPointsHoldEveryPointTightly.cs": {},
+ "tests/Evil.Engine.Tests::BoxPair.cs": {},
  "tests/Evil.Engine.Tests::CameraMathTests.cs": {},
+ "tests/Evil.Engine.Tests::ColorPair.cs": {},
+ "tests/Evil.Engine.Tests::ContainsAgreesWithTheTriangles.cs": {},
  "tests/Evil.Engine.Tests::CoreTests.cs": {
   "lambda": 1
  },
- "tests/Evil.Engine.Tests::EaseAndColorProperties.cs": {
-  "tuple": 6
- },
+ "tests/Evil.Engine.Tests::CornerPair.cs": {},
+ "tests/Evil.Engine.Tests::CornersAndCentersBuildTheSameRect.cs": {},
+ "tests/Evil.Engine.Tests::CornersAndSeed.cs": {},
+ "tests/Evil.Engine.Tests::EaseAt.cs": {},
+ "tests/Evil.Engine.Tests::EaseCurveKinds.cs": {},
+ "tests/Evil.Engine.Tests::EaseCurveTests.cs": {},
+ "tests/Evil.Engine.Tests::EaseMirror.cs": {},
+ "tests/Evil.Engine.Tests::EaseSpan.cs": {},
  "tests/Evil.Engine.Tests::EaseTests.cs": {
   "lambda": 3,
   "linq": 6
  },
+ "tests/Evil.Engine.Tests::EasingsWithoutOvershootNeverGoBack.cs": {},
+ "tests/Evil.Engine.Tests::EulerTurn.cs": {},
+ "tests/Evil.Engine.Tests::EulerTurnsRollThenPitchThenYaw.cs": {},
  "tests/Evil.Engine.Tests::GlobalUsings.cs": {},
+ "tests/Evil.Engine.Tests::HexRoundTripsEveryByteColour.cs": {},
+ "tests/Evil.Engine.Tests::InOutIsTheSameFromBothEnds.cs": {},
+ "tests/Evil.Engine.Tests::IntersectIsInsideBothAndAgreesWithIntersects.cs": {},
+ "tests/Evil.Engine.Tests::LerpHitsBothEndsAndTheMiddle.cs": {},
+ "tests/Evil.Engine.Tests::LookAlongFacesTheDirectionWithALevelHorizon.cs": {},
  "tests/Evil.Engine.Tests::Math3DTests.cs": {
   "lambda": 2
  },
  "tests/Evil.Engine.Tests::MathTests.cs": {},
- "tests/Evil.Engine.Tests::MathValidatorTests.cs": {
-  "delegate": 1,
-  "lambda": 9,
-  "long method": 1
- },
+ "tests/Evil.Engine.Tests::MathValidatorTests.cs": {},
  "tests/Evil.Engine.Tests::MoveStep.cs": {},
- "tests/Evil.Engine.Tests::PolygonProperties.cs": {
-  "tuple": 4
- },
+ "tests/Evil.Engine.Tests::MoveTurnScale.cs": {},
+ "tests/Evil.Engine.Tests::MovingTurningAndScalingChangeTheAreaAsExpected.cs": {},
+ "tests/Evil.Engine.Tests::NestedPoses.cs": {},
+ "tests/Evil.Engine.Tests::OrbitSpot.cs": {},
+ "tests/Evil.Engine.Tests::OutIsInPlayedBackwards.cs": {},
+ "tests/Evil.Engine.Tests::PlaneTurn.cs": {},
+ "tests/Evil.Engine.Tests::PolygonChange.cs": {},
  "tests/Evil.Engine.Tests::PolygonTests.cs": {
   "lambda": 2,
   "linq": 1
  },
- "tests/Evil.Engine.Tests::Program.cs": {
-  "linq": 1
- },
- "tests/Evil.Engine.Tests::RayAndBoundsProperties.cs": {
-  "lambda": 3,
-  "linq": 4,
-  "long method": 1,
-  "tuple": 4
- },
- "tests/Evil.Engine.Tests::RectAndTransformProperties.cs": {
-  "tuple": 6
- },
- "tests/Evil.Engine.Tests::RotationAndPoseProperties.cs": {
-  "tuple": 7
- },
+ "tests/Evil.Engine.Tests::PopPutsTheStackBackExactly.cs": {},
+ "tests/Evil.Engine.Tests::PosePoint.cs": {},
+ "tests/Evil.Engine.Tests::PoseTurns.cs": {},
+ "tests/Evil.Engine.Tests::PosesComposeLikeTheirPoints.cs": {},
+ "tests/Evil.Engine.Tests::Program.cs": {},
+ "tests/Evil.Engine.Tests::ProgressOutsideZeroToOneIsClamped.cs": {},
+ "tests/Evil.Engine.Tests::RadiansAndDegreesRoundTrip.cs": {},
+ "tests/Evil.Engine.Tests::RayAim.cs": {},
+ "tests/Evil.Engine.Tests::RayAtBox.cs": {},
+ "tests/Evil.Engine.Tests::RayAtPlane.cs": {},
+ "tests/Evil.Engine.Tests::RayAtSphere.cs": {},
+ "tests/Evil.Engine.Tests::RayRegressionTests.cs": {},
+ "tests/Evil.Engine.Tests::RectPair.cs": {},
+ "tests/Evil.Engine.Tests::RegularPolygonsAreConvexAndMeasureRight.cs": {},
+ "tests/Evil.Engine.Tests::RegularShape.cs": {},
  "tests/Evil.Engine.Tests::ScaleStep.cs": {},
+ "tests/Evil.Engine.Tests::SmoothingAVectorSmoothsEachAxis.cs": {},
+ "tests/Evil.Engine.Tests::SmoothingMove.cs": {},
+ "tests/Evil.Engine.Tests::SmoothingNeverOvershootsTheGoal.cs": {},
+ "tests/Evil.Engine.Tests::SmoothingStep.cs": {},
+ "tests/Evil.Engine.Tests::StarShape.cs": {},
+ "tests/Evil.Engine.Tests::StepsAndPoint.cs": {},
+ "tests/Evil.Engine.Tests::StepsAroundAGroup.cs": {},
+ "tests/Evil.Engine.Tests::TheCentroidIsTheTrianglesBalancePoint.cs": {},
+ "tests/Evil.Engine.Tests::TheMatrixAgreesWithToWorld.cs": {},
+ "tests/Evil.Engine.Tests::ThePoseDirectionsAreTurnedAxes.cs": {},
+ "tests/Evil.Engine.Tests::TheStackAppliesTheInnermostStepFirst.cs": {},
+ "tests/Evil.Engine.Tests::TheWindingOnlyFlipsTheSign.cs": {},
+ "tests/Evil.Engine.Tests::ToLocalUndoesToWorld.cs": {},
  "tests/Evil.Engine.Tests::TransformStackTests.cs": {},
  "tests/Evil.Engine.Tests::TransformStep.cs": {},
- "tests/Evil.Engine.Tests::TurnStep.cs": {}
+ "tests/Evil.Engine.Tests::TrianglesCoverTheAreaExactlyOnce.cs": {},
+ "tests/Evil.Engine.Tests::Triangulation.cs": {},
+ "tests/Evil.Engine.Tests::TurnStep.cs": {},
+ "tests/Evil.Engine.Tests::TurningAroundAnAxisMatchesRodrigues.cs": {},
+ "tests/Evil.Engine.Tests::TurnsAroundYAddUp.cs": {},
+ "tests/Evil.Engine.Tests::TwoHalfStepsOfSmoothingAreOneFullStep.cs": {},
+ "tests/Evil.Engine.Tests::UnionAndEncapsulateHoldBoth.cs": {},
+ "tests/Evil.Engine.Tests::UnionHoldsBoth.cs": {},
+ "tests/Evil.Engine.Tests::WrapLandsInZeroTo360AndKeepsTheDirection.cs": {}
 }

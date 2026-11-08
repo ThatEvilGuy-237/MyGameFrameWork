@@ -10,7 +10,8 @@ public partial class Runner : Godot.Node
         try
         {
             Stage.Host = this;
-            _code = TestRunner.Run(typeof(Runner).Assembly, "Godot tests", Godot.OS.GetCmdlineUserArgs().FirstOrDefault());
+            string[] arguments = Godot.OS.GetCmdlineUserArgs();
+            _code = new TestRunner(typeof(Runner).Assembly, "Godot tests").Run(arguments.Length > 0 ? arguments[0] : null);
         }
         catch (Exception error)
         {
