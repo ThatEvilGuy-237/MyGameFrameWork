@@ -40,6 +40,23 @@ internal static class ScreenTests
     }
 
     [Test]
+    public static void EachSceneAndFrameStartsWithTheBuiltInFont()
+    {
+        var (canvas, target) = Drawing();
+        var font = new Font(new Godot.FontFile(), "test");
+        canvas.Font = font;
+        canvas.DrawText("styled", new Vector2(0f, 0f), 16f, Color.White);
+        canvas.ResetTransform();
+        Check.True(canvas.Font is null, "reset between scenes");
+        canvas.DrawText("plain", new Vector2(0f, 0f), 16f, Color.White);
+        Check.True(ReferenceEquals(font, target.Texts[0].Font) && target.Texts[1].Font is null, "the font reaches the drawing");
+        canvas.Font = font;
+        canvas.End();
+        canvas.Begin(new Vector2(800f, 600f));
+        Check.True(canvas.Font is null, "reset every frame");
+    }
+
+    [Test]
     public static void TheCanvasOnlyDrawsInsideDraw()
     {
         var target = new RecordingTarget();
@@ -88,13 +105,13 @@ internal static class ScreenTests
     {
         var node = new Godot.Node2D();
         var target = new GodotCanvasTarget(node);
-        var hello = target.Measure("Hello", 16);
-        var longer = target.Measure("Hello, turn-based world", 16);
+        var hello = target.Measure("Hello", 16, null);
+        var longer = target.Measure("Hello, turn-based world", 16, null);
         Check.True(hello.X > 0f && hello.Y > 0f, $"has a size, got {hello}");
         Check.True(longer.X > hello.X, "longer text is wider");
-        Check.True(target.Measure("Hello", 32).Y > hello.Y, "bigger text is taller");
-        Check.True(target.Ascent(16) > 0f, "ascent");
-        var wrapped = target.MeasureParagraph("one two three four five six seven eight nine ten", 16, 80f);
+        Check.True(target.Measure("Hello", 32, null).Y > hello.Y, "bigger text is taller");
+        Check.True(target.Ascent(16, null) > 0f, "ascent");
+        var wrapped = target.MeasureParagraph("one two three four five six seven eight nine ten", 16, 80f, null);
         Check.True(wrapped.Y > hello.Y * 1.5f, $"a narrow paragraph wraps onto several lines, got {wrapped}");
         node.Free();
     }
@@ -143,7 +160,7 @@ internal static class ScreenTests
     {
         private readonly List<string> _steps = [];
 
-        public List<(Vector2 Baseline, int Size, float Width, TextAlign Align)> Texts { get; } = [];
+        public List<(Vector2 Baseline, int Size, float Width, TextAlign Align, Font? Font)> Texts { get; } = [];
 
         public string Script => string.Join(" | ", _steps);
 
@@ -157,18 +174,18 @@ internal static class ScreenTests
 
         public void Polygon(ReadOnlySpan<Vector2> points, Color color) => _steps.Add("polygon");
 
-        public void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width)
+        public void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width, Font? font)
         {
             _steps.Add("text");
-            Texts.Add((baseline, size, width, align));
+            Texts.Add((baseline, size, width, align, font));
         }
 
-        public void Paragraph(string text, Vector2 baseline, int size, Color color, float width) => _steps.Add("paragraph");
+        public void Paragraph(string text, Vector2 baseline, int size, Color color, float width, Font? font) => _steps.Add("paragraph");
 
-        public Vector2 Measure(string text, int size) => new(60f, 20f);
+        public Vector2 Measure(string text, int size, Font? font) => new(60f, 20f);
 
-        public Vector2 MeasureParagraph(string text, int size, float width) => new(width, 60f);
+        public Vector2 MeasureParagraph(string text, int size, float width, Font? font) => new(width, 60f);
 
-        public float Ascent(int size) => 15f;
+        public float Ascent(int size, Font? font) => 15f;
     }
 }

@@ -29,6 +29,9 @@ if grep -q "leaked at exit" "$godot_tests"; then
 fi
 rm -f "$godot_tests"
 
+echo "== import OrbitDemo content (models, textures, fonts)"
+bash scripts/godot.sh --headless samples/OrbitDemo --import > /dev/null
+
 echo "== OrbitDemo in Godot, frame 90"
 rm -f "$shots/orbit.png"
 bash scripts/godot.sh samples/OrbitDemo -- --capture "$shots/orbit.png" --frame 90

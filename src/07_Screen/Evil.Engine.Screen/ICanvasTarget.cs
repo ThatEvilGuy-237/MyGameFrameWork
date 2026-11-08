@@ -16,13 +16,13 @@ internal interface ICanvasTarget
 
     void Polygon(ReadOnlySpan<Vector2> points, Color color);
 
-    void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width);
+    void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width, Font? font);
 
-    void Paragraph(string text, Vector2 baseline, int size, Color color, float width);
+    void Paragraph(string text, Vector2 baseline, int size, Color color, float width, Font? font);
 
-    Vector2 Measure(string text, int size);
+    Vector2 Measure(string text, int size, Font? font);
 
-    Vector2 MeasureParagraph(string text, int size, float width);
+    Vector2 MeasureParagraph(string text, int size, float width, Font? font);
 
-    float Ascent(int size);
+    float Ascent(int size, Font? font);
 }

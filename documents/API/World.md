@@ -45,7 +45,8 @@ Directions follow Godot: `+Y` is up, `-Z` is forward, a positive turn around `Y`
 | `Capsule` | `new Capsule(radius, height, color)`; the height includes both round ends |
 | `Torus` | `new Torus(innerRadius, outerRadius, color)` |
 
-Every shape has `Color`, `Material` and `CastsShadow`. Sizes are checked before anything is created, so a bad
+Shapes and model parts are both `MeshObject`s: they share `CastsShadow`, `Pickable` and `LocalBounds`, and both
+can be picked (see [[Input]]). Every shape also has `Color` and `Material`. Sizes are checked before anything is created, so a bad
 size never leaves a half-made object behind.
 
 ## Materials
@@ -60,6 +61,17 @@ A `Material` can be shared: give ten pillars the same `stone` and recolour them 
 | `Unshaded` | ignore lights (flat colour) |
 | `Material.Matte`, `Shiny`, `Metal`, `Glowing` | ready-made starting points |
 
-> [!note] Coming later
-> Textures arrive with file loading in round 8. Shiny and metal surfaces look their best once the sky and
-> ambient light of round 5 are in.
+| `Texture`, `TextureScale` | an image on the surface (see [[Content]]); scale above 1 tiles it |
+
+## Models
+
+`Game.Content.Model(path)` gives a `Model`: a `WorldObject` whose meshes are `ModelPart`s and whose empty nodes are
+groups, under the names they had in Blender.
+
+| Member | What |
+|---|---|
+| `Parts`, `Part(name)` | every mesh in the model, or one by name |
+| `part.Material` | paint one part; `null` goes back to the model's own material |
+| `Paint(material)` | paint every part at once |
+| `Find(name)`, `Descendants<T>()`, `Ancestor<T>()` | the same tree tools as any world object |
+| `Source` | where it was loaded from |

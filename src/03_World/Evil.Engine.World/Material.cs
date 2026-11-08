@@ -1,11 +1,14 @@
 using Evil.Engine.Platform;
 using Godot;
 using Color = Evil.Engine.Core.Color;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Evil.Engine.World;
 
 public sealed class Material
 {
+    private Texture? _texture;
+
     public Material()
         : this(Color.White)
     {
@@ -51,6 +54,22 @@ public sealed class Material
     {
         get => Native.EmissionEnergyMultiplier;
         set => Native.EmissionEnergyMultiplier = Math.Max(0f, value);
+    }
+
+    public Texture? Texture
+    {
+        get => _texture;
+        set
+        {
+            _texture = value;
+            Native.AlbedoTexture = value?.Native;
+        }
+    }
+
+    public Vector2 TextureScale
+    {
+        get => new(Native.Uv1Scale.X, Native.Uv1Scale.Y);
+        set => Native.Uv1Scale = new Godot.Vector3(value.X, value.Y, 1f);
     }
 
     public bool Unshaded

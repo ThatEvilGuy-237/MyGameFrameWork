@@ -26,6 +26,12 @@ public class WorldObject
         Node.Name = _name;
     }
 
+    internal WorldObject(Node3D node, string adoptedName)
+    {
+        Node = node;
+        _name = adoptedName;
+    }
+
     public string Name
     {
         get => _name;
@@ -263,6 +269,12 @@ public class WorldObject
         }
 
         return Node.IsInsideTree() && Node.GetParent() is Node3D parent ? parent.GlobalTransform.Basis : Basis.Identity;
+    }
+
+    internal void Adopt(WorldObject child)
+    {
+        child.Parent = this;
+        _children.Add(child);
     }
 
     private bool VisibleUpTheChain()
