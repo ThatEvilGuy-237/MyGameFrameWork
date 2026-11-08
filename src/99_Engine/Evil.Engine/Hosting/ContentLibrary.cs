@@ -1,5 +1,6 @@
 using Godot;
 using EvilFont = Evil.Engine.Screen.Font;
+using EvilSound = Evil.Engine.Audio.Sound;
 using EvilModel = Evil.Engine.World.Model;
 using EvilTexture = Evil.Engine.World.Texture;
 
@@ -9,6 +10,7 @@ public sealed class ContentLibrary
 {
     private readonly Dictionary<string, EvilTexture> _textures = new Dictionary<string, EvilTexture>(StringComparer.Ordinal);
     private readonly Dictionary<string, EvilFont> _fonts = new Dictionary<string, EvilFont>(StringComparer.Ordinal);
+    private readonly Dictionary<string, EvilSound> _sounds = new Dictionary<string, EvilSound>(StringComparer.Ordinal);
     private readonly Dictionary<string, PackedScene> _scenes = new Dictionary<string, PackedScene>(StringComparer.Ordinal);
 
     internal ContentLibrary(string root) => Root = root;
@@ -100,10 +102,74 @@ public sealed class ContentLibrary
         return font;
     }
 
+    public EvilSound Sound(string path)
+    {
+        string full = Resolve(path);
+        if (_sounds.TryGetValue(full, out EvilSound? cached))
+        {
+            return cached;
+        }
+
+        AudioStream native;
+        if (IsImported(full))
+        {
+            native = ResourceLoader.Load<AudioStream>(full) ?? throw Unreadable(path, "a sound");
+        }
+        else
+        {
+            RequireFile(path, full);
+            native = LoadSoundFile(path, full);
+        }
+
+        EvilSound sound = new EvilSound(native, path);
+        _sounds[full] = sound;
+        return sound;
+    }
+
+    internal void Close()
+    {
+        foreach (EvilSound sound in _sounds.Values)
+        {
+            sound.Native.Dispose();
+        }
+
+        foreach (EvilTexture texture in _textures.Values)
+        {
+            texture.Native.Dispose();
+        }
+
+        foreach (EvilFont font in _fonts.Values)
+        {
+            font.Native.Dispose();
+        }
+
+        foreach (PackedScene scene in _scenes.Values)
+        {
+            scene.Dispose();
+        }
+
+        _sounds.Clear();
+        _textures.Clear();
+        _fonts.Clear();
+        _scenes.Clear();
+    }
+
     internal static bool IsGodotPath(string path) =>
         path.StartsWith("res://", StringComparison.Ordinal) || path.StartsWith("user://", StringComparison.Ordinal);
 
     private static bool IsImported(string full) => full.StartsWith("res://", StringComparison.Ordinal) && ResourceLoader.Exists(full);
+
+    private static AudioStream LoadSoundFile(string path, string full)
+    {
+        string extension = System.IO.Path.GetExtension(full).ToLowerInvariant();
+        AudioStream? stream = extension switch
+        {
+            ".wav" => AudioStreamWav.LoadFromFile(full),
+            ".ogg" => AudioStreamOggVorbis.LoadFromFile(full),
+            _ => throw new InvalidDataException($"Content: '{path}' is not a .wav or .ogg sound."),
+        };
+        return stream ?? throw Unreadable(path, "a sound");
+    }
 
     private static void RequireFile(string path, string full)
     {

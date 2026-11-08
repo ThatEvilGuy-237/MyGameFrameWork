@@ -14,6 +14,13 @@
         "resolved": "4.7.2",
         "contentHash": "EPvfayB7b7MrBNdASvy86jRS5AbM9dprkVivcRD80g+ngn2M8KAIrBQH4NhyQL+pwxni0xVnuqhD9AFpZeNQpw=="
       },
+      "evil.engine.audio": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.World": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
       "evil.engine.cameras": {
         "type": "Project",
         "dependencies": {

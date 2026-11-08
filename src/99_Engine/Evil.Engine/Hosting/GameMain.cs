@@ -1,3 +1,4 @@
+using Evil.Engine.Audio;
 using Evil.Engine.Core;
 using Evil.Engine.Input;
 using Evil.Engine.Platform;
@@ -19,16 +20,21 @@ public abstract partial class GameMain : Node, IOverlayPainter
     private long _frame;
     private bool _quitAfterCapture;
     private bool _quitting;
+    private int _framesUntilQuit;
 
     protected IReadOnlyList<string> Arguments => OS.GetCmdlineUserArgs();
 
     public override void _Ready()
     {
+        GetTree().AutoAcceptQuit = false;
         _options = CreateGame().Options;
         WindowSetup.Apply(_options.Window, GetTree().Root);
         RenderingServer.SetDefaultClearColor(_options.ClearColor.ToGodot());
         WorldObject worlds = new WorldObject("Worlds");
         AddChild(worlds.Node);
+        Node audio = new Node();
+        audio.Name = "Audio";
+        AddChild(audio);
         CanvasLayer layer = new CanvasLayer();
         layer.Name = "Overlay";
         layer.Layer = 1;
@@ -39,7 +45,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         layer.AddChild(_overlay);
         _canvas = new Canvas(_overlay.Target);
         _mouse.Place(GetViewport().GetMousePosition().ToEvil());
-        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot));
+        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot), new AudioMixer(audio));
         _game.ScreenSize = ScreenSize();
         RenderingServer.FramePostDraw += OnFrameDrawn;
         _game.Scenes.Push(_options.StartScene);
@@ -48,7 +54,18 @@ public abstract partial class GameMain : Node, IOverlayPainter
 
     public override void _Process(double delta)
     {
-        if (_quitting || _game is null || _options is null)
+        if (_quitting)
+        {
+            _framesUntilQuit--;
+            if (_framesUntilQuit <= 0)
+            {
+                GetTree().Quit();
+            }
+
+            return;
+        }
+
+        if (_game is null || _options is null)
         {
             return;
         }
@@ -59,6 +76,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         _game.Scenes.Update(_game.Time);
         _game.Scenes.ApplyChanges();
         _game.Motion.Update((float)delta);
+        _game.Audio.Update((float)delta);
         _keyboard.EndFrame();
         _mouse.EndFrame();
         _overlay?.QueueRedraw();
@@ -87,6 +105,12 @@ public abstract partial class GameMain : Node, IOverlayPainter
 
     public override void _Notification(int what)
     {
+        if (what == NotificationWMCloseRequest)
+        {
+            Quit();
+            return;
+        }
+
         if (what == NotificationApplicationFocusOut)
         {
             _keyboard.ReleaseAll();
@@ -98,6 +122,8 @@ public abstract partial class GameMain : Node, IOverlayPainter
     {
         RenderingServer.FramePostDraw -= OnFrameDrawn;
         _game?.Scenes.ExitAll();
+        _game?.Audio.Close();
+        _game?.Content.Close();
     }
 
     protected abstract GameHost CreateGame();
@@ -140,8 +166,14 @@ public abstract partial class GameMain : Node, IOverlayPainter
 
     private void Quit()
     {
+        if (_quitting)
+        {
+            return;
+        }
+
         _quitting = true;
-        GetTree().Quit();
+        _framesUntilQuit = 3;
+        _game?.Audio.StopAll();
     }
 
     private System.Numerics.Vector2 ScreenSize() => GetViewport().GetVisibleRect().Size.ToEvil();

@@ -21,7 +21,8 @@ number.
 | `src/06_Input` | `Evil.Engine.Input` | `Keyboard`, `Mouse`, `Picker` | inside |
 | `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, `Display`, frame capture, `Canvas` overlay with text | inside |
 | `src/08_Motion` | `Evil.Engine.Motion` | `MotionPlayer`, `Tween` (queued per object) | no Godot types used |
-| `src/09_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
+| `src/09_Audio` | `Evil.Engine.Audio` | `AudioMixer`, `Sound`, volume groups, recording | inside |
+| `src/99_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
 
 "Inside" means Godot types never show in the public API: a game sees Evil Engine types and `System.Numerics`
 vectors only. Wrappers keep their Godot node `internal`, and the constructors that take one are
@@ -38,7 +39,9 @@ flowchart BT
   cameras --> lighting[05 Lighting]
   cameras --> input[06 Input]
   world --> motion[08 Motion]
-  motion --> engine[09 Engine]
+  motion --> engine[99 Engine]
+  world --> audio[09 Audio]
+  audio --> engine
   input --> engine
   cameras --> engine
   lighting --> engine
