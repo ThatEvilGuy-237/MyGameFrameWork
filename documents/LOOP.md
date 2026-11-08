@@ -65,7 +65,33 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 - [x] **R10 Audio**: sounds and music wrappers (one-shot, loop, volume groups).
 - [x] **R11 Docs and pack**: documents/ rewritten for the Godot SDK, Decisions updated, `0.2.0` packed.
 - [ ] **R12 On the PC**: build and run OrbitDemo on the owner's Windows PC through the Windows lab (**ask the
-  owner first**, standing rule).
+  owner first**, standing rule). Waits for the owner; the loop skips it.
+
+## Second loop: structure, readability, usability
+
+Owner, 2026-11-08 after R11: "loop on improving the code structure and readability, also usability for people to
+code with". Every 1 minute (session cron), one round at a time, same gate (`scripts/check.sh`, screenshots, land the
+work). Readability is through names, small methods and files, never comments (house rule). Public API changes are
+allowed (0.3.0) but each one gets a test and a line in Decisions.
+
+- [ ] **R13 Fresh eyes**: one agent that never saw the code writes a small turn-based game (tiled board, two teams,
+  click a unit, click a tile to walk there, Space ends the turn, a HUD line) with only `documents/` and the packed
+  `Evil.Engine` 0.2.0. Every place it got stuck, guessed or wished for something goes into
+  `documents/Usability.md` as a numbered finding with severity; the rounds below fix them, worst first.
+- [ ] **R14 The sample reads like a guide**: OrbitScene (426 lines, `Update` 91 and `Enter` 85) split by concern
+  (board, pawns, action bar, camera controls, sound) so a reader follows it top-down; no method over ~30 lines.
+- [ ] **R15 One type per file, folders by concern**: ObjectTweens.cs (8 types), Background.cs (4) and
+  GameOptions.cs (2) split; libraries with many files get subfolders (World: shapes, content); namespaces stay.
+- [ ] **R16 An API that guides**: fixes for R13's findings: consistent verbs and parameter order, shortcuts where
+  every game repeats the same lines, error messages that say what to do next. Each change with a test.
+- [ ] **R17 Readable internals**: the longest methods (GodotKeys.Build 105 lines, MotionPlayer.Update 49,
+  GameMain._Process 47, InputFeed, GameBuilder.Build) cut into named steps.
+- [ ] **R18 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
+  Game files; make-a-game-check builds from it.
+- [ ] **R19 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
+  left.
+- [ ] **R20 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
+  feed.
 
 ## Log
 
