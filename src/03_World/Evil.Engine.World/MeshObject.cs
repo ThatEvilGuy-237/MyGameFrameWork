@@ -42,6 +42,11 @@ public abstract class MeshObject : WorldObject
     internal float? HitDistance(Ray3 worldRay)
     {
         Transform3D world = WorldTransform;
+        if (MathF.Abs(world.Basis.Determinant()) < 1e-12f)
+        {
+            return null;
+        }
+
         Transform3D inverse = world.AffineInverse();
         Godot.Vector3 localDirection = inverse.Basis * worldRay.Direction.ToGodot();
         if (localDirection.LengthSquared() < 1e-12f)

@@ -4,6 +4,11 @@ public static class Ease
 {
     public static float Apply(Easing easing, float progress)
     {
+        if (float.IsNaN(progress))
+        {
+            throw new ArgumentException("Ease.Apply needs a progress between 0 and 1, got NaN. Look for elapsed / duration with a zero duration.", nameof(progress));
+        }
+
         float t = Math.Clamp(progress, 0f, 1f);
         return easing switch
         {

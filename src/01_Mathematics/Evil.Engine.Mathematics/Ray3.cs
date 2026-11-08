@@ -6,13 +6,8 @@ public readonly record struct Ray3
 {
     public Ray3(Vector3 origin, Vector3 direction)
     {
-        if (direction.LengthSquared() < 1e-12f)
-        {
-            throw new ArgumentException("A ray needs a direction with a length.", nameof(direction));
-        }
-
-        Origin = origin;
-        Direction = Vector3.Normalize(direction);
+        Origin = Finite.Point(origin, "A ray's origin");
+        Direction = Vector3.Normalize(Finite.Direction(direction, "A ray's direction"));
     }
 
     public Vector3 Origin { get; }
@@ -61,6 +56,8 @@ public readonly record struct Ray3
 
     public float? IntersectPlane(Vector3 pointOnPlane, Vector3 normal)
     {
+        Finite.Point(pointOnPlane, "The plane's point");
+        Finite.Direction(normal, "The plane's normal");
         float facing = Vector3.Dot(Direction, normal);
         if (MathF.Abs(facing) < 1e-9f)
         {
@@ -73,23 +70,29 @@ public readonly record struct Ray3
 
     public float? IntersectSphere(Vector3 center, float radius)
     {
-        Vector3 toCenter = Origin - center;
-        float b = Vector3.Dot(toCenter, Direction);
-        float c = toCenter.LengthSquared() - radius * radius;
-        float discriminant = b * b - c;
-        if (discriminant < 0f)
+        Finite.Point(center, "The sphere's center");
+        if (Finite.Number(radius, "The sphere's radius") < 0f)
+        {
+            throw new ArgumentOutOfRangeException(nameof(radius), radius, "A sphere's radius cannot be negative.");
+        }
+
+        Vector3 toCenter = center - Origin;
+        float closestAlong = Vector3.Dot(toCenter, Direction);
+        Vector3 gap = toCenter - Direction * closestAlong;
+        float halfChordSquared = radius * radius - gap.LengthSquared();
+        if (halfChordSquared < 0f)
         {
             return null;
         }
 
-        float root = MathF.Sqrt(discriminant);
-        float near = -b - root;
-        float far = -b + root;
+        float halfChord = MathF.Sqrt(halfChordSquared);
+        float far = closestAlong + halfChord;
         if (far < 0f)
         {
             return null;
         }
 
+        float near = closestAlong - halfChord;
         return near >= 0f ? near : 0f;
     }
 

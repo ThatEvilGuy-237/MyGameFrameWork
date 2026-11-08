@@ -28,13 +28,13 @@ public sealed class TransformStack
         return new TransformScope(this);
     }
 
-    public void Translate(Vector2 offset) => Current = Matrix3x2.CreateTranslation(offset) * Current;
+    public void Translate(Vector2 offset) => Current = Matrix3x2.CreateTranslation(Finite.Point(offset, "Translate's offset")) * Current;
 
     public void Translate(float x, float y) => Translate(new Vector2(x, y));
 
-    public void Rotate(float degrees) => Current = Matrix3x2.CreateRotation(Angle.ToRadians(degrees)) * Current;
+    public void Rotate(float degrees) => Current = Matrix3x2.CreateRotation(Angle.ToRadians(Finite.Number(degrees, "Rotate's degrees"))) * Current;
 
-    public void Scale(Vector2 factor) => Current = Matrix3x2.CreateScale(factor) * Current;
+    public void Scale(Vector2 factor) => Current = Matrix3x2.CreateScale(Finite.Point(factor, "Scale's factor")) * Current;
 
     public void Scale(float factor) => Scale(new Vector2(factor));
 
