@@ -59,6 +59,8 @@ against Godot's own maths.
 | `Pose(Position, Rotation, Scale)` | where something is and which way it faces; `ToWorld(local pose)` chains poses like groups; `Forward`, `Right`, `Up`, `TurnedY`, `Moved`, `ToMatrix` |
 | `Rotations` | `FromEulerDegrees`, `AroundAxis`, `LookAlong(direction)`, `Rotate(vector, rotation)` |
 | `Bounds3(Min, Max)` | an axis-aligned box: `Contains`, `Intersects`, `Encapsulate`, `Union`, `FromCenter`, `FromPoints` |
+| `Orbit.PoseFor(target, yaw, pitch, distance)` | where an orbiting camera sits and how it faces (see [[Cameras]]) |
+| `Smoothing.Toward(current, goal, sharpness, seconds)` | glide towards a goal, the same at any frame rate |
 | `Ray3(origin, direction)` | `Intersect(bounds)`, `IntersectPlane(point, normal)`, `IntersectSphere(center, radius)`; distances, `null` on a miss |
 
 ```csharp
