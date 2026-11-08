@@ -39,7 +39,17 @@ for _ in 1 2 3; do
   xdotool click 4
   sleep 0.15
 done
+sleep 0.5
+xdotool key F11
 sleep 1
+xdotool key F10
+sleep 2
+attack="$(grep -oE "Attack [0-9]+,[0-9]+" "$log" | tail -n 1 | sed -E 's/Attack ([0-9]+),([0-9]+)/\1 \2/')"
+[ -n "$attack" ] || { echo "the demo never showed its action buttons" >&2; exit 1; }
+xdotool mousemove --window "$window" $attack
+sleep 0.4
+xdotool click 1
+sleep 0.8
 xdotool key F12
 wait "$game"
 trap - EXIT

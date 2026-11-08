@@ -3,6 +3,7 @@ using Evil.Engine.Core;
 using Evil.Engine.Hosting;
 using Evil.Engine.Input;
 using Evil.Engine.Lighting;
+using Evil.Engine.Screen;
 using Evil.Engine.World;
 
 namespace Evil.Engine.Scenes;
@@ -61,6 +62,10 @@ public abstract class Scene
     {
     }
 
+    protected virtual void Draw(Canvas canvas)
+    {
+    }
+
     internal Atmosphere? Sky => _atmosphere;
 
     internal void Attach(GameContext? game, WorldObject world, Camera camera, Atmosphere atmosphere)
@@ -89,6 +94,8 @@ public abstract class Scene
     internal void RunResume() => Resume();
 
     internal void RunUpdate(GameTime time) => Update(time);
+
+    internal void RunDraw(Canvas canvas) => Draw(canvas);
 
     private InvalidOperationException NotOnStack(string member) =>
         new($"{GetType().Name} is not on the scene stack; {member} is ready from Enter() on.");

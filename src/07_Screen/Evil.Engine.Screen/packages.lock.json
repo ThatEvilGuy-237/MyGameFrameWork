@@ -17,6 +17,9 @@
       "evil.engine.core": {
         "type": "Project"
       },
+      "evil.engine.mathematics": {
+        "type": "Project"
+      },
       "evil.engine.platform": {
         "type": "Project",
         "dependencies": {

@@ -2,6 +2,7 @@ using Evil.Engine.Cameras;
 using Evil.Engine.Core;
 using Evil.Engine.Hosting;
 using Evil.Engine.Lighting;
+using Evil.Engine.Screen;
 using Evil.Engine.World;
 
 namespace Evil.Engine.Scenes;
@@ -69,6 +70,20 @@ public sealed class SceneStack
 
     internal void Update(GameTime time) => Current?.RunUpdate(time);
 
+    internal void Draw(Canvas canvas)
+    {
+        for (var i = FirstVisible(); i < _scenes.Count; i++)
+        {
+            var scene = _scenes[i];
+            canvas.ResetTransform();
+            scene.RunDraw(canvas);
+            if (canvas.Depth != 0)
+            {
+                throw new InvalidOperationException($"{scene.GetType().Name}.Draw left {canvas.Depth} Push() without a matching Pop().");
+            }
+        }
+    }
+
     internal void ExitAll()
     {
         _pending.Clear();
@@ -118,18 +133,29 @@ public sealed class SceneStack
             return;
         }
 
-        var first = _scenes.Count - 1;
-        while (first > 0 && _scenes[first].IsOverlay)
-        {
-            first--;
-        }
-
+        var first = FirstVisible();
         for (var i = 0; i < _scenes.Count; i++)
         {
             _scenes[i].Root!.Visible = i >= first;
         }
 
         _scenes[first].View!.MakeCurrent();
+    }
+
+    private int FirstVisible()
+    {
+        if (_scenes.Count == 0)
+        {
+            return 0;
+        }
+
+        var first = _scenes.Count - 1;
+        while (first > 0 && _scenes[first].IsOverlay)
+        {
+            first--;
+        }
+
+        return first;
     }
 
     private enum SceneChangeKind

@@ -44,7 +44,7 @@ if command -v xdotool >/dev/null && command -v xvfb-run >/dev/null; then
     rm -f "$drive_log"
     exit 1
   fi
-  for seen in "spinning: False" "selected: pawn" "zoom:"; do
+  for seen in "spinning: False" "selected: pawn" "zoom:" "screen: 1024x640" "action: Attack"; do
     if ! grep -q "$seen" "$drive_log"; then
       echo "the driven run never showed '$seen'" >&2
       cat "$drive_log" >&2
@@ -52,7 +52,7 @@ if command -v xdotool >/dev/null && command -v xvfb-run >/dev/null; then
       exit 1
     fi
   done
-  grep -E "spinning: False|selected: pawn|zoom:" "$drive_log" | head -n 5
+  grep -E "spinning: False|selected: pawn|zoom:|screen:|action:" "$drive_log" | head -n 8
   rm -f "$drive_log"
   test -s "$shots/orbit-driven.png" || { echo "no driven frame was captured" >&2; exit 1; }
   echo "saved $shots/orbit-driven.png"

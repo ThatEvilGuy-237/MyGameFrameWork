@@ -2,7 +2,12 @@ namespace OrbitDemo;
 
 internal sealed class OrbitScene(SampleOptions options) : Scene
 {
+    private static readonly string[] Actions = ["Move", "Attack", "Wait"];
+
     private readonly List<Capsule> _pawns = [];
+    private Vector2 _loggedScreen;
+    private string? _lastAction;
+    private int _hoveredAction = -1;
     private Box? _red;
     private Box? _green;
     private Box? _blue;
@@ -105,11 +110,124 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             _view!.Turn(12f * step);
         }
 
+        if (keys.WasPressed(Key.F11))
+        {
+            Game.Display.Fullscreen = !Game.Display.Fullscreen;
+        }
+
+        if (keys.WasPressed(Key.F10))
+        {
+            Game.Display.Resize(1024, 640);
+        }
+
         SteerCamera(keys, mouse, step);
+        LogScreen();
+        _hoveredAction = ActionUnder(mouse.Position);
+        if (_hoveredAction >= 0)
+        {
+            ClearHover();
+            if (mouse.WasPressed(MouseButton.Left))
+            {
+                _lastAction = Actions[_hoveredAction];
+                Console.WriteLine($"action: {_lastAction}");
+            }
+
+            return;
+        }
+
         Hover(mouse);
         if (mouse.WasPressed(MouseButton.Left) && _hovered is not null)
         {
             Select(_hovered);
+        }
+    }
+
+    protected override void Draw(Canvas canvas)
+    {
+        DrawPanel(canvas);
+        DrawCompass(canvas);
+        if (_selected is not null)
+        {
+            DrawActions(canvas);
+        }
+    }
+
+    private void DrawPanel(Canvas canvas)
+    {
+        var panel = new RectF(16f, 16f, 380f, 112f);
+        canvas.FillRect(panel, Color.Black.WithAlpha(0.45f));
+        canvas.DrawRect(panel, Color.White.WithAlpha(0.25f));
+        canvas.DrawText("Evil Engine orbit demo", new Vector2(30f, 26f), 22f, Color.White);
+        var status = _selected is null ? "Click a pawn to select it" : $"Selected: {_selected.Tag}" + (_lastAction is null ? string.Empty : $"   Last action: {_lastAction}");
+        canvas.DrawText(status, new Vector2(30f, 60f), 16f, Color.FromHex("#FFC53D"));
+        canvas.DrawText("Space pause   Q/E turn   wheel zoom   F10 small   F11 full screen", new Vector2(30f, 92f), 13f, Color.White.WithAlpha(0.7f));
+    }
+
+    private void DrawCompass(Canvas canvas)
+    {
+        using var compass = canvas.Group();
+        canvas.Translate(canvas.Size.X - 70f, 70f);
+        canvas.FillCircle(Vector2.Zero, 46f, Color.Black.WithAlpha(0.45f));
+        canvas.Rotate(_view!.Yaw);
+        canvas.FillTriangle(new Vector2(0f, -32f), new Vector2(-9f, 0f), new Vector2(9f, 0f), Color.FromHex("#E5484D"));
+        canvas.FillTriangle(new Vector2(0f, 32f), new Vector2(-9f, 0f), new Vector2(9f, 0f), Color.White.WithAlpha(0.8f));
+        canvas.DrawText("N", new RectF(-10f, -52f, 20f, 16f), 13f, Color.White, TextAlign.Center);
+    }
+
+    private void DrawActions(Canvas canvas)
+    {
+        var buttons = ActionRects(canvas.Size);
+        for (var i = 0; i < buttons.Length; i++)
+        {
+            var hovered = i == _hoveredAction;
+            canvas.FillRect(buttons[i], hovered ? Color.FromHex("#3E63DD") : Color.Black.WithAlpha(0.55f));
+            canvas.DrawRect(buttons[i], Color.White.WithAlpha(hovered ? 0.9f : 0.35f), 2f);
+            canvas.DrawText(Actions[i], buttons[i], 18f, Color.White, TextAlign.Center);
+        }
+    }
+
+    private static RectF[] ActionRects(Vector2 screen)
+    {
+        const float width = 150f;
+        const float height = 46f;
+        const float gap = 16f;
+        var left = (screen.X - (width * Actions.Length + gap * (Actions.Length - 1))) / 2f;
+        var top = screen.Y - height - 32f;
+        return [.. Enumerable.Range(0, Actions.Length).Select(i => new RectF(left + i * (width + gap), top, width, height))];
+    }
+
+    private int ActionUnder(Vector2 point)
+    {
+        if (_selected is null)
+        {
+            return -1;
+        }
+
+        var buttons = ActionRects(Game.ScreenSize);
+        return Array.FindIndex(buttons, button => button.Contains(point));
+    }
+
+    private void LogScreen()
+    {
+        var screen = Game.ScreenSize;
+        if (screen == _loggedScreen || _selected is null)
+        {
+            return;
+        }
+
+        _loggedScreen = screen;
+        var buttons = ActionRects(screen);
+        var centres = string.Join(' ', Actions.Select((name, i) => $"{name} {(int)buttons[i].Center.X},{(int)buttons[i].Center.Y}"));
+        Console.WriteLine($"screen: {(int)screen.X}x{(int)screen.Y}");
+        Console.WriteLine($"buttons: {centres}");
+    }
+
+    private void ClearHover()
+    {
+        if (_hovered is not null)
+        {
+            _hovered.Material.Glow = Color.Black;
+            _hovered = null;
         }
     }
 
@@ -149,11 +267,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             return;
         }
 
-        if (_hovered is not null)
-        {
-            _hovered.Material.Glow = Color.Black;
-        }
-
+        ClearHover();
         _hovered = pawn;
         if (pawn is not null)
         {
