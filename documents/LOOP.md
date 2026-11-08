@@ -50,7 +50,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   `Destroy`, names and finding.
 - [x] **R4 Camera**: perspective and orthographic, field of view, near/far, `LookAt`, `OrbitCamera` (turn, tilt,
   zoom, pan, smooth) for a tactics view; screen point to world ray.
-- [ ] **R5 Lighting**: Sun with shadows, Lamp (point), Spotlight, Environment (sky colour, ambient, fog, glow),
+- [x] **R5 Lighting**: Sun with shadows, Lamp (point), Spotlight, Environment (sky colour, ambient, fog, glow),
   light presets.
 - [ ] **R6 Input**: event-based keyboard and mouse (taps never lost, same API as the 2D engine), mouse picking
   of WorldObjects through the camera ray.
@@ -85,3 +85,9 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   test showed `{ Pitch = 0, MinPitch = 0 }` depended on property order; pure `Orbit` and `Smoothing` maths. The demo
   circles with the orbit camera and a glowing ring marks where the screen middle hits the floor (it lands at
   640,358 of 1280x720). 36 pure + 45 Godot tests green. ![[r4-cameras.png]]
+- 2026-11-08 19:00 R5: Light base (colour, intensity, shadows); Sun presets (Noon, Golden, Moonlight) and
+  ShadowDistance; Lamp (range, falloff, Warm/Cool); Spotlight (direction, range, angle, softness); Atmosphere
+  (clear/solid/gradient background, ambient incl. from sky, fog, glow, tone mapping, exposure; Studio, Daylight,
+  Dusk, Night) per scene through its camera, default ambient so dark sides are gone. The leak check caught a real
+  one: `new SpotLight3D { SpotAngle = Checked(angle) }` builds the light before the check runs. Dusk preset toned
+  down after the first shot washed colours out. 36 pure + 53 Godot tests green. ![[r5-lighting.png]]

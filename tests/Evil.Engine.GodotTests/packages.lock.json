@@ -49,7 +49,7 @@
       "evil.engine.lighting": {
         "type": "Project",
         "dependencies": {
-          "Evil.Engine.World": "[0.2.0, )",
+          "Evil.Engine.Cameras": "[0.2.0, )",
           "GodotSharp": "[4.7.2, )"
         }
       },

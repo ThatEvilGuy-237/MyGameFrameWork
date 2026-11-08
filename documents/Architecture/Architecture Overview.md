@@ -17,7 +17,7 @@ number.
 | `src/02_Platform` | `Evil.Engine.Platform` | the one place that converts our types to Godot's and back | inside |
 | `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), seven shapes, `Material` | inside |
 | `src/04_Cameras` | `Evil.Engine.Cameras` | `Camera`, `OrbitCamera`, screen rays | inside |
-| `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun` | inside |
+| `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun`, `Lamp`, `Spotlight`, `Atmosphere` | inside |
 | `src/06_Input` | `Evil.Engine.Input` | keyboard, mouse, picking (round 6) | inside |
 | `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, frame capture, overlay later | inside |
 | `src/08_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
@@ -33,7 +33,7 @@ flowchart BT
   platform --> world
   platform --> screen[07 Screen]
   world --> cameras[04 Cameras]
-  world --> lighting[05 Lighting]
+  cameras --> lighting[05 Lighting]
   cameras --> engine[08 Engine]
   lighting --> engine
   screen --> engine
@@ -53,7 +53,8 @@ flowchart BT
 
 ## Scenes own a world
 
-Each scene on the stack gets its own `World` (a `WorldObject` under `Worlds`) and its own `Camera` inside it.
+Each scene on the stack gets its own `World` (a `WorldObject` under `Worlds`), its own `Camera` inside it and its
+own `Atmosphere` shown through that camera.
 Popping a scene frees its world. A full scene hides the worlds below it; an overlay keeps them visible. The
 camera of the lowest visible scene is the one the screen shows.
 

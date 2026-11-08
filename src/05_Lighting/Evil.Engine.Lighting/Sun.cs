@@ -1,12 +1,10 @@
-using Evil.Engine.Platform;
-using Evil.Engine.World;
 using Godot;
 using Color = Evil.Engine.Core.Color;
 using Vector3 = System.Numerics.Vector3;
 
 namespace Evil.Engine.Lighting;
 
-public class Sun : WorldObject
+public sealed class Sun : Light
 {
     public Sun()
         : this(new Vector3(-0.5f, -1f, -0.6f))
@@ -22,35 +20,19 @@ public class Sun : WorldObject
 
     public Vector3 Direction
     {
-        get => (-Node.Basis.Z).ToEvil();
-        set
-        {
-            if (value.LengthSquared() < 1e-12f)
-            {
-                throw new ArgumentException("The sun needs a direction with a length.", nameof(value));
-            }
-
-            Node.Basis = Facing.Along(value.ToGodot());
-        }
+        get => Pointing;
+        set => Pointing = value;
     }
 
-    public Color Color
+    public float ShadowDistance
     {
-        get => Light.LightColor.ToEvil();
-        set => Light.LightColor = value.ToGodot();
+        get => ((DirectionalLight3D)Node).DirectionalShadowMaxDistance;
+        set => ((DirectionalLight3D)Node).DirectionalShadowMaxDistance = Math.Max(1f, value);
     }
 
-    public float Intensity
-    {
-        get => Light.LightEnergy;
-        set => Light.LightEnergy = value;
-    }
+    public static Sun Noon() => new(new Vector3(-0.3f, -1f, -0.2f)) { Color = new Color(1f, 0.98f, 0.92f), Intensity = 1.1f };
 
-    public bool Shadows
-    {
-        get => Light.ShadowEnabled;
-        set => Light.ShadowEnabled = value;
-    }
+    public static Sun Golden() => new(new Vector3(-1f, -0.45f, -0.3f)) { Color = new Color(1f, 0.78f, 0.5f), Intensity = 1f };
 
-    private DirectionalLight3D Light => (DirectionalLight3D)Node;
+    public static Sun Moonlight() => new(new Vector3(0.4f, -1f, 0.5f)) { Color = new Color(0.6f, 0.7f, 1f), Intensity = 0.35f };
 }

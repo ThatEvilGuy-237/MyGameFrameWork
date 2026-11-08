@@ -1,6 +1,7 @@
 using Evil.Engine.Cameras;
 using Evil.Engine.Core;
 using Evil.Engine.Hosting;
+using Evil.Engine.Lighting;
 using Evil.Engine.World;
 
 namespace Evil.Engine.Scenes;
@@ -10,6 +11,7 @@ public abstract class Scene
     private GameContext? _game;
     private WorldObject? _world;
     private Camera? _camera;
+    private Atmosphere? _atmosphere;
 
     public virtual bool IsOverlay => false;
 
@@ -18,6 +20,18 @@ public abstract class Scene
     protected WorldObject World => _world ?? throw NotOnStack(nameof(World));
 
     protected Camera Camera => _camera ?? throw NotOnStack(nameof(Camera));
+
+    protected Atmosphere Atmosphere
+    {
+        get => _atmosphere ?? throw NotOnStack(nameof(Atmosphere));
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            var camera = _camera ?? throw NotOnStack(nameof(Atmosphere));
+            _atmosphere = value;
+            value.ShowThrough(camera);
+        }
+    }
 
     internal WorldObject? Root => _world;
 
@@ -43,11 +57,15 @@ public abstract class Scene
     {
     }
 
-    internal void Attach(GameContext? game, WorldObject world, Camera camera)
+    internal Atmosphere? Sky => _atmosphere;
+
+    internal void Attach(GameContext? game, WorldObject world, Camera camera, Atmosphere atmosphere)
     {
         _game = game;
         _world = world;
         _camera = camera;
+        _atmosphere = atmosphere;
+        atmosphere.ShowThrough(camera);
     }
 
     internal void Detach()
@@ -55,6 +73,7 @@ public abstract class Scene
         _game = null;
         _world = null;
         _camera = null;
+        _atmosphere = null;
     }
 
     internal void RunEnter() => Enter();

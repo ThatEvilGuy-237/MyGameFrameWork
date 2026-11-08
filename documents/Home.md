@@ -22,7 +22,7 @@ turn and scale together (see [[Grouped Transforms]]).
 |---|---|
 | Plan and progress | [[LOOP]] |
 | Architecture | [[Architecture Overview]] · [[Grouped Transforms]] · [[Testing]] |
-| API | [[World]] · [[Cameras]] · [[Mathematics]] (more per round) |
+| API | [[World]] · [[Cameras]] · [[Lighting]] · [[Mathematics]] (more per round) |
 | History | [[From MyGameFrameWork]] (the 0.1.0 OpenTK engine, tag `v0.1.0`) |
 | Why it is built this way | [[Decisions]] |
 
@@ -45,7 +45,8 @@ internal sealed class OrbitScene : Scene
     {
         Camera.Position = new Vector3(0f, 7f, 11f);
         Camera.LookAt(Vector3.Zero);
-        World.Add(new Sun(new Vector3(-0.6f, -1f, -0.4f)));
+        Atmosphere = Atmosphere.Dusk();
+        World.Add(Sun.Golden());
         World.Add(new Floor(new Vector2(24f, 24f), Color.FromHex("#3C5A5A")));
 
         _blue = World.Add(new Box(Vector3.One, Color.FromHex("#3E63DD")));

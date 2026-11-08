@@ -21,7 +21,8 @@ internal sealed class OrbitScene : Scene
         };
         _view.Snap();
 
-        World.Add(new Sun(new Vector3(-0.6f, -1f, -0.4f)));
+        Atmosphere = Atmosphere.Dusk();
+        World.Add(Sun.Golden());
         World.Add(new Floor(new Vector2(24f, 24f), Color.FromHex("#3C5A5A")));
 
         _red = World.Add(new Box(new Vector3(1.4f, 1.4f, 1.4f), Color.FromHex("#E5484D")));
@@ -47,7 +48,13 @@ internal sealed class OrbitScene : Scene
         {
             var pillar = World.Add(new Cylinder(0.45f, 3f, Color.White) { Material = stone });
             pillar.Position = new Vector3(x, 1.5f, -5f);
+            var flame = pillar.Add(new Sphere(0.18f, Color.White) { Material = Material.Glowing(Color.FromHex("#FFB45E"), 2.5f), CastsShadow = false });
+            flame.Position = new Vector3(0f, 1.75f, 0f);
+            flame.Add(Lamp.Warm(7f));
         }
+
+        var spot = World.Add(new Spotlight(Color.FromHex("#CFE3FF"), 14f, 24f) { Shadows = true, Intensity = 2f });
+        spot.Position = new Vector3(0f, 9f, 3.5f);
 
         AddPawn(new Vector3(-2.5f, 0f, 3.5f), Color.FromHex("#E5484D"));
         AddPawn(new Vector3(2.5f, 0f, 3.5f), Color.FromHex("#3E63DD"));
