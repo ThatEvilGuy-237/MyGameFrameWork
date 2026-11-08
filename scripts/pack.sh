@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 feed="${EVIL_FEED:-/mnt/hdd/projects/MyGameFrameWork-data/feed}"
 version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props)"
-packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Screen Evil.Engine)
+packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Input Evil.Engine.Screen Evil.Engine.Motion Evil.Engine.Audio Evil.Engine)
 mkdir -p "$feed"
 for id in "${packages[@]}"; do
   if [ -e "$feed/$id.$version.nupkg" ]; then

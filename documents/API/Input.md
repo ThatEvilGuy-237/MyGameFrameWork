@@ -14,7 +14,7 @@ protected override void Update(GameTime time)
     if (Game.Keyboard.WasPressed(Key.Space)) { TogglePause(); }
     if (Game.Mouse.Scroll != 0f) { _view.Zoom(MathF.Pow(0.85f, Game.Mouse.Scroll)); }
 
-    var hit = Pick(Game.Mouse.Position);
+    Hit? hit = Pick(Game.Mouse.Position);
     if (Game.Mouse.WasPressed(MouseButton.Left) && hit?.Target.Ancestor<Unit>() is { } unit)
     {
         Select(unit);

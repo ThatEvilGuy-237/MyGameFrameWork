@@ -5,66 +5,69 @@ aliases: [Start here, Index]
 
 # Evil Engine
 
-Our own game engine SDK for C#, now in **3D on top of Godot 4.7.2**. Godot does the rendering, lights, shadows
-and windows; our libraries are what a game talks to. A game sees Evil Engine types and `System.Numerics`
-vectors, never Godot's API, and the one idea this started from stays at the heart: things in a **group** move,
-turn and scale together (see [[Grouped Transforms]]).
+Our own game engine SDK for C#, version **0.2.0**: eleven class libraries over **Godot 4.7.2 (.NET)** for a full 3D
+game. Godot renders, plays sound and runs the window; a game talks only to our API. It sees Evil Engine types and
+`System.Numerics` vectors, never Godot's. The idea it started from is still at the heart: things in a **group**
+move, turn and scale together ([[Grouped Transforms]]).
 
-> [!important] Being built in rounds
-> The SDK grows one round every 30 minutes. What is done and what comes next is in [[LOOP]]. Notes that describe
-> features still to come are written when their round lands.
+> [!tip] New here?
+> [[Make a Game]] gets a window with a scene up in four steps; [[Run the Sample]] shows everything the engine does.
 
-![[orbit.png]]
+![[r10-audio.png]]
 
 ## Map
 
 | Area | Notes |
 |---|---|
-| Plan and progress | [[LOOP]] |
+| Getting started | [[Make a Game]] · [[Run the Sample]] |
 | Architecture | [[Architecture Overview]] · [[Grouped Transforms]] · [[Testing]] |
-| API | [[World]] · [[Content]] · [[Cameras]] · [[Lighting]] · [[Input]] · [[Screen]] · [[Motion]] · [[Audio]] · [[Mathematics]] |
-| History | [[From MyGameFrameWork]] (the 0.1.0 OpenTK engine, tag `v0.1.0`) |
+| The 3D world | [[World]] · [[Content]] · [[Cameras]] · [[Lighting]] |
+| Play | [[Input]] · [[Screen]] · [[Motion]] · [[Audio]] |
+| Maths without Godot | [[Mathematics]] |
 | Why it is built this way | [[Decisions]] |
+| History | [[From MyGameFrameWork]] (2025) and tag `v0.1.0` (the OpenTK 2D engine) |
+| How it was built | [[LOOP]] (one round at a time, each with a screenshot) |
 
-## A game today
+## The engine in one scene
 
 ```csharp
-public partial class Main : GameMain
+internal sealed class SkirmishScene : Scene
 {
-    protected override GameHost CreateGame() =>
-        GameBuilder.Create(new WindowSettings("Orbit", 1280, 720))
-            .Start(new OrbitScene())
-            .Build();
-}
-
-internal sealed class OrbitScene : Scene
-{
-    private Box? _blue;
+    private Capsule? _pawn;
+    private Tween? _busy;
 
     protected override void Enter()
     {
-        Camera.Position = new Vector3(0f, 7f, 11f);
-        Camera.LookAt(Vector3.Zero);
         Atmosphere = Atmosphere.Dusk();
         World.Add(Sun.Golden());
-        World.Add(new Floor(new Vector2(24f, 24f), Color.FromHex("#3C5A5A")));
+        Floor floor = World.Add(new Floor(new Vector2(24f, 24f), Color.White));
+        floor.Material.Texture = Game.Content.Texture("textures/tiles.png");
+        floor.Material.TextureScale = new Vector2(12f, 12f);
+        World.Add(Game.Content.Model("models/tower.glb"));
 
-        _blue = World.Add(new Box(Vector3.One, Color.FromHex("#3E63DD")));
-        var yellow = _blue.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));
-        yellow.Position = new Vector3(3f, 0f, 0f);
+        _pawn = World.Add(new Capsule(0.35f, 1.4f, Color.FromHex("#E5484D")));
+        _pawn.Position = new Vector3(0f, 0.7f, 2f);
+        Camera.Position = new Vector3(0f, 7f, 11f);
+        Camera.LookAt(Vector3.Zero);
+        Game.Audio.PlayMusic(Game.Content.Sound("sounds/music.wav"), 2f);
     }
 
-    protected override void Update(GameTime time) => _blue!.RotateY(-50f * time.DeltaSeconds);
+    protected override void Update(GameTime time)
+    {
+        if (_busy is null && Game.Mouse.WasPressed(MouseButton.Left) && Pick(Game.Mouse.Position)?.Target == _pawn)
+        {
+            _busy = Game.Motion.MoveTo(_pawn!, _pawn!.Position + new Vector3(0f, 0f, -2f), 0.6f);
+        }
+
+        if (_busy is { IsDone: true })
+        {
+            _busy = null;
+        }
+    }
+
+    protected override void Draw(Canvas canvas) =>
+        canvas.DrawText(_busy is null ? "Click the pawn" : "Moving...", new Vector2(20f, 20f), 22f, Color.White);
 }
 ```
 
-`_blue.Add(...)` puts the yellow sphere inside the blue box's group: turn the box and the sphere orbits it.
-
-## Run it
-
-```bash
-./scripts/check.sh                                  # build, tests, the demo in Godot, a screenshot
-bash scripts/godot.sh samples/OrbitDemo             # the demo on the server (virtual screen)
-```
-
-On a desktop: open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play.
+A game wires it up in one class, its only Godot-facing line: see [[Make a Game]].

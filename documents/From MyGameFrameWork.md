@@ -1,50 +1,45 @@
 ---
 tags: [history, migration]
-aliases: [Old engine, MyGameFrameWork, Migration]
+aliases: [Old engine, MyGameFrameWork, Migration, History]
 ---
 
 # From MyGameFrameWork
 
-The code before the engine is in git: commit `8b1fb3f` ("Update README.md", July 2025). Everything it did is
-still here, under new names and in a clearer place.
+| Version | What | Where |
+|---|---|---|
+| MyGameFrameWork (July 2025) | the owner's OpenGL learning project before the AZTEQ internship: `EvilUtils` with grouped transforms | commit `8b1fb3f` |
+| 0.1.0 (November 2026) | that idea as a clean 2D SDK on OpenTK: builder, scenes, batched canvas | tag `v0.1.0` |
+| 0.2.0 (November 2026) | a 3D game engine SDK on Godot 4.7.2: numbered libraries, world, cameras, lights, input, screen, content, motion, audio | `main` |
 
-## Old call to new call
+The idea that started it all made it through both rewrites: things in a group follow their parent's move, turn and
+scale ([[Grouped Transforms]]). In 0.2.0 that is `WorldObject` in 3D and `Canvas.Group()` on the 2D overlay.
 
-| MyGameFrameWork | Evil Engine |
+## Original call to 0.2.0
+
+| MyGameFrameWork | Evil Engine 0.2.0 |
 |---|---|
-| `new Window(800, 800, "test").Run()` | `GameBuilder.Create("test", 800, 800).Start(scene).Build().Run()` |
-| `Window.TestDrawing()` | a scene's `Draw(Canvas canvas)` |
+| `new Window(800, 800, "test").Run()` | `public partial class Main : GameMain` with `GameBuilder.Create("test", 800, 800).Start(scene).Build()` |
+| `Window.TestDrawing()` | a scene's `Enter()` builds the 3D world once; `Draw(Canvas canvas)` draws the 2D overlay each frame |
 | `Window.OnUpdateFrame` game logic | a scene's `Update(GameTime time)` |
-| `EvilUtils.NewPush()` | `canvas.Push()` or `using var g = canvas.Group();` |
-| `EvilUtils.PopOrgin()` | `canvas.Pop()` or the end of the `using` |
-| `EvilUtils.PushTranslate(x, y)` | `canvas.Translate(x, y)` |
-| `EvilUtils.PushRotate(0, 0, r)` | `canvas.Rotate(r)` |
-| `EvilUtils.PushScale(x, y, z)` | `canvas.Scale(x, y)` |
-| `EvilUtils.SetColor(r, g, b, a)` then draw | pass the colour: `canvas.FillRect(rect, new Color(r, g, b, a))` |
-| `EvilUtils.DrawRectanlge(x, y, w, h)` | `canvas.FillRect(new RectF(x, y, w, h), color)` |
-| `EvilUtils.Draw(Shape)` | `canvas.FillPolygon(polygon, color)` |
-| `EvilUtils.SetTexture(path, rect)` then draw | `canvas.Draw(Game.Textures.Load(path).Region(rect), destination)` |
-| `Shape.CenterAroundOrigin()` | `polygon.CenteredOnOrigin()` |
-| `Shape.GetBoundingRectangle()` | `polygon.Bounds` |
-| `Rect`, `RectF`, `RectD` | `RectI`, `RectF` (doubles were not used) |
-| `SRTVector`, `SRTVectorsStack` | `Transform2D`, `TransformStack` |
-| `ShadersHandeler`, `EvilShader` | internal `ShaderProgram` (games never see it) |
-| `TextureHandeler` | `TextureLibrary`, `Texture2D`, `TextureRegion` |
+| `EvilUtils.NewPush()` ... `PopOrgin()` | 3D: `WorldObject group = World.Add(new WorldObject("group"));` then `group.Add(child)`; overlay: `using (canvas.Group())` |
+| `EvilUtils.PushTranslate(x, y)` | 3D: `group.Position = new Vector3(x, 0f, z);`; overlay: `canvas.Translate(x, y)` |
+| `EvilUtils.PushRotate(0, 0, r)` | 3D: `group.RotateY(r)`; overlay: `canvas.Rotate(r)` |
+| `EvilUtils.PushScale(x, y, z)` | 3D: `group.Scale = new Vector3(x, y, z);`; overlay: `canvas.Scale(x, y)` |
+| `EvilUtils.SetColor(r, g, b, a)` then draw | `new Box(size, new Color(r, g, b, a))`, or `shape.Material.Color = ...`; overlay calls take the colour |
+| `EvilUtils.DrawRectanlge(x, y, w, h)` | 3D: `new Box(...)`; overlay: `canvas.FillRect(new RectF(x, y, w, h), color)` |
+| `EvilUtils.Draw(Shape)` | overlay: `canvas.FillPolygon(polygon, color)` |
+| `EvilUtils.SetTexture(path, rect)` | 3D: `material.Texture = Game.Content.Texture(path);` |
+| `Shape.CenterAroundOrigin()`, `GetBoundingRectangle()` | `polygon.CenteredOnOrigin()`, `polygon.Bounds` |
+| `Rect`, `RectF`, `RectD` | `RectI`, `RectF`; in 3D `Bounds3` |
+| `SRTVector`, `SRTVectorsStack` | `Transform2D`, `TransformStack` (2D), `Pose` (3D) |
+| `ShadersHandeler`, `EvilShader`, `TextureHandeler` | Godot renders; games never see shaders or GPU textures |
 
-## What got fixed on the way
+## What got fixed along the way
 
-| Problem in the old code | Now |
+| In MyGameFrameWork | Now |
 |---|---|
-| groups deeper than two levels lost their parents' turn | real matrices, tested at three levels ([[Grouped Transforms]]) |
-| a parent's scale did not move its children | scale is part of the matrix |
-| `PushRotate(5f)` turned X, Y and Z and squashed shapes | `Rotate(degrees)` turns in 2D only |
-| a new GPU buffer and VAO for every shape, every frame | one batch ([[Rendering]]) |
-| shader files found by a Windows path from `bin/Debug` | shaders embedded |
-| resizing kept the old size | viewport and canvas follow the window |
-| a point list drawn as loose triangles | ear-clipping triangulation |
-| the plain-colour fallback in the shader could not work | a white texture times the colour |
-| the cutout reread the image file and made a texture each time | regions on one texture |
-| the console printed every frame | quiet; `Game.LastFrame` has the numbers |
-| alpha passed as `100.0f` | colours are 0 to 1, `Color.FromBytes` for 0 to 255 |
-| ImageSharp 3.1.6 with open advisories | StbImageSharp 2.30.16 |
-| `net8.0` | `net10.0`, like every other app |
+| groups deeper than two levels lost their parents' turn | Godot node trees in 3D, matrices on the overlay; tested three levels deep |
+| a parent's scale did not move its children | scale is part of the transform |
+| a GPU buffer per shape per frame, shaders found by a Windows path | Godot does the rendering |
+| no input, scenes, sound, text, models or lights | all of them, each with tests (38 pure + 95 inside Godot) |
+| ImageSharp 3.1.6 with open advisories, `net8.0` | only Godot's own packages (checked), .NET 10 |

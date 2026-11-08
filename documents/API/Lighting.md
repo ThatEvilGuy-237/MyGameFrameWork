@@ -14,11 +14,15 @@ protected override void Enter()
     Atmosphere = Atmosphere.Dusk();
     World.Add(Sun.Golden());
 
-    var flame = pillar.Add(new Sphere(0.18f, Color.White) { Material = Material.Glowing(Color.FromHex("#FFB45E"), 2.5f) });
+    Sphere flame = new Sphere(0.18f, Color.White);
+    flame.Material = Material.Glowing(Color.FromHex("#FFB45E"), 2.5f);
+    pillar.Add(flame);
     flame.Add(Lamp.Warm(7f));
 
-    var spot = World.Add(new Spotlight(Color.FromHex("#CFE3FF"), 14f, 24f) { Shadows = true });
+    Spotlight spot = new Spotlight(Color.FromHex("#CFE3FF"), 14f, 24f);
+    spot.Shadows = true;
     spot.Position = new Vector3(0f, 9f, 3.5f);
+    World.Add(spot);
 }
 ```
 
@@ -43,13 +47,18 @@ away from the sun is never pitch black.
 | Member | What |
 |---|---|
 | `Background` | `Background.ClearColor`, `Background.Solid(color)` or `Background.Gradient(top, horizon, ground)` |
-| `AmbientColor`, `AmbientStrength` | the light that reaches everywhere |
-| `AmbientFromSky` | take the ambient light from a gradient sky instead |
+| `AmbientColor`, `AmbientStrength` | the light that reaches everywhere; strength 0 is none, above 1 is allowed |
+| `AmbientFromSky` | take the ambient light from a gradient sky instead; `AmbientStrength` is then the sky's share, 0 to 1 |
 | `Fog` | `new Fog(color, density)` or `null` for none |
 | `Glow` | 0 is off; makes glowing materials bloom |
 | `ToneMapping`, `Exposure` | `Linear`, `Filmic` (default) or `Aces`; overall brightness |
 
 Presets: `Atmosphere.Studio()`, `Daylight()`, `Dusk()`, `Night()`.
+
+> [!warning] A bright sky is a strong light
+> Godot's sky light is strong and blue. With the whole sky as ambient light under a noon sun, a green floor turned
+> turquoise (hue 149° to 175°) and a blue box went light blue. `Daylight()` therefore takes a tenth of the sky
+> (floor 159°, still green); `Dusk()`'s sky is dark, so it takes all of it. Measured on the [[Make a Game]] scene.
 
 > [!note] Server pictures
 > Screenshots on the server use Godot's compatibility renderer. On the PC, Godot's Forward+ renderer draws the same

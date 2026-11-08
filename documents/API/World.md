@@ -10,11 +10,13 @@ one, and so are shapes, cameras and lights. Objects inside another object follow
 your [[Grouped Transforms]] idea, now as a tree.
 
 ```csharp
-var planet = World.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));
-var ring = planet.Add(new Torus(0.8f, 0.95f, Color.FromHex("#E8D9A8")));
+Sphere planet = World.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));
+Torus ring = planet.Add(new Torus(0.8f, 0.95f, Color.FromHex("#E8D9A8")));
 ring.Rotation = new Vector3(20f, 0f, 10f);
-var moon = planet.Add(new Sphere(0.22f, Color.White) { Material = Material.Glowing(Color.White) });
+Sphere moon = new Sphere(0.22f, Color.White);
+moon.Material = Material.Glowing(Color.White);
 moon.Position = new Vector3(1.4f, 0f, 0f);
+planet.Add(moon);
 ```
 
 ## WorldObject

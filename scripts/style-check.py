@@ -37,10 +37,26 @@ def initializers(text):
             yield match.start()
 
 
-files = subprocess.run(["git", "ls-files", "*.cs"], capture_output=True, text=True, check=True).stdout.split()
+CODE_BLOCK = re.compile(r"```csharp\n(.*?)```", re.S)
+
+
+def tracked(pattern):
+    listing = subprocess.run(["git", "ls-files", "-z", pattern], capture_output=True, text=True, check=True).stdout
+    return [path for path in listing.split("\0") if path]
+
+
+def sources():
+    for path in tracked("*.cs"):
+        yield path, open(path, encoding="utf-8").read()
+    for path in tracked("*.md"):
+        document = open(path, encoding="utf-8").read()
+        for block in CODE_BLOCK.finditer(document):
+            offset = document.count("\n", 0, block.start(1))
+            yield path, "\n" * offset + block.group(1)
+
+
 problems = []
-for path in files:
-    text = open(path, encoding="utf-8").read()
+for path, text in sources():
     lines = text.splitlines()
 
     def line_of(index):
