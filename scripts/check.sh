@@ -9,8 +9,19 @@ shots="$(cd "$shots" && pwd)"
 echo "== build (warnings are errors)"
 dotnet build EvilEngine.slnx -nologo -v q
 
-echo "== tests"
+echo "== pure tests"
 dotnet tests/Evil.Engine.Tests/bin/Debug/net10.0/Evil.Engine.Tests.dll | tail -n 1
+
+echo "== Godot tests (inside Godot, headless)"
+godot_tests="$(mktemp)"
+if ! bash scripts/godot.sh --headless tests/Evil.Engine.GodotTests > "$godot_tests"; then
+  grep -E "FAIL|passed" "$godot_tests" >&2 || cat "$godot_tests" >&2
+  rm -f "$godot_tests"
+  echo "Godot tests failed" >&2
+  exit 1
+fi
+grep -E "FAIL|Godot tests passed" "$godot_tests"
+rm -f "$godot_tests"
 
 echo "== OrbitDemo in Godot, frame 90"
 rm -f "$shots/orbit.png"

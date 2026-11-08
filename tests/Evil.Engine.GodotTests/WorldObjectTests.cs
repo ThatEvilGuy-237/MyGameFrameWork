@@ -1,0 +1,136 @@
+namespace Evil.Engine.GodotTests;
+
+internal static class WorldObjectTests
+{
+    [Test]
+    public static void AddPutsTheChildInsideTheParent()
+    {
+        var parent = new WorldObject("parent");
+        var child = parent.Add(new WorldObject("child"));
+        Check.True(ReferenceEquals(parent, child.Parent), "parent is set");
+        Check.Equal(1, parent.Children.Count, "children");
+        Check.True(ReferenceEquals(parent.Node, child.Node.GetParent()), "the Godot node sits inside the parent's node");
+        parent.Node.Free();
+    }
+
+    [Test]
+    public static void AnObjectHasOneParentAndNoCycles()
+    {
+        var first = new WorldObject("first");
+        var second = new WorldObject("second");
+        var child = first.Add(new WorldObject("child"));
+        Check.Throws<InvalidOperationException>(() => second.Add(child), "already belongs to 'first'");
+        Check.Throws<InvalidOperationException>(() => child.Add(first), "cannot go inside itself");
+        Check.Throws<InvalidOperationException>(() => first.Add(first), "cannot go inside itself");
+        first.Node.Free();
+        second.Node.Free();
+    }
+
+    [Test]
+    public static void RemoveTakesTheChildOut()
+    {
+        var parent = new WorldObject("parent");
+        var child = parent.Add(new WorldObject("child"));
+        parent.Remove(child);
+        Check.True(child.Parent is null, "no parent");
+        Check.True(child.Node.GetParent() is null, "the Godot node is out too");
+        Check.Throws<InvalidOperationException>(() => parent.Remove(child), "is not inside 'parent'");
+        parent.Node.Free();
+        child.Node.Free();
+    }
+
+    [Test]
+    public static void TransformsRoundTrip()
+    {
+        var thing = new WorldObject("thing")
+        {
+            Position = new Vector3(1f, 2f, 3f),
+            Rotation = new Vector3(0f, 45f, 0f),
+            Scale = new Vector3(2f, 2f, 2f),
+            Visible = false,
+        };
+        Check.Near(new Vector3(1f, 2f, 3f), thing.Position, "position");
+        Check.Near(new Vector3(0f, 45f, 0f), thing.Rotation, "rotation in degrees");
+        Check.Near(new Vector3(2f, 2f, 2f), thing.Scale, "scale");
+        Check.True(!thing.Visible, "hidden");
+        Check.Equal("thing", thing.Name, "name");
+        thing.Translate(new Vector3(1f, 0f, 0f));
+        Check.Near(new Vector3(2f, 2f, 3f), thing.Position, "translate adds");
+        thing.Node.Free();
+    }
+
+    [Test]
+    public static void ChildrenFollowTheParentsTurn()
+    {
+        using var stage = Stage.Open();
+        var arm = stage.Root.Add(new WorldObject("arm"));
+        arm.Position = new Vector3(1f, 0f, 0f);
+        arm.RotateY(90f);
+        var hand = arm.Add(new WorldObject("hand"));
+        hand.Position = new Vector3(2f, 0f, 0f);
+        Check.Near(new Vector3(1f, 0f, -2f), hand.WorldPosition, "a quarter turn left swings +X to -Z");
+    }
+
+    [Test]
+    public static void ThreeLevelsFollowEveryParent()
+    {
+        using var stage = Stage.Open();
+        var sun = stage.Root.Add(new WorldObject("sun"));
+        sun.RotateY(90f);
+        var planet = sun.Add(new WorldObject("planet"));
+        planet.Position = new Vector3(10f, 0f, 0f);
+        var moon = planet.Add(new WorldObject("moon"));
+        moon.Position = new Vector3(5f, 0f, 0f);
+        Check.Near(new Vector3(0f, 0f, -15f), moon.WorldPosition, "the moon follows the sun's turn");
+    }
+
+    [Test]
+    public static void ParentScaleMovesChildren()
+    {
+        using var stage = Stage.Open();
+        var group = stage.Root.Add(new WorldObject("group"));
+        group.Scale = new Vector3(2f, 2f, 2f);
+        var child = group.Add(new WorldObject("child"));
+        child.Position = new Vector3(1f, 0f, 0f);
+        Check.Near(new Vector3(2f, 0f, 0f), child.WorldPosition, "offset doubles");
+    }
+
+    [Test]
+    public static void LookAtTurnsTheFrontToTheTarget()
+    {
+        using var stage = Stage.Open();
+        var eye = stage.Root.Add(new WorldObject("eye"));
+        eye.LookAt(new Vector3(5f, 0f, 0f));
+        Check.Near(new Vector3(1f, 0f, 0f), Forward(eye), "in the world");
+
+        var loose = new WorldObject("loose");
+        loose.LookAt(new Vector3(0f, 0f, -5f));
+        Check.Near(new Vector3(0f, 0f, -1f), Forward(loose), "outside the world");
+        loose.Node.Free();
+    }
+
+    [Test]
+    public static void LookAtStraightUpAndKeepsScale()
+    {
+        using var stage = Stage.Open();
+        var eye = stage.Root.Add(new WorldObject("eye"));
+        eye.Scale = new Vector3(2f, 2f, 2f);
+        eye.LookAt(new Vector3(0f, 10f, 0f));
+        Check.Near(new Vector3(0f, 1f, 0f), Forward(eye), "looks up without breaking");
+        Check.Near(new Vector3(2f, 2f, 2f), eye.Scale, "scale kept");
+    }
+
+    [Test]
+    public static void RotateNeedsAnAxis()
+    {
+        var thing = new WorldObject("thing");
+        Check.Throws<ArgumentException>(() => thing.Rotate(Vector3.Zero, 10f), "no length");
+        thing.Node.Free();
+    }
+
+    private static Vector3 Forward(WorldObject thing)
+    {
+        var basis = thing.Node.IsInsideTree() ? thing.Node.GlobalTransform.Basis : thing.Node.Basis;
+        return Vector3.Normalize((-basis.Z).ToEvil());
+    }
+}

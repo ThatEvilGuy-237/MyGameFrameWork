@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Evil.Engine.Tests;
+namespace Evil.Engine.Testing;
 
 internal static class Check
 {
@@ -31,6 +31,14 @@ internal static class Check
     public static void Near(Vector2 expected, Vector2 actual, string what = "point", float tolerance = 1e-3f)
     {
         if (Vector2.Distance(expected, actual) > tolerance)
+        {
+            throw new CheckFailed($"{what}: expected {expected}, got {actual}");
+        }
+    }
+
+    public static void Near(Vector3 expected, Vector3 actual, string what = "point", float tolerance = 1e-3f)
+    {
+        if (Vector3.Distance(expected, actual) > tolerance)
         {
             throw new CheckFailed($"{what}: expected {expected}, got {actual}");
         }

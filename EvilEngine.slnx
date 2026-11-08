@@ -14,5 +14,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Evil.Engine.Tests/Evil.Engine.Tests.csproj" />
+    <Project Path="tests/Evil.Engine.GodotTests/Evil.Engine.GodotTests.csproj" />
   </Folder>
 </Solution>
