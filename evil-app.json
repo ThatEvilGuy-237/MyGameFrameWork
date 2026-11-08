@@ -2,7 +2,7 @@
   "spec": 2,
   "id": "evil-engine",
   "name": "Evil Engine",
-  "description": "Our own game engine SDK in C#: numbered class libraries over Godot 4.7.2 for a full 3D game (camera, lights, world objects, screen); 0.1.0 was the OpenTK 2D engine.",
+  "description": "Our own game engine SDK in C#: 11 numbered class libraries over Godot 4.7.2 for a full 3D game (world, models, cameras, lights, input, screen, motion, audio); 0.2.0 in the feed; 0.1.0 was the OpenTK 2D engine.",
   "kind": "library",
   "lifecycle": "building",
   "owner": "Thatevilguy",
@@ -25,12 +25,12 @@
     },
     "check": {
       "start": "./scripts/check.sh",
-      "notes": "Build with warnings as errors, the pure test runner, the OrbitDemo in Godot under xvfb with a captured frame in documents/screenshots."
+      "notes": "Style, build with warnings as errors, pure and Godot tests, the OrbitDemo in Godot under xvfb (frame 90 and a run driven with real input and recorded audio), no leaks; after a pack scripts/make-a-game-check.sh builds the Make a Game note from the feed."
     }
   },
   "flow": {
     "branch": "main",
-    "promote": "scripts/check.sh green, bump the version in Directory.Build.props, commit, ./scripts/pack.sh, push; games move to the exact version.",
+    "promote": "scripts/check.sh green, bump the version in Directory.Build.props, commit, merge, push, ./scripts/pack.sh from clean main, scripts/make-a-game-check.sh on the feed; games move to the exact version.",
     "rules": [
       "Lock-step versions: every package carries the same version.",
       "Packages only from the checked list; Godot pinned at 4.7.2.",
