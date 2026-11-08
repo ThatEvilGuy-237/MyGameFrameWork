@@ -45,8 +45,10 @@ public sealed class Spotlight : Light
 
     private static SpotLight3D NewSpot(float angle)
     {
-        var checkedAngle = CheckedAngle(angle);
-        return new SpotLight3D { SpotAngle = checkedAngle };
+        float checkedAngle = CheckedAngle(angle);
+        SpotLight3D light = new SpotLight3D();
+        light.SpotAngle = checkedAngle;
+        return light;
     }
 
     private static float CheckedAngle(float angle)

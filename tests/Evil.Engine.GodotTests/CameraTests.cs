@@ -1,3 +1,5 @@
+using Evil.Engine.Mathematics;
+
 namespace Evil.Engine.GodotTests;
 
 internal static class CameraTests
@@ -5,10 +7,10 @@ internal static class CameraTests
     [Test]
     public static void TheMiddleOfTheScreenLooksForward()
     {
-        using var stage = Stage.Open();
-        var camera = OnStage(stage, new Vector3(0f, 5f, 10f));
-        var middle = Middle();
-        var ray = camera.ScreenToRay(middle);
+        using Stage stage = Stage.Open();
+        Camera camera = OnStage(stage, new Vector3(0f, 5f, 10f));
+        Vector2 middle = Middle();
+        Ray3 ray = camera.ScreenToRay(middle);
         Check.Near(camera.Forward, ray.Direction, "ray along the view");
         Check.Near(Vector3.Zero, camera.PointOnGround(middle) ?? new Vector3(99f), "hits the ground under the middle", 0.01f);
         Check.Near(middle, camera.WorldToScreen(Vector3.Zero), "and back to the middle", 0.5f);
@@ -17,8 +19,8 @@ internal static class CameraTests
     [Test]
     public static void CanSeeWhatIsInFront()
     {
-        using var stage = Stage.Open();
-        var camera = OnStage(stage, new Vector3(0f, 5f, 10f));
+        using Stage stage = Stage.Open();
+        Camera camera = OnStage(stage, new Vector3(0f, 5f, 10f));
         Check.True(camera.CanSee(Vector3.Zero), "the target");
         Check.True(!camera.CanSee(new Vector3(0f, 5f, 20f)), "behind the camera");
     }
@@ -26,13 +28,13 @@ internal static class CameraTests
     [Test]
     public static void OrthographicRaysAreParallel()
     {
-        using var stage = Stage.Open();
-        var camera = OnStage(stage, new Vector3(0f, 5f, 10f));
+        using Stage stage = Stage.Open();
+        Camera camera = OnStage(stage, new Vector3(0f, 5f, 10f));
         camera.Projection = CameraProjection.Orthographic;
         camera.OrthographicSize = 10f;
         Check.Equal(CameraProjection.Orthographic, camera.Projection, "projection");
-        var left = camera.ScreenToRay(Middle() - new Vector2(100f, 0f));
-        var right = camera.ScreenToRay(Middle() + new Vector2(100f, 0f));
+        Ray3 left = camera.ScreenToRay(Middle() - new Vector2(100f, 0f));
+        Ray3 right = camera.ScreenToRay(Middle() + new Vector2(100f, 0f));
         Check.Near(left.Direction, right.Direction, "same direction");
         Check.True(Vector3.Distance(left.Origin, right.Origin) > 0.1f, "different start points");
     }
@@ -40,7 +42,7 @@ internal static class CameraTests
     [Test]
     public static void ScreenCallsNeedTheWorld()
     {
-        var camera = new Camera();
+        Camera camera = new Camera();
         Check.Throws<InvalidOperationException>(() => camera.ScreenToRay(Vector2.Zero), "needs the camera in a scene's world");
         camera.Destroy();
     }
@@ -48,9 +50,12 @@ internal static class CameraTests
     [Test]
     public static void OrbitPlacesTheCameraAndLooksAtTheTarget()
     {
-        using var stage = Stage.Open();
-        var camera = OnStage(stage, Vector3.Zero);
-        var orbit = new OrbitCamera(camera) { Target = new Vector3(1f, 0f, 2f), Pitch = 45f, Distance = 10f };
+        using Stage stage = Stage.Open();
+        Camera camera = OnStage(stage, Vector3.Zero);
+        OrbitCamera orbit = new OrbitCamera(camera);
+        orbit.Target = new Vector3(1f, 0f, 2f);
+        orbit.Pitch = 45f;
+        orbit.Distance = 10f;
         orbit.Snap();
         Check.Near(new Vector3(1f, 7.0711f, 9.0711f), camera.WorldPosition, "position");
         Check.Near(Vector3.Normalize(orbit.Target - camera.WorldPosition), camera.Forward, "facing the target");
@@ -59,13 +64,15 @@ internal static class CameraTests
     [Test]
     public static void OrbitGlidesToNewSettings()
     {
-        using var stage = Stage.Open();
-        var camera = OnStage(stage, Vector3.Zero);
-        var orbit = new OrbitCamera(camera, new OrbitLimits(MinPitch: 0f)) { Pitch = 0f, Distance = 10f };
+        using Stage stage = Stage.Open();
+        Camera camera = OnStage(stage, Vector3.Zero);
+        OrbitCamera orbit = new OrbitCamera(camera, new OrbitLimits(MinPitch: 0f));
+        orbit.Pitch = 0f;
+        orbit.Distance = 10f;
         orbit.Snap();
         orbit.Turn(90f);
         orbit.Update(0.05f);
-        var partway = camera.WorldPosition;
+        Vector3 partway = camera.WorldPosition;
         Check.True(partway.X > 0.5f && partway.X < 9.5f, $"partway round after one frame, got {partway}");
         orbit.Update(5f);
         Check.Near(new Vector3(10f, 0f, 0f), camera.WorldPosition, "arrived", 0.01f);
@@ -74,8 +81,9 @@ internal static class CameraTests
     [Test]
     public static void OrbitStaysInsideItsLimits()
     {
-        var camera = new Camera();
-        var orbit = new OrbitCamera(camera) { Distance = 1000f };
+        Camera camera = new Camera();
+        OrbitCamera orbit = new OrbitCamera(camera);
+        orbit.Distance = 1000f;
         Check.Near(orbit.Limits.MaxDistance, orbit.Distance, "not further than the max");
         orbit.Zoom(0.0001f);
         Check.Near(orbit.Limits.MinDistance, orbit.Distance, "not closer than the min");
@@ -92,8 +100,9 @@ internal static class CameraTests
     [Test]
     public static void PanMovesAlongTheGroundTheWayTheCameraFaces()
     {
-        var camera = new Camera();
-        var orbit = new OrbitCamera(camera) { Yaw = 90f };
+        Camera camera = new Camera();
+        OrbitCamera orbit = new OrbitCamera(camera);
+        orbit.Yaw = 90f;
         orbit.Pan(new Vector2(0f, 1f));
         Check.Near(new Vector3(-1f, 0f, 0f), orbit.Target, "ahead is where the camera looks");
         orbit.Pan(new Vector2(1f, 0f));
@@ -103,7 +112,9 @@ internal static class CameraTests
 
     private static Camera OnStage(Stage stage, Vector3 position)
     {
-        var camera = stage.Root.Add(new Camera { Position = position });
+        Camera camera = new Camera();
+        camera.Position = position;
+        stage.Root.Add(camera);
         camera.LookAt(Vector3.Zero);
         camera.MakeCurrent();
         return camera;

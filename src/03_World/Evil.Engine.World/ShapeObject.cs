@@ -8,7 +8,7 @@ public abstract class ShapeObject : MeshObject
     private Material _material;
 
     private protected ShapeObject(PrimitiveMesh mesh, Color color)
-        : base(new MeshInstance3D { Mesh = mesh })
+        : base(Holding(mesh))
     {
         Mesh = mesh;
         _material = new Material(color);
@@ -33,4 +33,11 @@ public abstract class ShapeObject : MeshObject
     }
 
     private protected PrimitiveMesh Mesh { get; }
+
+    private static MeshInstance3D Holding(PrimitiveMesh mesh)
+    {
+        MeshInstance3D instance = new MeshInstance3D();
+        instance.Mesh = mesh;
+        return instance;
+    }
 }

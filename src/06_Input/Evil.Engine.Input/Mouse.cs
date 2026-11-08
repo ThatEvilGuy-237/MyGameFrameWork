@@ -46,7 +46,7 @@ public sealed class Mouse
 
     internal void ReleaseAll()
     {
-        foreach (var button in _down)
+        foreach (MouseButton button in _down)
         {
             _released.Add(button);
         }

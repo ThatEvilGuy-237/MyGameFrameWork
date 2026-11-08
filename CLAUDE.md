@@ -15,6 +15,23 @@ why things are the way they are is in `documents/Decisions.md`.
 - Numbered libraries in `src/NN_Area/Evil.Engine.Area` (00 Core to 09 Engine); a library only references lower numbers. Core and
   Mathematics never reference Godot. In the others Godot types stay `internal`: games see Evil Engine types and
   `System.Numerics` only. A game's only Godot line is `Main : GameMain`.
+- **Code style (owner, 2026-11-08), checked by the build and `scripts/style-check.py`:**
+  - Write the real type, never `var`: `string name = "x";`, `foreach (Capsule pawn in _pawns)`,
+    `using Stage stage = Stage.Open();`, `out PackedScene? scene`. The build fails on `var` (IDE0008 in
+    `.editorconfig`, `EnforceCodeStyleInBuild`).
+  - Build objects with their constructor, then set properties as separate statements. No initializer blocks
+    (`new Box { Name = "x", Position = p }`, `new Dictionary<,> { [k] = v }`) and no target-typed `new()`:
+    write `new Box(...)` with its type every time.
+
+    ```csharp
+    Capsule pawn = new Capsule(0.35f, 1.4f, team);
+    pawn.Name = name;
+    pawn.Tag = name;
+    World.Add(pawn);
+    ```
+  - Allowed: constructor arguments and named arguments (`new OrbitLimits(MinDistance: 6f)`), collection
+    expressions (`[a, b]`), `with` copies of records. A preset or helper that sets several properties is a small
+    method with statements, not an expression-bodied initializer.
 - The builder takes values or settings records, never lambdas; the engine reads no config and no environment
   variable. Fail early with the call's name. No code comments.
 - Packages only from the checked list (`evil-packages one nuget <name> <version> --save`), exact versions in

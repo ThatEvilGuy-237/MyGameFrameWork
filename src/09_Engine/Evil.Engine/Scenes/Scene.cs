@@ -29,7 +29,7 @@ public abstract class Scene
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            var camera = _camera ?? throw NotOnStack(nameof(Atmosphere));
+            Camera camera = _camera ?? throw NotOnStack(nameof(Atmosphere));
             _atmosphere = value;
             value.ShowThrough(camera);
         }
@@ -98,5 +98,5 @@ public abstract class Scene
     internal void RunDraw(Canvas canvas) => Draw(canvas);
 
     private InvalidOperationException NotOnStack(string member) =>
-        new($"{GetType().Name} is not on the scene stack; {member} is ready from Enter() on.");
+        new InvalidOperationException($"{GetType().Name} is not on the scene stack; {member} is ready from Enter() on.");
 }

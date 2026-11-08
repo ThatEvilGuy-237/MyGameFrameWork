@@ -4,7 +4,7 @@ public static class Ease
 {
     public static float Apply(Easing easing, float progress)
     {
-        var t = Math.Clamp(progress, 0f, 1f);
+        float t = Math.Clamp(progress, 0f, 1f);
         return easing switch
         {
             Easing.InQuad => t * t,

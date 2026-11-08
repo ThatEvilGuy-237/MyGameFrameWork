@@ -4,7 +4,7 @@ namespace Evil.Engine.Mathematics;
 
 public readonly record struct Pose(Vector3 Position, Quaternion Rotation, Vector3 Scale)
 {
-    public static Pose Identity => new(Vector3.Zero, Quaternion.Identity, Vector3.One);
+    public static Pose Identity => new Pose(Vector3.Zero, Quaternion.Identity, Vector3.One);
 
     public static Pose At(Vector3 position) => Identity with { Position = position };
 
@@ -26,7 +26,7 @@ public readonly record struct Pose(Vector3 Position, Quaternion Rotation, Vector
 
     public Vector3 ToLocal(Vector3 world) => Vector3.Transform(world - Position, Quaternion.Inverse(Rotation)) / Scale;
 
-    public Pose ToWorld(Pose local) => new(
+    public Pose ToWorld(Pose local) => new Pose(
         ToWorld(local.Position),
         Quaternion.Normalize(Rotation * local.Rotation),
         Scale * local.Scale);

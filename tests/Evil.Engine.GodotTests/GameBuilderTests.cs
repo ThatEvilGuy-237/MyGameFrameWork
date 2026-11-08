@@ -33,8 +33,8 @@ internal static class GameBuilderTests
     [Test]
     public static void BuildKeepsTheValuesItWasGiven()
     {
-        var window = new WindowSettings("test", 320, 240, VSync: false);
-        var game = GameBuilder.Create(window)
+        WindowSettings window = new WindowSettings("test", 320, 240, VSync: false);
+        GameHost game = GameBuilder.Create(window)
             .ClearColor(Color.Black)
             .Start(new EmptyScene())
             .CaptureAndExit("shots/one.png", 5)
@@ -47,11 +47,11 @@ internal static class GameBuilderTests
     [Test]
     public static void ContextQueuesCapturesAndExit()
     {
-        using var stage = Stage.Open();
-        var context = new GameContext(stage.Root);
+        using Stage stage = Stage.Open();
+        GameContext context = new GameContext(stage.Root);
         context.CaptureFrame("a.png");
         Check.True(context.HasPendingCaptures, "capture waiting");
-        Check.True(context.TryTakeCapture(out var path) && path == Path.GetFullPath("a.png"), "absolute path");
+        Check.True(context.TryTakeCapture(out string? path) && path == Path.GetFullPath("a.png"), "absolute path");
         Check.True(!context.IsExiting, "running");
         context.Exit();
         Check.True(context.IsExiting, "exiting");

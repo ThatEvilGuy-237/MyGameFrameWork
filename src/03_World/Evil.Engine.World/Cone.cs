@@ -11,7 +11,7 @@ public sealed class Cone : ShapeObject
     }
 
     public Cone(float radius, float height, Color color)
-        : base(new CylinderMesh { TopRadius = 0f }, color)
+        : base(PointedMesh(), color)
     {
         Radius = radius;
         Height = height;
@@ -27,5 +27,12 @@ public sealed class Cone : ShapeObject
     {
         get => ((CylinderMesh)Mesh).Height;
         set => ((CylinderMesh)Mesh).Height = value;
+    }
+
+    private static CylinderMesh PointedMesh()
+    {
+        CylinderMesh mesh = new CylinderMesh();
+        mesh.TopRadius = 0f;
+        return mesh;
     }
 }

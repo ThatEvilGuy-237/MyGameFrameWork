@@ -4,7 +4,7 @@ namespace Evil.Engine.Mathematics;
 
 public readonly record struct Transform2D(Vector2 Position, float Rotation, Vector2 Scale, Vector2 Origin)
 {
-    public static Transform2D Identity => new(Vector2.Zero, 0f, Vector2.One, Vector2.Zero);
+    public static Transform2D Identity => new Transform2D(Vector2.Zero, 0f, Vector2.One, Vector2.Zero);
 
     public static Transform2D At(Vector2 position) => Identity with { Position = position };
 

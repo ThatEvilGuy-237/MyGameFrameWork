@@ -29,7 +29,17 @@ public sealed class Lamp : Light
         set => ((OmniLight3D)Node).OmniAttenuation = Math.Max(0f, value);
     }
 
-    public static Lamp Warm(float range) => new(new Color(1f, 0.72f, 0.42f), range) { Intensity = 1.5f };
+    public static Lamp Warm(float range)
+    {
+        Lamp lamp = new Lamp(new Color(1f, 0.72f, 0.42f), range);
+        lamp.Intensity = 1.5f;
+        return lamp;
+    }
 
-    public static Lamp Cool(float range) => new(new Color(0.65f, 0.8f, 1f), range) { Intensity = 1.2f };
+    public static Lamp Cool(float range)
+    {
+        Lamp lamp = new Lamp(new Color(0.65f, 0.8f, 1f), range);
+        lamp.Intensity = 1.2f;
+        return lamp;
+    }
 }

@@ -25,24 +25,22 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     protected override void Enter()
     {
         Camera.FieldOfView = 50f;
-        _view = new OrbitCamera(Camera, new OrbitLimits(MinDistance: 6f, MaxDistance: 30f))
-        {
-            Target = new Vector3(0f, 0f, 2.2f),
-            Distance = 13f,
-            Pitch = 32f,
-            Yaw = -15f,
-        };
+        _view = new OrbitCamera(Camera, new OrbitLimits(MinDistance: 6f, MaxDistance: 30f));
+        _view.Target = new Vector3(0f, 0f, 2.2f);
+        _view.Distance = 13f;
+        _view.Pitch = 32f;
+        _view.Yaw = -15f;
         _view.Snap();
 
         Atmosphere = Atmosphere.Dusk();
         World.Add(Sun.Golden());
-        var floor = World.Add(new Floor(new Vector2(24f, 24f), Color.White));
+        Floor floor = World.Add(new Floor(new Vector2(24f, 24f), Color.White));
         floor.Material.Texture = Game.Content.Texture("textures/tiles.png");
         floor.Material.TextureScale = new Vector2(12f, 12f);
 
-        var watchtower = World.Add(Game.Content.Model("models/tower.glb"));
+        Model watchtower = World.Add(Game.Content.Model("models/tower.glb"));
         watchtower.Position = new Vector3(-5.5f, 0f, 3.2f);
-        var outpost = World.Add(Game.Content.Model("models/tower.glb"));
+        Model outpost = World.Add(Game.Content.Model("models/tower.glb"));
         outpost.Position = new Vector3(5.5f, 0f, 3.2f);
         outpost.RotateY(180f);
         outpost.Part("Flag")!.Material = Material.Matte(Color.FromHex("#E5484D"));
@@ -61,18 +59,25 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         _yellow = _blue.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));
         _yellow.Position = new Vector3(3f, 0f, 0f);
 
-        var ring = _yellow.Add(new Torus(0.8f, 0.95f, Color.FromHex("#E8D9A8")));
+        Torus ring = _yellow.Add(new Torus(0.8f, 0.95f, Color.FromHex("#E8D9A8")));
         ring.Rotation = new Vector3(20f, 0f, 10f);
 
-        var moon = _yellow.Add(new Sphere(0.22f, Color.White) { Material = Material.Glowing(Color.FromHex("#DDEBFF"), 1.5f) });
+        Sphere moon = new Sphere(0.22f, Color.White);
+        moon.Material = Material.Glowing(Color.FromHex("#DDEBFF"), 1.5f);
+        _yellow.Add(moon);
         moon.Position = new Vector3(1.4f, 0f, 0f);
 
-        var stone = Material.Matte(Color.FromHex("#8C8A80"));
-        foreach (var x in new[] { -7f, 7f })
+        Material stone = Material.Matte(Color.FromHex("#8C8A80"));
+        foreach (float x in new[] { -7f, 7f })
         {
-            var pillar = World.Add(new Cylinder(0.45f, 3f, Color.White) { Material = stone });
+            Cylinder pillar = new Cylinder(0.45f, 3f, Color.White);
+            pillar.Material = stone;
+            World.Add(pillar);
             pillar.Position = new Vector3(x, 1.5f, -5f);
-            var flame = pillar.Add(new Sphere(0.18f, Color.White) { Material = Material.Glowing(Color.FromHex("#FFB45E"), 2.5f), CastsShadow = false });
+            Sphere flame = new Sphere(0.18f, Color.White);
+            flame.Material = Material.Glowing(Color.FromHex("#FFB45E"), 2.5f);
+            flame.CastsShadow = false;
+            pillar.Add(flame);
             flame.Position = new Vector3(0f, 1.75f, 0f);
             flame.Add(Lamp.Warm(7f));
         }
@@ -80,23 +85,25 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         AddPawn("pawn-red", new Vector3(-2.5f, 0f, 3.5f), Color.FromHex("#E5484D"));
         AddPawn("pawn-blue", new Vector3(2.5f, 0f, 3.5f), Color.FromHex("#3E63DD"));
 
-        _spot = World.Add(new Spotlight(Color.FromHex("#CFE3FF"), 14f, 24f) { Shadows = true, Intensity = 2f });
+        Spotlight spot = new Spotlight(Color.FromHex("#CFE3FF"), 14f, 24f);
+        spot.Shadows = true;
+        spot.Intensity = 2f;
+        _spot = World.Add(spot);
         _spot.Position = new Vector3(0f, 9f, 3.5f);
 
-        _ring = World.Add(new Torus(0.5f, 0.65f, Color.White)
-        {
-            Material = Material.Glowing(Color.FromHex("#FFC53D"), 1.5f),
-            CastsShadow = false,
-            Pickable = false,
-            Visible = false,
-        });
+        Torus selectionRing = new Torus(0.5f, 0.65f, Color.White);
+        selectionRing.Material = Material.Glowing(Color.FromHex("#FFC53D"), 1.5f);
+        selectionRing.CastsShadow = false;
+        selectionRing.Pickable = false;
+        selectionRing.Visible = false;
+        _ring = World.Add(selectionRing);
     }
 
     protected override void Update(GameTime time)
     {
-        var keys = Game.Keyboard;
-        var mouse = Game.Mouse;
-        var step = time.DeltaSeconds;
+        Keyboard keys = Game.Keyboard;
+        Mouse mouse = Game.Mouse;
+        float step = time.DeltaSeconds;
 
         if (keys.WasPressed(Key.Escape))
         {
@@ -176,20 +183,20 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private void DrawPanel(Canvas canvas)
     {
-        var panel = new RectF(16f, 16f, 380f, 112f);
+        RectF panel = new RectF(16f, 16f, 380f, 112f);
         canvas.FillRect(panel, Color.Black.WithAlpha(0.45f));
         canvas.DrawRect(panel, Color.White.WithAlpha(0.25f));
         canvas.Font = _titleFont;
         canvas.DrawText("Evil Engine orbit demo", new Vector2(30f, 24f), 24f, Color.White);
         canvas.Font = null;
-        var status = _selected is null ? "Click a pawn to select it" : $"Selected: {_selected.Tag}" + (_lastAction is null ? string.Empty : $"   Last action: {_lastAction}");
+        string status = _selected is null ? "Click a pawn to select it" : $"Selected: {_selected.Tag}" + (_lastAction is null ? string.Empty : $"   Last action: {_lastAction}");
         canvas.DrawText(status, new Vector2(30f, 60f), 16f, Color.FromHex("#FFC53D"));
         canvas.DrawText("Space pause   Q/E turn   wheel zoom   F10 small   F11 full screen", new Vector2(30f, 92f), 13f, Color.White.WithAlpha(0.7f));
     }
 
     private void DrawCompass(Canvas canvas)
     {
-        using var compass = canvas.Group();
+        using TransformScope compass = canvas.Group();
         canvas.Translate(canvas.Size.X - 70f, 70f);
         canvas.FillCircle(Vector2.Zero, 46f, Color.Black.WithAlpha(0.45f));
         canvas.Rotate(_view!.Yaw);
@@ -200,11 +207,11 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private void DrawActions(Canvas canvas)
     {
-        var buttons = ActionRects(canvas.Size);
-        var waiting = _busy is not null;
-        for (var i = 0; i < buttons.Length; i++)
+        RectF[] buttons = ActionRects(canvas.Size);
+        bool waiting = _busy is not null;
+        for (int i = 0; i < buttons.Length; i++)
         {
-            var hovered = i == _hoveredAction && !waiting;
+            bool hovered = i == _hoveredAction && !waiting;
             canvas.FillRect(buttons[i], hovered ? Color.FromHex("#3E63DD") : Color.Black.WithAlpha(waiting ? 0.25f : 0.55f));
             canvas.DrawRect(buttons[i], Color.White.WithAlpha(hovered ? 0.9f : 0.35f), 2f);
             canvas.DrawText(Actions[i], buttons[i], 18f, Color.White.WithAlpha(waiting ? 0.4f : 1f), TextAlign.Center);
@@ -216,8 +223,8 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         const float width = 150f;
         const float height = 46f;
         const float gap = 16f;
-        var left = (screen.X - (width * Actions.Length + gap * (Actions.Length - 1))) / 2f;
-        var top = screen.Y - height - 32f;
+        float left = (screen.X - (width * Actions.Length + gap * (Actions.Length - 1))) / 2f;
+        float top = screen.Y - height - 32f;
         return [.. Enumerable.Range(0, Actions.Length).Select(i => new RectF(left + i * (width + gap), top, width, height))];
     }
 
@@ -228,21 +235,21 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             return -1;
         }
 
-        var buttons = ActionRects(Game.ScreenSize);
+        RectF[] buttons = ActionRects(Game.ScreenSize);
         return Array.FindIndex(buttons, button => button.Contains(point));
     }
 
     private void LogScreen()
     {
-        var screen = Game.ScreenSize;
+        Vector2 screen = Game.ScreenSize;
         if (screen == _loggedScreen || _selected is null)
         {
             return;
         }
 
         _loggedScreen = screen;
-        var buttons = ActionRects(screen);
-        var centres = string.Join(' ', Actions.Select((name, i) => $"{name} {(int)buttons[i].Center.X},{(int)buttons[i].Center.Y}"));
+        RectF[] buttons = ActionRects(screen);
+        string centres = string.Join(' ', Actions.Select((name, i) => $"{name} {(int)buttons[i].Center.X},{(int)buttons[i].Center.Y}"));
         Console.WriteLine($"screen: {(int)screen.X}x{(int)screen.Y}");
         Console.WriteLine($"buttons: {centres}");
     }
@@ -258,7 +265,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private void SteerCamera(Keyboard keys, Mouse mouse, float step)
     {
-        var view = _view!;
+        OrbitCamera view = _view!;
         if (keys.IsDown(Key.Q))
         {
             view.Turn(-60f * step);
@@ -286,7 +293,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private void Hover(Mouse mouse)
     {
-        var pawn = PawnOf(Pick(mouse.Position)?.Target);
+        Capsule? pawn = PawnOf(Pick(mouse.Position)?.Target);
         if (ReferenceEquals(pawn, _hovered))
         {
             return;
@@ -318,26 +325,26 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             return;
         }
 
-        var feet = _selected.WorldPosition with { Y = 0.05f };
+        Vector3 feet = _selected.WorldPosition with { Y = 0.05f };
         _ring!.Position = feet;
         _spot!.Position = feet + new Vector3(0f, 9f, 0f);
     }
 
     private void Act(string action, Capsule pawn)
     {
-        var motion = Game.Motion;
-        var start = pawn.Position;
+        MotionPlayer motion = Game.Motion;
+        Vector3 start = pawn.Position;
         switch (action)
         {
             case "Move":
-                var side = start.X < 0f ? 1f : -1f;
+                float side = start.X < 0f ? 1f : -1f;
                 _busy = motion.MoveAlong(pawn, [start + new Vector3(0f, 0f, -2f), start + new Vector3(2f * side, 0f, -2f)], 0.6f);
                 _whenDone = $"arrived: {pawn.Tag} at {start.X + 2f * side:0},{start.Z - 2f:0}";
                 break;
             case "Attack":
-                var enemy = _pawns.First(other => !ReferenceEquals(other, pawn));
-                var reach = Vector3.Lerp(start, enemy.Position, 0.45f) with { Y = start.Y };
-                var push = enemy.Position + Vector3.Normalize(enemy.Position - start) * 0.6f;
+                Capsule enemy = _pawns.First(other => !ReferenceEquals(other, pawn));
+                Vector3 reach = Vector3.Lerp(start, enemy.Position, 0.45f) with { Y = start.Y };
+                Vector3 push = enemy.Position + Vector3.Normalize(enemy.Position - start) * 0.6f;
                 motion.Face(pawn, enemy.Position, 0.25f);
                 motion.Hop(pawn, reach, 1.2f, 0.45f);
                 _busy = motion.Hop(pawn, start, 0.5f, 0.4f);
@@ -355,7 +362,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private Capsule? PawnOf(WorldObject? target)
     {
-        for (var current = target; current is not null; current = current.Parent)
+        for (WorldObject? current = target; current is not null; current = current.Parent)
         {
             if (current is Capsule pawn && _pawns.Contains(pawn))
             {
@@ -368,9 +375,12 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private void AddPawn(string name, Vector3 place, Color team)
     {
-        var pawn = World.Add(new Capsule(0.35f, 1.4f, team) { Name = name, Tag = name });
+        Capsule pawn = new Capsule(0.35f, 1.4f, team);
+        pawn.Name = name;
+        pawn.Tag = name;
+        World.Add(pawn);
         pawn.Position = place + new Vector3(0f, 0.7f, 0f);
-        var hat = pawn.Add(new Cone(0.3f, 0.45f, Color.FromHex("#F0F0F0")));
+        Cone hat = pawn.Add(new Cone(0.3f, 0.45f, Color.FromHex("#F0F0F0")));
         hat.Position = new Vector3(0f, 0.9f, 0f);
         _pawns.Add(pawn);
     }

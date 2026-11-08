@@ -34,16 +34,7 @@ public sealed class Atmosphere
                     break;
                 case GradientBackground gradient:
                     Native.BackgroundMode = Godot.Environment.BGMode.Sky;
-                    Native.Sky = new Sky
-                    {
-                        SkyMaterial = new ProceduralSkyMaterial
-                        {
-                            SkyTopColor = gradient.Top.ToGodot(),
-                            SkyHorizonColor = gradient.Horizon.ToGodot(),
-                            GroundHorizonColor = gradient.Horizon.ToGodot(),
-                            GroundBottomColor = gradient.Ground.ToGodot(),
-                        },
-                    };
+                    Native.Sky = SkyFor(gradient);
                     break;
                 default:
                     Native.BackgroundMode = Godot.Environment.BGMode.ClearColor;
@@ -124,35 +115,53 @@ public sealed class Atmosphere
         set => Native.TonemapExposure = Math.Max(0.01f, value);
     }
 
-    internal Godot.Environment Native { get; } = new();
+    internal Godot.Environment Native { get; } = new Godot.Environment();
 
-    public static Atmosphere Studio() => new();
+    public static Atmosphere Studio() => new Atmosphere();
 
-    public static Atmosphere Daylight() => new()
+    public static Atmosphere Daylight()
     {
-        Background = Background.Gradient(Color.FromHex("#3E7CC9"), Color.FromHex("#A9C9E8"), Color.FromHex("#5A5A55")),
-        AmbientFromSky = true,
-        AmbientStrength = 0.8f,
-    };
+        Atmosphere air = new Atmosphere();
+        air.Background = Background.Gradient(Color.FromHex("#3E7CC9"), Color.FromHex("#A9C9E8"), Color.FromHex("#5A5A55"));
+        air.AmbientFromSky = true;
+        air.AmbientStrength = 0.8f;
+        return air;
+    }
 
-    public static Atmosphere Dusk() => new()
+    public static Atmosphere Dusk()
     {
-        Background = Background.Gradient(Color.FromHex("#2B2F5A"), Color.FromHex("#E89A6A"), Color.FromHex("#3A3030")),
-        AmbientFromSky = true,
-        AmbientStrength = 0.4f,
-        Glow = 0.4f,
-        Fog = new Fog(Color.FromHex("#C9A088"), 0.004f),
-    };
+        Atmosphere air = new Atmosphere();
+        air.Background = Background.Gradient(Color.FromHex("#2B2F5A"), Color.FromHex("#E89A6A"), Color.FromHex("#3A3030"));
+        air.AmbientFromSky = true;
+        air.AmbientStrength = 0.4f;
+        air.Glow = 0.4f;
+        air.Fog = new Fog(Color.FromHex("#C9A088"), 0.004f);
+        return air;
+    }
 
-    public static Atmosphere Night() => new()
+    public static Atmosphere Night()
     {
-        Background = Background.Solid(Color.FromHex("#0B1020")),
-        AmbientColor = Color.FromHex("#30405A"),
-        AmbientStrength = 0.35f,
-        Glow = 0.8f,
-    };
+        Atmosphere air = new Atmosphere();
+        air.Background = Background.Solid(Color.FromHex("#0B1020"));
+        air.AmbientColor = Color.FromHex("#30405A");
+        air.AmbientStrength = 0.35f;
+        air.Glow = 0.8f;
+        return air;
+    }
 
     internal void ShowThrough(Camera camera) => camera.Lens.Environment = Native;
+
+    private static Sky SkyFor(GradientBackground gradient)
+    {
+        ProceduralSkyMaterial material = new ProceduralSkyMaterial();
+        material.SkyTopColor = gradient.Top.ToGodot();
+        material.SkyHorizonColor = gradient.Horizon.ToGodot();
+        material.GroundHorizonColor = gradient.Horizon.ToGodot();
+        material.GroundBottomColor = gradient.Ground.ToGodot();
+        Sky sky = new Sky();
+        sky.SkyMaterial = material;
+        return sky;
+    }
 
     private void RefreshAmbient() =>
         Native.AmbientLightSource = _ambientFromSky && _background is GradientBackground

@@ -34,6 +34,9 @@ public sealed class Torus : ShapeObject
             throw new ArgumentOutOfRangeException(nameof(outerRadius), $"A torus needs the outer radius ({outerRadius}) bigger than the inner one ({innerRadius}).");
         }
 
-        return new TorusMesh { InnerRadius = innerRadius, OuterRadius = outerRadius };
+        TorusMesh mesh = new TorusMesh();
+        mesh.InnerRadius = innerRadius;
+        mesh.OuterRadius = outerRadius;
+        return mesh;
     }
 }

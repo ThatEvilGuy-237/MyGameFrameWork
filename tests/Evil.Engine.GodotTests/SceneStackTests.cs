@@ -5,9 +5,9 @@ internal static class SceneStackTests
     [Test]
     public static void EachSceneGetsAWorldAndACamera()
     {
-        using var stage = Stage.Open();
-        var scenes = new SceneStack(null, stage.Root);
-        var map = new ProbeScene("map", []);
+        using Stage stage = Stage.Open();
+        SceneStack scenes = new SceneStack(null, stage.Root);
+        ProbeScene map = new ProbeScene("map", []);
         scenes.Push(map);
         scenes.ApplyChanges();
         Check.Equal(1, stage.Root.Children.Count, "one world");
@@ -19,11 +19,11 @@ internal static class SceneStackTests
     [Test]
     public static void AFullSceneHidesTheOneBelow()
     {
-        using var stage = Stage.Open();
-        var log = new List<string>();
-        var scenes = new SceneStack(null, stage.Root);
-        var map = new ProbeScene("map", log);
-        var battle = new ProbeScene("battle", log);
+        using Stage stage = Stage.Open();
+        List<string> log = new List<string>();
+        SceneStack scenes = new SceneStack(null, stage.Root);
+        ProbeScene map = new ProbeScene("map", log);
+        ProbeScene battle = new ProbeScene("battle", log);
         scenes.Push(map);
         scenes.ApplyChanges();
         scenes.Push(battle);
@@ -37,10 +37,10 @@ internal static class SceneStackTests
     [Test]
     public static void AnOverlayKeepsTheWorldBelowAndItsCamera()
     {
-        using var stage = Stage.Open();
-        var scenes = new SceneStack(null, stage.Root);
-        var battle = new ProbeScene("battle", []);
-        var menu = new ProbeScene("menu", [], overlay: true);
+        using Stage stage = Stage.Open();
+        SceneStack scenes = new SceneStack(null, stage.Root);
+        ProbeScene battle = new ProbeScene("battle", []);
+        ProbeScene menu = new ProbeScene("menu", [], overlay: true);
         scenes.Push(battle);
         scenes.Push(menu);
         scenes.ApplyChanges();
@@ -52,15 +52,15 @@ internal static class SceneStackTests
     [Test]
     public static void PopFreesTheWorldAndGivesTheViewBack()
     {
-        using var stage = Stage.Open();
-        var log = new List<string>();
-        var scenes = new SceneStack(null, stage.Root);
-        var map = new ProbeScene("map", log);
-        var battle = new ProbeScene("battle", log);
+        using Stage stage = Stage.Open();
+        List<string> log = new List<string>();
+        SceneStack scenes = new SceneStack(null, stage.Root);
+        ProbeScene map = new ProbeScene("map", log);
+        ProbeScene battle = new ProbeScene("battle", log);
         scenes.Push(map);
         scenes.Push(battle);
         scenes.ApplyChanges();
-        var battleWorld = battle.OwnWorld;
+        WorldObject battleWorld = battle.OwnWorld;
         scenes.Pop();
         scenes.ApplyChanges();
         Check.Equal(1, stage.Root.Children.Count, "battle world removed");
@@ -74,9 +74,9 @@ internal static class SceneStackTests
     [Test]
     public static void SwitchReplacesTheTopScene()
     {
-        using var stage = Stage.Open();
-        var log = new List<string>();
-        var scenes = new SceneStack(null, stage.Root);
+        using Stage stage = Stage.Open();
+        List<string> log = new List<string>();
+        SceneStack scenes = new SceneStack(null, stage.Root);
         scenes.Push(new ProbeScene("title", log));
         scenes.ApplyChanges();
         scenes.Switch(new ProbeScene("map", log));
@@ -88,11 +88,11 @@ internal static class SceneStackTests
     [Test]
     public static void BadChangesThrow()
     {
-        using var stage = Stage.Open();
-        var scenes = new SceneStack(null, stage.Root);
+        using Stage stage = Stage.Open();
+        SceneStack scenes = new SceneStack(null, stage.Root);
         scenes.Pop();
         Check.Throws<InvalidOperationException>(scenes.ApplyChanges, "no scene on the stack");
-        var map = new ProbeScene("map", []);
+        ProbeScene map = new ProbeScene("map", []);
         scenes.Push(map);
         scenes.Push(map);
         Check.Throws<InvalidOperationException>(scenes.ApplyChanges, "already on the scene stack");
@@ -101,9 +101,9 @@ internal static class SceneStackTests
     [Test]
     public static void ExitAllRunsExitTopDown()
     {
-        using var stage = Stage.Open();
-        var log = new List<string>();
-        var scenes = new SceneStack(null, stage.Root);
+        using Stage stage = Stage.Open();
+        List<string> log = new List<string>();
+        SceneStack scenes = new SceneStack(null, stage.Root);
         scenes.Push(new ProbeScene("map", log));
         scenes.Push(new ProbeScene("battle", log));
         scenes.ApplyChanges();

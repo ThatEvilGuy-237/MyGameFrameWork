@@ -9,7 +9,7 @@ public sealed class Model : WorldObject
     {
     }
 
-    public string Source { get; private init; } = string.Empty;
+    public string Source { get; private set; } = string.Empty;
 
     public IReadOnlyList<ModelPart> Parts => [.. Descendants<ModelPart>()];
 
@@ -17,7 +17,7 @@ public sealed class Model : WorldObject
 
     public void Paint(Material? material)
     {
-        foreach (var part in Parts)
+        foreach (ModelPart part in Parts)
         {
             part.Material = material;
         }
@@ -25,7 +25,8 @@ public sealed class Model : WorldObject
 
     internal static Model Wrap(Node3D root, string name, string source)
     {
-        var model = new Model(root, name) { Source = source };
+        Model model = new Model(root, name);
+        model.Source = source;
         root.Name = name;
         AdoptChildren(model, root);
         return model;
@@ -33,7 +34,7 @@ public sealed class Model : WorldObject
 
     private static void AdoptChildren(WorldObject parent, Node node)
     {
-        foreach (var child in node.GetChildren())
+        foreach (Node? child in node.GetChildren())
         {
             WorldObject? wrapped = child switch
             {

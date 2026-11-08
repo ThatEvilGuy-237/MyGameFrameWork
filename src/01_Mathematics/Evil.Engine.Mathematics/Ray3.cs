@@ -23,14 +23,14 @@ public readonly record struct Ray3
 
     public float? Intersect(Bounds3 box)
     {
-        var enter = 0f;
-        var leave = float.PositiveInfinity;
-        for (var axis = 0; axis < 3; axis++)
+        float enter = 0f;
+        float leave = float.PositiveInfinity;
+        for (int axis = 0; axis < 3; axis++)
         {
-            var origin = Component(Origin, axis);
-            var direction = Component(Direction, axis);
-            var min = Component(box.Min, axis);
-            var max = Component(box.Max, axis);
+            float origin = Component(Origin, axis);
+            float direction = Component(Direction, axis);
+            float min = Component(box.Min, axis);
+            float max = Component(box.Max, axis);
             if (MathF.Abs(direction) < 1e-9f)
             {
                 if (origin < min || origin > max)
@@ -41,8 +41,8 @@ public readonly record struct Ray3
                 continue;
             }
 
-            var near = (min - origin) / direction;
-            var far = (max - origin) / direction;
+            float near = (min - origin) / direction;
+            float far = (max - origin) / direction;
             if (near > far)
             {
                 (near, far) = (far, near);
@@ -61,30 +61,30 @@ public readonly record struct Ray3
 
     public float? IntersectPlane(Vector3 pointOnPlane, Vector3 normal)
     {
-        var facing = Vector3.Dot(Direction, normal);
+        float facing = Vector3.Dot(Direction, normal);
         if (MathF.Abs(facing) < 1e-9f)
         {
             return null;
         }
 
-        var distance = Vector3.Dot(pointOnPlane - Origin, normal) / facing;
+        float distance = Vector3.Dot(pointOnPlane - Origin, normal) / facing;
         return distance >= 0f ? distance : null;
     }
 
     public float? IntersectSphere(Vector3 center, float radius)
     {
-        var toCenter = Origin - center;
-        var b = Vector3.Dot(toCenter, Direction);
-        var c = toCenter.LengthSquared() - radius * radius;
-        var discriminant = b * b - c;
+        Vector3 toCenter = Origin - center;
+        float b = Vector3.Dot(toCenter, Direction);
+        float c = toCenter.LengthSquared() - radius * radius;
+        float discriminant = b * b - c;
         if (discriminant < 0f)
         {
             return null;
         }
 
-        var root = MathF.Sqrt(discriminant);
-        var near = -b - root;
-        var far = -b + root;
+        float root = MathF.Sqrt(discriminant);
+        float near = -b - root;
+        float far = -b + root;
         if (far < 0f)
         {
             return null;

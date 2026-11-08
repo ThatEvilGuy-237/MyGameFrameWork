@@ -9,8 +9,8 @@ namespace Evil.Engine.Hosting;
 
 public abstract partial class GameMain : Node, IOverlayPainter
 {
-    private readonly Keyboard _keyboard = new();
-    private readonly Mouse _mouse = new();
+    private readonly Keyboard _keyboard = new Keyboard();
+    private readonly Mouse _mouse = new Mouse();
     private GameOptions? _options;
     private OverlayNode? _overlay;
     private Canvas? _canvas;
@@ -27,15 +27,20 @@ public abstract partial class GameMain : Node, IOverlayPainter
         _options = CreateGame().Options;
         WindowSetup.Apply(_options.Window, GetTree().Root);
         RenderingServer.SetDefaultClearColor(_options.ClearColor.ToGodot());
-        var worlds = new WorldObject("Worlds");
+        WorldObject worlds = new WorldObject("Worlds");
         AddChild(worlds.Node);
-        var layer = new CanvasLayer { Name = "Overlay", Layer = 1 };
+        CanvasLayer layer = new CanvasLayer();
+        layer.Name = "Overlay";
+        layer.Layer = 1;
         AddChild(layer);
-        _overlay = new OverlayNode { Name = "Canvas", Painter = this };
+        _overlay = new OverlayNode();
+        _overlay.Name = "Canvas";
+        _overlay.Painter = this;
         layer.AddChild(_overlay);
         _canvas = new Canvas(_overlay.Target);
         _mouse.Place(GetViewport().GetMousePosition().ToEvil());
-        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot)) { ScreenSize = ScreenSize() };
+        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot));
+        _game.ScreenSize = ScreenSize();
         RenderingServer.FramePostDraw += OnFrameDrawn;
         _game.Scenes.Push(_options.StartScene);
         _game.Scenes.ApplyChanges();
@@ -122,7 +127,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
             return;
         }
 
-        while (_game.TryTakeCapture(out var path))
+        while (_game.TryTakeCapture(out string? path))
         {
             FrameCapture.Save(GetViewport(), path);
         }

@@ -11,7 +11,7 @@ namespace Evil.Engine.Hosting;
 
 public sealed class GameContext
 {
-    private readonly Queue<string> _captures = new();
+    private readonly Queue<string> _captures = new Queue<string>();
 
     internal GameContext(WorldObject worlds)
         : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")), new ContentLibrary("res://"))

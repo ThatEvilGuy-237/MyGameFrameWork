@@ -92,9 +92,9 @@ public sealed class OrbitCamera
 
     public void Pan(Vector2 amount)
     {
-        var heading = Rotations.AroundAxis(Vector3.UnitY, _yawGoal);
-        var right = Rotations.Rotate(Vector3.UnitX, heading);
-        var ahead = Rotations.Rotate(Rotations.Forward, heading);
+        Quaternion heading = Rotations.AroundAxis(Vector3.UnitY, _yawGoal);
+        Vector3 right = Rotations.Rotate(Vector3.UnitX, heading);
+        Vector3 ahead = Rotations.Rotate(Rotations.Forward, heading);
         Target += right * amount.X + ahead * amount.Y;
     }
 

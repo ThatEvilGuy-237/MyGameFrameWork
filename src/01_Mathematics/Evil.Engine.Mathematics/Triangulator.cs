@@ -13,8 +13,8 @@ public static class Triangulator
             return [];
         }
 
-        var remaining = new List<int>(points.Length);
-        for (var i = 0; i < points.Length; i++)
+        List<int> remaining = new List<int>(points.Length);
+        for (int i = 0; i < points.Length; i++)
         {
             remaining.Add(i);
         }
@@ -24,7 +24,7 @@ public static class Triangulator
             remaining.Reverse();
         }
 
-        var triangles = new List<int>((points.Length - 2) * 3);
+        List<int> triangles = new List<int>((points.Length - 2) * 3);
         while (remaining.Count > 3)
         {
             if (TryClipEar(points, remaining, triangles) || TryDropCollinear(points, remaining))
@@ -47,9 +47,9 @@ public static class Triangulator
             return 0f;
         }
 
-        var anchor = points[0];
-        var sum = 0f;
-        for (var i = 1; i < points.Length - 1; i++)
+        Vector2 anchor = points[0];
+        float sum = 0f;
+        for (int i = 1; i < points.Length - 1; i++)
         {
             sum += Cross(points[i] - anchor, points[i + 1] - anchor);
         }
@@ -59,12 +59,12 @@ public static class Triangulator
 
     private static bool TryClipEar(ReadOnlySpan<Vector2> points, List<int> remaining, List<int> triangles)
     {
-        var count = remaining.Count;
-        for (var i = 0; i < count; i++)
+        int count = remaining.Count;
+        for (int i = 0; i < count; i++)
         {
-            var previous = remaining[(i + count - 1) % count];
-            var current = remaining[i];
-            var next = remaining[(i + 1) % count];
+            int previous = remaining[(i + count - 1) % count];
+            int current = remaining[i];
+            int next = remaining[(i + 1) % count];
             if (!IsEar(points, remaining, previous, current, next))
             {
                 continue;
@@ -82,22 +82,22 @@ public static class Triangulator
 
     private static bool IsEar(ReadOnlySpan<Vector2> points, List<int> remaining, int previous, int current, int next)
     {
-        var a = points[previous];
-        var b = points[current];
-        var c = points[next];
+        Vector2 a = points[previous];
+        Vector2 b = points[current];
+        Vector2 c = points[next];
         if (Cross(b - a, c - b) <= Epsilon)
         {
             return false;
         }
 
-        foreach (var index in remaining)
+        foreach (int index in remaining)
         {
             if (index == previous || index == current || index == next)
             {
                 continue;
             }
 
-            var point = points[index];
+            Vector2 point = points[index];
             if (point == a || point == b || point == c)
             {
                 continue;
@@ -114,12 +114,12 @@ public static class Triangulator
 
     private static bool TryDropCollinear(ReadOnlySpan<Vector2> points, List<int> remaining)
     {
-        var count = remaining.Count;
-        for (var i = 0; i < count; i++)
+        int count = remaining.Count;
+        for (int i = 0; i < count; i++)
         {
-            var a = points[remaining[(i + count - 1) % count]];
-            var b = points[remaining[i]];
-            var c = points[remaining[(i + 1) % count]];
+            Vector2 a = points[remaining[(i + count - 1) % count]];
+            Vector2 b = points[remaining[i]];
+            Vector2 c = points[remaining[(i + 1) % count]];
             if (MathF.Abs(Cross(b - a, c - b)) > Epsilon)
             {
                 continue;
@@ -134,7 +134,7 @@ public static class Triangulator
 
     private static void AddFan(List<int> remaining, List<int> triangles)
     {
-        for (var i = 1; i < remaining.Count - 1; i++)
+        for (int i = 1; i < remaining.Count - 1; i++)
         {
             triangles.Add(remaining[0]);
             triangles.Add(remaining[i]);

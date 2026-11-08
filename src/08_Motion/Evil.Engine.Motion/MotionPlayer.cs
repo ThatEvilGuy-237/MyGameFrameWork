@@ -7,7 +7,7 @@ namespace Evil.Engine.Motion;
 
 public sealed class MotionPlayer
 {
-    private readonly Dictionary<object, Queue<Tween>> _queues = new(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<object, Queue<Tween>> _queues = new Dictionary<object, Queue<Tween>>(ReferenceEqualityComparer.Instance);
     private readonly List<Tween> _free = [];
     private float _speed = 1f;
 
@@ -25,7 +25,7 @@ public sealed class MotionPlayer
         _queues.Values.Any(queue => queue.Any(tween => !tween.IsDone)) || _free.Any(tween => !tween.IsDone);
 
     public bool IsBusy(WorldObject target) =>
-        _queues.TryGetValue(target, out var queue) && queue.Any(tween => !tween.IsDone);
+        _queues.TryGetValue(target, out Queue<Tween>? queue) && queue.Any(tween => !tween.IsDone);
 
     public Tween MoveTo(WorldObject target, Vector3 position, float seconds, Easing easing = Easing.InOutCubic) =>
         Enqueue(target, new MoveTween(Live(target), position, 0f, seconds, easing));
@@ -42,7 +42,7 @@ public sealed class MotionPlayer
         }
 
         Tween? last = null;
-        foreach (var point in path)
+        foreach (Vector3 point in path)
         {
             if (face)
             {
@@ -77,7 +77,7 @@ public sealed class MotionPlayer
 
     public ValueTween Value(float from, float to, float seconds, Easing easing = Easing.InOutCubic)
     {
-        var tween = new ValueTween(from, to, seconds, easing);
+        ValueTween tween = new ValueTween(from, to, seconds, easing);
         _free.Add(tween);
         return tween;
     }
@@ -85,9 +85,9 @@ public sealed class MotionPlayer
     public void Stop(WorldObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        if (_queues.Remove(target, out var queue))
+        if (_queues.Remove(target, out Queue<Tween>? queue))
         {
-            foreach (var tween in queue)
+            foreach (Tween tween in queue)
             {
                 tween.Cancel();
             }
@@ -97,9 +97,9 @@ public sealed class MotionPlayer
     public void Complete(WorldObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        if (_queues.Remove(target, out var queue))
+        if (_queues.Remove(target, out Queue<Tween>? queue))
         {
-            foreach (var tween in queue)
+            foreach (Tween tween in queue)
             {
                 if (!tween.TargetIsGone)
                 {
@@ -111,7 +111,7 @@ public sealed class MotionPlayer
 
     public void StopAll()
     {
-        foreach (var tween in _queues.Values.SelectMany(queue => queue).Concat(_free))
+        foreach (Tween? tween in _queues.Values.SelectMany(queue => queue).Concat(_free))
         {
             tween.Cancel();
         }
@@ -122,12 +122,12 @@ public sealed class MotionPlayer
 
     internal void Update(float seconds)
     {
-        var step = seconds * _speed;
-        foreach (var key in _queues.Keys.ToList())
+        float step = seconds * _speed;
+        foreach (object? key in _queues.Keys.ToList())
         {
-            var queue = _queues[key];
-            var left = step;
-            while (queue.TryPeek(out var tween))
+            Queue<Tween> queue = _queues[key];
+            float left = step;
+            while (queue.TryPeek(out Tween? tween))
             {
                 if (tween.IsDone || tween.TargetIsGone)
                 {
@@ -156,9 +156,9 @@ public sealed class MotionPlayer
             }
         }
 
-        for (var i = _free.Count - 1; i >= 0; i--)
+        for (int i = _free.Count - 1; i >= 0; i--)
         {
-            var tween = _free[i];
+            Tween tween = _free[i];
             if (!tween.IsDone && step > 0f)
             {
                 tween.Advance(step);
@@ -181,7 +181,7 @@ public sealed class MotionPlayer
     private T Enqueue<T>(object key, T tween)
         where T : Tween
     {
-        if (!_queues.TryGetValue(key, out var queue))
+        if (!_queues.TryGetValue(key, out Queue<Tween>? queue))
         {
             queue = new Queue<Tween>();
             _queues[key] = queue;

@@ -53,14 +53,14 @@ public class Camera : WorldObject
     public Ray3 ScreenToRay(Vector2 screenPoint)
     {
         RequireInWorld(nameof(ScreenToRay));
-        var point = screenPoint.ToGodot();
+        Godot.Vector2 point = screenPoint.ToGodot();
         return new Ray3(Lens.ProjectRayOrigin(point).ToEvil(), Lens.ProjectRayNormal(point).ToEvil());
     }
 
     public Vector3? PointOnGround(Vector2 screenPoint, float groundHeight = 0f)
     {
-        var ray = ScreenToRay(screenPoint);
-        var distance = ray.IntersectPlane(new Vector3(0f, groundHeight, 0f), Vector3.UnitY);
+        Ray3 ray = ScreenToRay(screenPoint);
+        float? distance = ray.IntersectPlane(new Vector3(0f, groundHeight, 0f), Vector3.UnitY);
         return distance is { } along ? ray.PointAt(along) : null;
     }
 
@@ -73,7 +73,7 @@ public class Camera : WorldObject
     public bool CanSee(Vector3 worldPoint)
     {
         RequireInWorld(nameof(CanSee));
-        var point = worldPoint.ToGodot();
+        Godot.Vector3 point = worldPoint.ToGodot();
         return !Lens.IsPositionBehind(point) && Lens.IsPositionInFrustum(point);
     }
 

@@ -7,7 +7,7 @@ namespace Evil.Engine.Screen;
 public sealed class Canvas
 {
     private readonly ICanvasTarget _target;
-    private readonly TransformStack _transforms = new();
+    private readonly TransformStack _transforms = new TransformStack();
     private Matrix3x2 _sent = Matrix3x2.Identity;
     private bool _drawing;
 
@@ -15,7 +15,7 @@ public sealed class Canvas
 
     public Vector2 Size { get; private set; }
 
-    public RectF Bounds => new(0f, 0f, Size.X, Size.Y);
+    public RectF Bounds => new RectF(0f, 0f, Size.X, Size.Y);
 
     public int Depth => _transforms.Depth;
 
@@ -84,24 +84,24 @@ public sealed class Canvas
 
     public void DrawText(string text, Vector2 topLeft, float size, Color color)
     {
-        var target = Ready();
-        var pixels = Pixels(size);
+        ICanvasTarget target = Ready();
+        int pixels = Pixels(size);
         target.Text(text, topLeft + new Vector2(0f, target.Ascent(pixels, Font)), pixels, color, TextAlign.Left, -1f, Font);
     }
 
     public void DrawText(string text, RectF box, float size, Color color, TextAlign align)
     {
-        var target = Ready();
-        var pixels = Pixels(size);
-        var height = target.Measure(text, pixels, Font).Y;
-        var top = box.Y + (box.Height - height) / 2f;
+        ICanvasTarget target = Ready();
+        int pixels = Pixels(size);
+        float height = target.Measure(text, pixels, Font).Y;
+        float top = box.Y + (box.Height - height) / 2f;
         target.Text(text, new Vector2(box.X, top + target.Ascent(pixels, Font)), pixels, color, align, box.Width, Font);
     }
 
     public void DrawParagraph(string text, RectF box, float size, Color color)
     {
-        var target = Ready();
-        var pixels = Pixels(size);
+        ICanvasTarget target = Ready();
+        int pixels = Pixels(size);
         target.Paragraph(text, new Vector2(box.X, box.Y + target.Ascent(pixels, Font)), pixels, color, box.Width, Font);
     }
 
@@ -129,7 +129,7 @@ public sealed class Canvas
     internal void End()
     {
         _drawing = false;
-        var depth = _transforms.Depth;
+        int depth = _transforms.Depth;
         _transforms.Reset();
         if (depth != 0)
         {
@@ -146,7 +146,7 @@ public sealed class Canvas
             throw new InvalidOperationException("The canvas only draws inside a scene's Draw(Canvas).");
         }
 
-        var current = _transforms.Current;
+        Matrix3x2 current = _transforms.Current;
         if (current != _sent)
         {
             _target.SetTransform(current);

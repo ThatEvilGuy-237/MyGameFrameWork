@@ -7,8 +7,8 @@ internal static class MotionTests
     [Test]
     public static void MoveToArrivesOnTime()
     {
-        var (motion, pawn) = Setup();
-        var move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        Tween move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
         motion.Update(0.5f);
         Check.Near(new Vector3(2f, 0f, 0f), pawn.Position, "halfway after half the time");
         Check.True(!move.IsDone && motion.IsBusy(pawn), "still moving");
@@ -22,7 +22,7 @@ internal static class MotionTests
     [Test]
     public static void EasingShapesTheWay()
     {
-        var (motion, pawn) = Setup();
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
         motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.InOutCubic);
         motion.Update(0.25f);
         Check.Near(4f * Ease.Apply(Easing.InOutCubic, 0.25f), pawn.Position.X, "slow start");
@@ -32,9 +32,9 @@ internal static class MotionTests
     [Test]
     public static void MovesOnOneObjectWaitTheirTurnAndKeepLeftoverTime()
     {
-        var (motion, pawn) = Setup();
-        var first = motion.MoveTo(pawn, new Vector3(2f, 0f, 0f), 1f, Easing.Linear);
-        var second = motion.MoveTo(pawn, new Vector3(2f, 0f, 2f), 1f, Easing.Linear);
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        Tween first = motion.MoveTo(pawn, new Vector3(2f, 0f, 0f), 1f, Easing.Linear);
+        Tween second = motion.MoveTo(pawn, new Vector3(2f, 0f, 2f), 1f, Easing.Linear);
         motion.Update(0.5f);
         Check.True(!second.IsStarted, "the second waits");
         motion.Update(1f);
@@ -48,8 +48,8 @@ internal static class MotionTests
     [Test]
     public static void DifferentObjectsMoveTogether()
     {
-        var (motion, red) = Setup();
-        var blue = new WorldObject("blue");
+        (MotionPlayer? motion, WorldObject? red) = Setup();
+        WorldObject blue = new WorldObject("blue");
         motion.MoveTo(red, new Vector3(2f, 0f, 0f), 1f, Easing.Linear);
         motion.MoveTo(blue, new Vector3(0f, 0f, 2f), 1f, Easing.Linear);
         motion.Update(1f);
@@ -62,7 +62,7 @@ internal static class MotionTests
     [Test]
     public static void HopsArcAndLand()
     {
-        var (motion, pawn) = Setup();
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
         motion.Hop(pawn, new Vector3(4f, 0f, 0f), 2f, 1f);
         motion.Update(0.5f);
         Check.Near(new Vector3(2f, 2f, 0f), pawn.Position, "top of the arc");
@@ -74,7 +74,7 @@ internal static class MotionTests
     [Test]
     public static void TurnsFacesAndSpins()
     {
-        var (motion, pawn) = Setup();
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
         motion.Face(pawn, new Vector3(5f, 0f, 0f), 0.2f);
         motion.Update(1f);
         Check.Near(new Vector3(1f, 0f, 0f), pawn.Forward, "faces the point");
@@ -95,8 +95,8 @@ internal static class MotionTests
     [Test]
     public static void MoveAlongWalksThePathFacingEachStep()
     {
-        var (motion, pawn) = Setup();
-        var last = motion.MoveAlong(pawn, [new Vector3(0f, 0f, -2f), new Vector3(2f, 0f, -2f)], 1f);
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        Tween last = motion.MoveAlong(pawn, [new Vector3(0f, 0f, -2f), new Vector3(2f, 0f, -2f)], 1f);
         motion.Update(1.25f);
         Check.Near(new Vector3(0f, 0f, -2f), pawn.Position, "first tile");
         Check.Near(new Vector3(0f, 0f, -1f), pawn.Forward, "facing the way it walked");
@@ -112,16 +112,16 @@ internal static class MotionTests
     [Test]
     public static void StopLeavesItWhereItIsAndCompleteSkipsAhead()
     {
-        var (motion, pawn) = Setup();
-        var move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        Tween move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
         motion.Update(0.5f);
         motion.Stop(pawn);
         motion.Update(0.5f);
         Check.Near(new Vector3(2f, 0f, 0f), pawn.Position, "stopped where it was");
         Check.True(move.WasCancelled && !move.Finished.Result, "the wait ends as cancelled");
 
-        var a = motion.MoveTo(pawn, new Vector3(2f, 0f, 3f), 1f);
-        var b = motion.MoveTo(pawn, new Vector3(5f, 0f, 3f), 1f);
+        Tween a = motion.MoveTo(pawn, new Vector3(2f, 0f, 3f), 1f);
+        Tween b = motion.MoveTo(pawn, new Vector3(5f, 0f, 3f), 1f);
         motion.Complete(pawn);
         Check.Near(new Vector3(5f, 0f, 3f), pawn.Position, "skipped to the end of everything queued");
         Check.True(a.Finished.Result && b.Finished.Result && !motion.IsBusy(pawn), "both finished");
@@ -131,8 +131,8 @@ internal static class MotionTests
     [Test]
     public static void DestroyedObjectsDropTheirMotions()
     {
-        var (motion, pawn) = Setup();
-        var move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f);
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        Tween move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f);
         pawn.Destroy();
         motion.Update(0.5f);
         Check.True(move.WasCancelled && !motion.IsBusy(), "dropped without a crash");
@@ -142,7 +142,7 @@ internal static class MotionTests
     [Test]
     public static void SpeedSlowsAndPauses()
     {
-        var (motion, pawn) = Setup();
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
         motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
         motion.Speed = 0f;
         motion.Update(1f);
@@ -156,14 +156,14 @@ internal static class MotionTests
     [Test]
     public static void ValuesColoursAndInstantMoves()
     {
-        var (motion, pawn) = Setup();
-        var fade = motion.Value(0f, 10f, 1f, Easing.Linear);
-        var glass = new Material(Color.Red);
+        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        ValueTween fade = motion.Value(0f, 10f, 1f, Easing.Linear);
+        Material glass = new Material(Color.Red);
         motion.ColorTo(glass, Color.Blue, 1f, Easing.Linear);
         motion.Update(0.5f);
         Check.Near(5f, fade.Current, "value halfway");
         Check.Equal(Color.Lerp(Color.Red, Color.Blue, 0.5f), glass.Color, "colour halfway");
-        var jump = motion.MoveTo(pawn, new Vector3(9f, 0f, 0f), 0f);
+        Tween jump = motion.MoveTo(pawn, new Vector3(9f, 0f, 0f), 0f);
         motion.Update(0f);
         Check.True(jump.IsDone, "zero seconds is instant");
         Check.Near(new Vector3(9f, 0f, 0f), pawn.Position, "and lands");

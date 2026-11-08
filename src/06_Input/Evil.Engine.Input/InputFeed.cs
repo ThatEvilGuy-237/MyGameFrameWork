@@ -24,8 +24,8 @@ internal static class InputFeed
 
     private static void FeedKey(InputEventKey key, Keyboard keyboard)
     {
-        var code = key.PhysicalKeycode != Godot.Key.None ? key.PhysicalKeycode : key.Keycode;
-        if (!GodotKeys.TryMap(code, out var mapped))
+        Godot.Key code = key.PhysicalKeycode != Godot.Key.None ? key.PhysicalKeycode : key.Keycode;
+        if (!GodotKeys.TryMap(code, out Key mapped))
         {
             return;
         }
@@ -43,7 +43,7 @@ internal static class InputFeed
     private static void FeedButton(InputEventMouseButton button, Mouse mouse)
     {
         mouse.Move(button.Position.ToEvil());
-        var steps = button.Factor > 0f ? button.Factor : 1f;
+        float steps = button.Factor > 0f ? button.Factor : 1f;
         switch (button.ButtonIndex)
         {
             case GodotButton.WheelUp when button.Pressed:

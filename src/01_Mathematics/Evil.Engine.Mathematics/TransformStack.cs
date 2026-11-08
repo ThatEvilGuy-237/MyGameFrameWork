@@ -4,7 +4,7 @@ namespace Evil.Engine.Mathematics;
 
 public sealed class TransformStack
 {
-    private readonly Stack<Matrix3x2> _saved = new();
+    private readonly Stack<Matrix3x2> _saved = new Stack<Matrix3x2>();
 
     public Matrix3x2 Current { get; private set; } = Matrix3x2.Identity;
 
@@ -47,7 +47,7 @@ public sealed class TransformStack
     public Vector2 ToWorld(Vector2 local) => Vector2.Transform(local, Current);
 
     public Vector2 ToLocal(Vector2 world) =>
-        Matrix3x2.Invert(Current, out var inverse) ? Vector2.Transform(world, inverse) : world;
+        Matrix3x2.Invert(Current, out Matrix3x2 inverse) ? Vector2.Transform(world, inverse) : world;
 
     public void Reset()
     {

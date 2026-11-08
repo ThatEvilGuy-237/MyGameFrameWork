@@ -22,7 +22,7 @@ public sealed class Cylinder : ShapeObject
         get => ((CylinderMesh)Mesh).BottomRadius;
         set
         {
-            var mesh = (CylinderMesh)Mesh;
+            CylinderMesh mesh = (CylinderMesh)Mesh;
             mesh.TopRadius = value;
             mesh.BottomRadius = value;
         }

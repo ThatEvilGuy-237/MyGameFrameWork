@@ -34,6 +34,9 @@ public sealed class Capsule : ShapeObject
             throw new ArgumentOutOfRangeException(nameof(height), $"A capsule's height ({height}) includes both round ends, so it needs at least twice the radius ({radius * 2f}).");
         }
 
-        return new CapsuleMesh { Radius = radius, Height = height };
+        CapsuleMesh mesh = new CapsuleMesh();
+        mesh.Radius = radius;
+        mesh.Height = height;
+        return mesh;
     }
 }
