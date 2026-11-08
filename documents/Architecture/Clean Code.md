@@ -30,7 +30,7 @@ lambdas, and stay.
 calls, tuples used as data, `switch` on strings or numbers, `Func`/`Action`, extra types in a file, and duplicated
 code (5 identical lines, or 8 lines with the same shape and other names; enum lists are skipped).
 
-It is a **ratchet**: `scripts/clean-code-baseline.json` holds what each file had when R16 started. A file may never
+It is a **ratchet**: `scripts/clean-code-baseline.json` holds what each file had when R16 started, keyed by project and file name so a file can move to another folder of its library. A file may never
 get worse; `--write-baseline` after a round locks in the progress; `--show` lists every finding. Before it scans, it
 tests itself on 25 planted cases (a switch arm is not a lambda, a record's parameters are not a tuple, `MathF.Max`
 is not LINQ, renamed copies are still copies, enum lists are not copies), so a broken check cannot pass broken code.
@@ -39,3 +39,4 @@ is not LINQ, renamed copies are still copies, enum lists are not copies), so a b
 |---|---|---|
 | R16 start (baseline) | 291 | 125 (86 of them the typed-out Godot key table) |
 | R16 end | 285 | 125 |
+| R17 end | 272 | 112 |

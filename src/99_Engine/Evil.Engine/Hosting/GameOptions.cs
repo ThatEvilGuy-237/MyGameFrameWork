@@ -10,5 +10,3 @@ internal sealed record GameOptions(
     string ContentRoot,
     Scene StartScene,
     FrameSnapshot? Snapshot);
-
-internal sealed record FrameSnapshot(string Path, long Frame);

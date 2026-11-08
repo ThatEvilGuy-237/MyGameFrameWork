@@ -1,5 +1,6 @@
 import collections
 import json
+import os
 import re
 import subprocess
 import sys
@@ -31,6 +32,19 @@ KEYWORDS = set(
     "public private protected internal static sealed readonly override virtual abstract class record struct enum interface "
     "new return if else for foreach while switch case default break continue true false null this base void float int bool "
     "string double in is not and or out ref using get set init throw typeof nameof".split())
+
+
+def project_of(path):
+    folder = os.path.dirname(path)
+    while folder:
+        if any(name.endswith(".csproj") for name in os.listdir(folder)):
+            return folder
+        folder = os.path.dirname(folder)
+    return "."
+
+
+def key_of(path):
+    return f"{project_of(path)}::{os.path.basename(path)}"
 
 
 def tracked_sources():
@@ -127,11 +141,11 @@ def measure():
     sources = {path: open(path, encoding="utf-8").read() for path in tracked_sources()}
     report = {}
     for path, text in sources.items():
-        report[path] = dict(code_rules(text))
+        report[key_of(path)] = dict(code_rules(text))
     hits, places = duplicates(sources)
     for path, count in hits.items():
-        report[path]["duplicate"] = count
-    return {path: {rule: count for rule, count in rules.items() if count} for path, rules in report.items()}, places
+        report[key_of(path)]["duplicate"] = count
+    return {key: {rule: count for rule, count in rules.items() if count} for key, rules in report.items()}, places
 
 
 def totals(report):
@@ -191,6 +205,10 @@ def self_test():
         if hits[path] != expected:
             failed += 1
             print(f"self-test: duplicate in {path} counted {hits[path]}, expected {expected}")
+    moved = "src/03_World/Evil.Engine.World/Models/Model.cs"
+    if key_of(moved) != "src/03_World/Evil.Engine.World::Model.cs":
+        failed += 1
+        print(f"self-test: a file moved inside its project must keep its key, got {key_of(moved)}")
     return failed
 
 

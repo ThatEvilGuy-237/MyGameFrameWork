@@ -1,267 +1,273 @@
 {
- "samples/OrbitDemo/ActionBar.cs": {
+ ".::Check.cs": {
+  "delegate": 1,
+  "types per file": 1
+ },
+ ".::Gen.cs": {},
+ ".::Property.cs": {
+  "delegate": 2,
+  "linq": 1
+ },
+ ".::TestRunner.cs": {
+  "lambda": 5,
+  "linq": 5,
+  "tuple": 2,
+  "types per file": 1
+ },
+ "samples/OrbitDemo::ActionBar.cs": {
   "lambda": 2,
   "linq": 1
  },
- "samples/OrbitDemo/CameraControls.cs": {},
- "samples/OrbitDemo/DemoSounds.cs": {},
- "samples/OrbitDemo/GlobalUsings.cs": {},
- "samples/OrbitDemo/Hud.cs": {},
- "samples/OrbitDemo/Main.cs": {},
- "samples/OrbitDemo/OrbitScene.cs": {
+ "samples/OrbitDemo::CameraControls.cs": {},
+ "samples/OrbitDemo::DemoSounds.cs": {},
+ "samples/OrbitDemo::GlobalUsings.cs": {},
+ "samples/OrbitDemo::Hud.cs": {},
+ "samples/OrbitDemo::Main.cs": {},
+ "samples/OrbitDemo::OrbitScene.cs": {
   "linq": 1
  },
- "samples/OrbitDemo/PawnActions.cs": {
+ "samples/OrbitDemo::PawnActions.cs": {
   "value switch": 2
  },
- "samples/OrbitDemo/Pawns.cs": {
+ "samples/OrbitDemo::Pawns.cs": {
   "lambda": 1,
   "linq": 1
  },
- "samples/OrbitDemo/SampleOptions.cs": {
+ "samples/OrbitDemo::SampleOptions.cs": {
   "value switch": 4
  },
- "samples/OrbitDemo/Scenery.cs": {},
- "samples/OrbitDemo/SpinningShapes.cs": {},
- "src/00_Core/Evil.Engine.Core/Color.cs": {},
- "src/00_Core/Evil.Engine.Core/Ease.cs": {},
- "src/00_Core/Evil.Engine.Core/Easing.cs": {},
- "src/00_Core/Evil.Engine.Core/GameTime.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Angle.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Bounds3.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Finite.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Orbit.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Polygon.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Pose.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Ray3.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/RectF.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/RectI.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Rotations.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Smoothing.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Transform2D.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/TransformScope.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/TransformStack.cs": {},
- "src/01_Mathematics/Evil.Engine.Mathematics/Triangulator.cs": {},
- "src/02_Platform/Evil.Engine.Platform/Facing.cs": {},
- "src/02_Platform/Evil.Engine.Platform/GodotConvert.cs": {},
- "src/03_World/Evil.Engine.World/Box.cs": {},
- "src/03_World/Evil.Engine.World/Capsule.cs": {
+ "samples/OrbitDemo::Scenery.cs": {},
+ "samples/OrbitDemo::SpinningShapes.cs": {},
+ "src/00_Core/Evil.Engine.Core::Color.cs": {},
+ "src/00_Core/Evil.Engine.Core::Ease.cs": {},
+ "src/00_Core/Evil.Engine.Core::Easing.cs": {},
+ "src/00_Core/Evil.Engine.Core::GameTime.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Angle.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Bounds3.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Finite.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Orbit.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Polygon.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Pose.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Ray3.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::RectF.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::RectI.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Rotations.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Smoothing.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Transform2D.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::TransformScope.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::TransformStack.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Triangulator.cs": {},
+ "src/02_Platform/Evil.Engine.Platform::Facing.cs": {},
+ "src/02_Platform/Evil.Engine.Platform::GodotConvert.cs": {},
+ "src/03_World/Evil.Engine.World::Box.cs": {},
+ "src/03_World/Evil.Engine.World::Capsule.cs": {
   "duplicate": 1
  },
- "src/03_World/Evil.Engine.World/Cone.cs": {},
- "src/03_World/Evil.Engine.World/Cylinder.cs": {},
- "src/03_World/Evil.Engine.World/Floor.cs": {},
- "src/03_World/Evil.Engine.World/Material.cs": {},
- "src/03_World/Evil.Engine.World/MeshObject.cs": {},
- "src/03_World/Evil.Engine.World/Model.cs": {
+ "src/03_World/Evil.Engine.World::Cone.cs": {},
+ "src/03_World/Evil.Engine.World::Cylinder.cs": {},
+ "src/03_World/Evil.Engine.World::Floor.cs": {},
+ "src/03_World/Evil.Engine.World::Material.cs": {},
+ "src/03_World/Evil.Engine.World::MeshObject.cs": {},
+ "src/03_World/Evil.Engine.World::Model.cs": {
   "lambda": 1,
   "linq": 1
  },
- "src/03_World/Evil.Engine.World/ModelPart.cs": {},
- "src/03_World/Evil.Engine.World/ShapeObject.cs": {},
- "src/03_World/Evil.Engine.World/Sphere.cs": {},
- "src/03_World/Evil.Engine.World/Texture.cs": {},
- "src/03_World/Evil.Engine.World/Torus.cs": {
+ "src/03_World/Evil.Engine.World::ModelPart.cs": {},
+ "src/03_World/Evil.Engine.World::ShapeObject.cs": {},
+ "src/03_World/Evil.Engine.World::Sphere.cs": {},
+ "src/03_World/Evil.Engine.World::Texture.cs": {},
+ "src/03_World/Evil.Engine.World::Torus.cs": {
   "duplicate": 1
  },
- "src/03_World/Evil.Engine.World/WorldObject.cs": {},
- "src/04_Cameras/Evil.Engine.Cameras/Camera.cs": {
+ "src/03_World/Evil.Engine.World::WorldObject.cs": {},
+ "src/04_Cameras/Evil.Engine.Cameras::Camera.cs": {
   "duplicate": 2
  },
- "src/04_Cameras/Evil.Engine.Cameras/CameraProjection.cs": {},
- "src/04_Cameras/Evil.Engine.Cameras/OrbitCamera.cs": {},
- "src/04_Cameras/Evil.Engine.Cameras/OrbitLimits.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/Atmosphere.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/Background.cs": {
-  "types per file": 3
- },
- "src/05_Lighting/Evil.Engine.Lighting/Fog.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/Lamp.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/Light.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/Spotlight.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/Sun.cs": {},
- "src/05_Lighting/Evil.Engine.Lighting/ToneMapping.cs": {},
- "src/06_Input/Evil.Engine.Input/GodotKeys.cs": {
+ "src/04_Cameras/Evil.Engine.Cameras::CameraProjection.cs": {},
+ "src/04_Cameras/Evil.Engine.Cameras::OrbitCamera.cs": {},
+ "src/04_Cameras/Evil.Engine.Cameras::OrbitLimits.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Atmosphere.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Background.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::ClearColorBackground.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Fog.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::GradientBackground.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Lamp.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Light.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::SolidBackground.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Spotlight.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::Sun.cs": {},
+ "src/05_Lighting/Evil.Engine.Lighting::ToneMapping.cs": {},
+ "src/06_Input/Evil.Engine.Input::GodotKeys.cs": {
   "duplicate": 86,
   "tuple": 1
  },
- "src/06_Input/Evil.Engine.Input/Hit.cs": {},
- "src/06_Input/Evil.Engine.Input/InputFeed.cs": {},
- "src/06_Input/Evil.Engine.Input/Key.cs": {},
- "src/06_Input/Evil.Engine.Input/Keyboard.cs": {
+ "src/06_Input/Evil.Engine.Input::Hit.cs": {},
+ "src/06_Input/Evil.Engine.Input::InputFeed.cs": {},
+ "src/06_Input/Evil.Engine.Input::Key.cs": {},
+ "src/06_Input/Evil.Engine.Input::Keyboard.cs": {
   "duplicate": 1
  },
- "src/06_Input/Evil.Engine.Input/Mouse.cs": {
+ "src/06_Input/Evil.Engine.Input::Mouse.cs": {
   "duplicate": 1
  },
- "src/06_Input/Evil.Engine.Input/MouseButton.cs": {},
- "src/06_Input/Evil.Engine.Input/Picker.cs": {},
- "src/07_Screen/Evil.Engine.Screen/Canvas.cs": {},
- "src/07_Screen/Evil.Engine.Screen/Display.cs": {},
- "src/07_Screen/Evil.Engine.Screen/Font.cs": {},
- "src/07_Screen/Evil.Engine.Screen/FrameCapture.cs": {},
- "src/07_Screen/Evil.Engine.Screen/GodotCanvasTarget.cs": {},
- "src/07_Screen/Evil.Engine.Screen/ICanvasTarget.cs": {},
- "src/07_Screen/Evil.Engine.Screen/IOverlayPainter.cs": {},
- "src/07_Screen/Evil.Engine.Screen/OverlayNode.cs": {},
- "src/07_Screen/Evil.Engine.Screen/TextAlign.cs": {},
- "src/07_Screen/Evil.Engine.Screen/WindowSettings.cs": {},
- "src/07_Screen/Evil.Engine.Screen/WindowSetup.cs": {},
- "src/08_Motion/Evil.Engine.Motion/MotionPlayer.cs": {
+ "src/06_Input/Evil.Engine.Input::MouseButton.cs": {},
+ "src/06_Input/Evil.Engine.Input::Picker.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::Canvas.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::Display.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::Font.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::FrameCapture.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::GodotCanvasTarget.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::ICanvasTarget.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::IOverlayPainter.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::OverlayNode.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::TextAlign.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::WindowSettings.cs": {},
+ "src/07_Screen/Evil.Engine.Screen::WindowSetup.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::ColorTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::FaceTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::MotionPlayer.cs": {
   "lambda": 5,
   "linq": 5
  },
- "src/08_Motion/Evil.Engine.Motion/ObjectTweens.cs": {
-  "types per file": 7
- },
- "src/08_Motion/Evil.Engine.Motion/Tween.cs": {},
- "src/08_Motion/Evil.Engine.Motion/ValueTween.cs": {},
- "src/09_Audio/Evil.Engine.Audio/AudioGroup.cs": {},
- "src/09_Audio/Evil.Engine.Audio/AudioMixer.cs": {
+ "src/08_Motion/Evil.Engine.Motion::MoveTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::ObjectTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::ScaleTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::SpinTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::TurnTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::Tween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::ValueTween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::WaitTween.cs": {},
+ "src/09_Audio/Evil.Engine.Audio::AudioGroup.cs": {},
+ "src/09_Audio/Evil.Engine.Audio::AudioMixer.cs": {
   "lambda": 1
  },
- "src/09_Audio/Evil.Engine.Audio/MusicTrack.cs": {},
- "src/09_Audio/Evil.Engine.Audio/Sound.cs": {},
- "src/09_Audio/Evil.Engine.Audio/SoundPlayback.cs": {},
- "src/99_Engine/Evil.Engine/Hosting/ContentLibrary.cs": {
+ "src/09_Audio/Evil.Engine.Audio::MusicTrack.cs": {},
+ "src/09_Audio/Evil.Engine.Audio::Sound.cs": {},
+ "src/09_Audio/Evil.Engine.Audio::SoundPlayback.cs": {},
+ "src/99_Engine/Evil.Engine::ContentLibrary.cs": {
   "duplicate": 2
  },
- "src/99_Engine/Evil.Engine/Hosting/GameBuilder.cs": {},
- "src/99_Engine/Evil.Engine/Hosting/GameContext.cs": {},
- "src/99_Engine/Evil.Engine/Hosting/GameHost.cs": {},
- "src/99_Engine/Evil.Engine/Hosting/GameMain.cs": {},
- "src/99_Engine/Evil.Engine/Hosting/GameOptions.cs": {
-  "types per file": 1
- },
- "src/99_Engine/Evil.Engine/Scenes/Scene.cs": {
+ "src/99_Engine/Evil.Engine::FrameSnapshot.cs": {},
+ "src/99_Engine/Evil.Engine::GameBuilder.cs": {},
+ "src/99_Engine/Evil.Engine::GameContext.cs": {},
+ "src/99_Engine/Evil.Engine::GameHost.cs": {},
+ "src/99_Engine/Evil.Engine::GameMain.cs": {},
+ "src/99_Engine/Evil.Engine::GameOptions.cs": {},
+ "src/99_Engine/Evil.Engine::Scene.cs": {
   "lambda": 3
  },
- "src/99_Engine/Evil.Engine/Scenes/SceneStack.cs": {
-  "lambda": 1,
-  "types per file": 2
+ "src/99_Engine/Evil.Engine::SceneChange.cs": {},
+ "src/99_Engine/Evil.Engine::SceneChangeKind.cs": {},
+ "src/99_Engine/Evil.Engine::SceneStack.cs": {
+  "lambda": 1
  },
- "tests/Evil.Engine.GodotTests/AudioTests.cs": {
+ "tests/Evil.Engine.GodotTests::AudioTests.cs": {
   "lambda": 4
  },
- "tests/Evil.Engine.GodotTests/CameraTests.cs": {
+ "tests/Evil.Engine.GodotTests::CameraTests.cs": {
   "duplicate": 1,
   "lambda": 4
  },
- "tests/Evil.Engine.GodotTests/ContentTests.cs": {
+ "tests/Evil.Engine.GodotTests::ContentTests.cs": {
   "duplicate": 1,
   "lambda": 3,
   "linq": 1,
   "types per file": 1
  },
- "tests/Evil.Engine.GodotTests/GameBuilderTests.cs": {
+ "tests/Evil.Engine.GodotTests::GameBuilderTests.cs": {
   "lambda": 1,
   "types per file": 1
  },
- "tests/Evil.Engine.GodotTests/GlobalUsings.cs": {},
- "tests/Evil.Engine.GodotTests/InputTests.cs": {
+ "tests/Evil.Engine.GodotTests::GlobalUsings.cs": {},
+ "tests/Evil.Engine.GodotTests::InputTests.cs": {
   "duplicate": 2,
   "linq": 2
  },
- "tests/Evil.Engine.GodotTests/LightingTests.cs": {
+ "tests/Evil.Engine.GodotTests::LightingTests.cs": {
   "lambda": 3,
   "types per file": 1
  },
- "tests/Evil.Engine.GodotTests/MathAgainstGodotTests.cs": {
+ "tests/Evil.Engine.GodotTests::MathAgainstGodotTests.cs": {
   "duplicate": 1,
   "lambda": 5,
   "tuple": 5
  },
- "tests/Evil.Engine.GodotTests/MotionTests.cs": {
+ "tests/Evil.Engine.GodotTests::MotionTests.cs": {
   "lambda": 3,
   "tuple": 1
  },
- "tests/Evil.Engine.GodotTests/Runner.cs": {
+ "tests/Evil.Engine.GodotTests::Runner.cs": {
   "linq": 1
  },
- "tests/Evil.Engine.GodotTests/SceneStackTests.cs": {
+ "tests/Evil.Engine.GodotTests::SceneStackTests.cs": {
   "duplicate": 2,
   "lambda": 1,
   "types per file": 1
  },
- "tests/Evil.Engine.GodotTests/ScreenTests.cs": {
+ "tests/Evil.Engine.GodotTests::ScreenTests.cs": {
   "lambda": 4,
   "linq": 2,
   "tuple": 3,
   "types per file": 3
  },
- "tests/Evil.Engine.GodotTests/ShapeAndLightTests.cs": {
+ "tests/Evil.Engine.GodotTests::ShapeAndLightTests.cs": {
   "lambda": 1
  },
- "tests/Evil.Engine.GodotTests/Stage.cs": {},
- "tests/Evil.Engine.GodotTests/WorldDeepTests.cs": {
+ "tests/Evil.Engine.GodotTests::Stage.cs": {},
+ "tests/Evil.Engine.GodotTests::WorldDeepTests.cs": {
   "lambda": 4,
   "linq": 1
  },
- "tests/Evil.Engine.GodotTests/WorldObjectTests.cs": {
+ "tests/Evil.Engine.GodotTests::WorldObjectTests.cs": {
   "lambda": 5
  },
- "tests/Evil.Engine.Tests/CameraMathTests.cs": {},
- "tests/Evil.Engine.Tests/CoreTests.cs": {
+ "tests/Evil.Engine.Tests::AngleAndSmoothingProperties.cs": {
+  "tuple": 3
+ },
+ "tests/Evil.Engine.Tests::CameraMathTests.cs": {},
+ "tests/Evil.Engine.Tests::CoreTests.cs": {
   "lambda": 1
  },
- "tests/Evil.Engine.Tests/EaseTests.cs": {
+ "tests/Evil.Engine.Tests::EaseAndColorProperties.cs": {
+  "tuple": 6
+ },
+ "tests/Evil.Engine.Tests::EaseTests.cs": {
   "lambda": 3,
   "linq": 5
  },
- "tests/Evil.Engine.Tests/GlobalUsings.cs": {},
- "tests/Evil.Engine.Tests/Math3DTests.cs": {
+ "tests/Evil.Engine.Tests::GlobalUsings.cs": {},
+ "tests/Evil.Engine.Tests::Math3DTests.cs": {
   "lambda": 2
  },
- "tests/Evil.Engine.Tests/MathTests.cs": {},
- "tests/Evil.Engine.Tests/PolygonTests.cs": {
-  "lambda": 2,
-  "linq": 1
- },
- "tests/Evil.Engine.Tests/Program.cs": {
-  "linq": 1
- },
- "tests/Evil.Engine.Tests/Properties/AngleAndSmoothingProperties.cs": {
-  "tuple": 3
- },
- "tests/Evil.Engine.Tests/Properties/EaseAndColorProperties.cs": {
-  "tuple": 6
- },
- "tests/Evil.Engine.Tests/Properties/MathValidatorTests.cs": {
+ "tests/Evil.Engine.Tests::MathTests.cs": {},
+ "tests/Evil.Engine.Tests::MathValidatorTests.cs": {
   "delegate": 1,
   "lambda": 9
  },
- "tests/Evil.Engine.Tests/Properties/PolygonProperties.cs": {
+ "tests/Evil.Engine.Tests::MoveStep.cs": {},
+ "tests/Evil.Engine.Tests::PolygonProperties.cs": {
   "tuple": 4
  },
- "tests/Evil.Engine.Tests/Properties/RayAndBoundsProperties.cs": {
+ "tests/Evil.Engine.Tests::PolygonTests.cs": {
+  "lambda": 2,
+  "linq": 1
+ },
+ "tests/Evil.Engine.Tests::Program.cs": {
+  "linq": 1
+ },
+ "tests/Evil.Engine.Tests::RayAndBoundsProperties.cs": {
   "lambda": 3,
   "linq": 4,
   "tuple": 4
  },
- "tests/Evil.Engine.Tests/Properties/RectAndTransformProperties.cs": {
+ "tests/Evil.Engine.Tests::RectAndTransformProperties.cs": {
   "tuple": 6
  },
- "tests/Evil.Engine.Tests/Properties/RotationAndPoseProperties.cs": {
+ "tests/Evil.Engine.Tests::RotationAndPoseProperties.cs": {
   "tuple": 7
  },
- "tests/Evil.Engine.Tests/Properties/Steps/MoveStep.cs": {},
- "tests/Evil.Engine.Tests/Properties/Steps/ScaleStep.cs": {},
- "tests/Evil.Engine.Tests/Properties/Steps/TransformStep.cs": {},
- "tests/Evil.Engine.Tests/Properties/Steps/TurnStep.cs": {},
- "tests/Evil.Engine.Tests/TransformStackTests.cs": {},
- "tests/Shared/Check.cs": {
-  "delegate": 1,
-  "types per file": 1
- },
- "tests/Shared/Gen.cs": {},
- "tests/Shared/Property.cs": {
-  "delegate": 2,
-  "linq": 1
- },
- "tests/Shared/TestRunner.cs": {
-  "lambda": 5,
-  "linq": 5,
-  "tuple": 2,
-  "types per file": 1
- }
+ "tests/Evil.Engine.Tests::ScaleStep.cs": {},
+ "tests/Evil.Engine.Tests::TransformStackTests.cs": {},
+ "tests/Evil.Engine.Tests::TransformStep.cs": {},
+ "tests/Evil.Engine.Tests::TurnStep.cs": {}
 }
