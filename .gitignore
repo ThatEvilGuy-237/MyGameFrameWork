@@ -278,3 +278,5 @@ __pycache__/
 *Backup.csproj
 
 .godot/
+
+samples/OrbitDemo/orbit-*.png
