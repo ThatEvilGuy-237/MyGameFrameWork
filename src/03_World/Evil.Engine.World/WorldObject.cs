@@ -43,6 +43,10 @@ public class WorldObject
 
     public bool IsDestroyed { get; private set; }
 
+    public object? Tag { get; set; }
+
+    public bool IsShown => Live.IsInsideTree() ? Live.IsVisibleInTree() : VisibleUpTheChain();
+
     public Vector3 Position
     {
         get => Live.Position.ToEvil();
@@ -188,6 +192,20 @@ public class WorldObject
         return null;
     }
 
+    public T? Ancestor<T>()
+        where T : WorldObject
+    {
+        for (var current = Parent; current is not null; current = current.Parent)
+        {
+            if (current is T match)
+            {
+                return match;
+            }
+        }
+
+        return null;
+    }
+
     public IEnumerable<T> Descendants<T>()
         where T : WorldObject
     {
@@ -245,6 +263,19 @@ public class WorldObject
         }
 
         return Node.IsInsideTree() && Node.GetParent() is Node3D parent ? parent.GlobalTransform.Basis : Basis.Identity;
+    }
+
+    private bool VisibleUpTheChain()
+    {
+        for (WorldObject? current = this; current is not null; current = current.Parent)
+        {
+            if (!current.Node.Visible)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void Detach(WorldObject child)

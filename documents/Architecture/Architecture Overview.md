@@ -18,7 +18,7 @@ number.
 | `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), seven shapes, `Material` | inside |
 | `src/04_Cameras` | `Evil.Engine.Cameras` | `Camera`, `OrbitCamera`, screen rays | inside |
 | `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun`, `Lamp`, `Spotlight`, `Atmosphere` | inside |
-| `src/06_Input` | `Evil.Engine.Input` | keyboard, mouse, picking (round 6) | inside |
+| `src/06_Input` | `Evil.Engine.Input` | `Keyboard`, `Mouse`, `Picker` | inside |
 | `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, frame capture, overlay later | inside |
 | `src/08_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
 
@@ -34,7 +34,9 @@ flowchart BT
   platform --> screen[07 Screen]
   world --> cameras[04 Cameras]
   cameras --> lighting[05 Lighting]
-  cameras --> engine[08 Engine]
+  cameras --> input[06 Input]
+  input --> engine[08 Engine]
+  cameras --> engine
   lighting --> engine
   screen --> engine
   core --> engine

@@ -24,6 +24,13 @@
       "evil.engine.core": {
         "type": "Project"
       },
+      "evil.engine.input": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.Cameras": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
       "evil.engine.lighting": {
         "type": "Project",
         "dependencies": {

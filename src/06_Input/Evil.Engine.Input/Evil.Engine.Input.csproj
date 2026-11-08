@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Godot.props" />
+
+  <PropertyGroup>
+    <Description>Evil Engine input: keyboard and mouse that never lose a tap, and picking objects in the 3D world.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\04_Cameras\Evil.Engine.Cameras\Evil.Engine.Cameras.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -34,3 +34,26 @@ rm -f "$shots/orbit.png"
 bash scripts/godot.sh samples/OrbitDemo -- --capture "$shots/orbit.png" --frame 90
 test -s "$shots/orbit.png" || { echo "no frame was captured" >&2; exit 1; }
 echo "saved $shots/orbit.png"
+
+if command -v xdotool >/dev/null && command -v xvfb-run >/dev/null; then
+  echo "== OrbitDemo driven with real keys and mouse"
+  drive_log="$(mktemp)"
+  rm -f "$shots/orbit-driven.png"
+  if ! xvfb-run -a -s "-screen 0 1600x900x24" bash scripts/drive-orbit.sh "$shots/orbit-driven.png" "$drive_log"; then
+    cat "$drive_log" >&2
+    rm -f "$drive_log"
+    exit 1
+  fi
+  for seen in "spinning: False" "selected: pawn" "zoom:"; do
+    if ! grep -q "$seen" "$drive_log"; then
+      echo "the driven run never showed '$seen'" >&2
+      cat "$drive_log" >&2
+      rm -f "$drive_log"
+      exit 1
+    fi
+  done
+  grep -E "spinning: False|selected: pawn|zoom:" "$drive_log" | head -n 5
+  rm -f "$drive_log"
+  test -s "$shots/orbit-driven.png" || { echo "no driven frame was captured" >&2; exit 1; }
+  echo "saved $shots/orbit-driven.png"
+fi

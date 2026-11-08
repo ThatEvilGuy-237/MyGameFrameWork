@@ -22,7 +22,7 @@ turn and scale together (see [[Grouped Transforms]]).
 |---|---|
 | Plan and progress | [[LOOP]] |
 | Architecture | [[Architecture Overview]] · [[Grouped Transforms]] · [[Testing]] |
-| API | [[World]] · [[Cameras]] · [[Lighting]] · [[Mathematics]] (more per round) |
+| API | [[World]] · [[Cameras]] · [[Lighting]] · [[Input]] · [[Mathematics]] (more per round) |
 | History | [[From MyGameFrameWork]] (the 0.1.0 OpenTK engine, tag `v0.1.0`) |
 | Why it is built this way | [[Decisions]] |
 

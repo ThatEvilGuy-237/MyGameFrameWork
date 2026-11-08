@@ -27,5 +27,5 @@ if [ "$headless" = 0 ] && [ -z "${DISPLAY:-}" ]; then
   run=(xvfb-run -a -s "-screen 0 1600x900x24" "${run[@]}")
 fi
 
-"${run[@]}" 2>&1 | grep -v -E "^ALSA|^$|audio_driver_alsa|All audio drivers failed|servers/audio/audio_server|Could not set V-Sync|gl_manager_x11.cpp"
+"${run[@]}" 2>&1 | grep --line-buffered -v -E "^ALSA|^$|audio_driver_alsa|All audio drivers failed|servers/audio/audio_server|Could not set V-Sync|gl_manager_x11.cpp"
 exit "${PIPESTATUS[0]}"

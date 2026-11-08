@@ -6,6 +6,7 @@
     <Project Path="src/03_World/Evil.Engine.World/Evil.Engine.World.csproj" />
     <Project Path="src/04_Cameras/Evil.Engine.Cameras/Evil.Engine.Cameras.csproj" />
     <Project Path="src/05_Lighting/Evil.Engine.Lighting/Evil.Engine.Lighting.csproj" />
+    <Project Path="src/06_Input/Evil.Engine.Input/Evil.Engine.Input.csproj" />
     <Project Path="src/07_Screen/Evil.Engine.Screen/Evil.Engine.Screen.csproj" />
     <Project Path="src/08_Engine/Evil.Engine/Evil.Engine.csproj" />
   </Folder>

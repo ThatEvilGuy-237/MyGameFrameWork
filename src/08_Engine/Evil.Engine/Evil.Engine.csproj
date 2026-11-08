@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\03_World\Evil.Engine.World\Evil.Engine.World.csproj" />
     <ProjectReference Include="..\..\04_Cameras\Evil.Engine.Cameras\Evil.Engine.Cameras.csproj" />
     <ProjectReference Include="..\..\05_Lighting\Evil.Engine.Lighting\Evil.Engine.Lighting.csproj" />
+    <ProjectReference Include="..\..\06_Input\Evil.Engine.Input\Evil.Engine.Input.csproj" />
     <ProjectReference Include="..\..\07_Screen\Evil.Engine.Screen\Evil.Engine.Screen.csproj" />
   </ItemGroup>
 

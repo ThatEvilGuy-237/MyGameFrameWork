@@ -1,3 +1,4 @@
+using Evil.Engine.Mathematics;
 using Godot;
 using Color = Evil.Engine.Core.Color;
 
@@ -23,4 +24,6 @@ public sealed class Sphere : ShapeObject
             mesh.Height = value * 2f;
         }
     }
+
+    private protected override float? LocalHit(Ray3 localRay) => localRay.IntersectSphere(System.Numerics.Vector3.Zero, Radius);
 }

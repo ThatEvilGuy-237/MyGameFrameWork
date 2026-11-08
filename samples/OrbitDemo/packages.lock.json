@@ -28,6 +28,7 @@
         "dependencies": {
           "Evil.Engine.Cameras": "[0.2.0, )",
           "Evil.Engine.Core": "[0.2.0, )",
+          "Evil.Engine.Input": "[0.2.0, )",
           "Evil.Engine.Lighting": "[0.2.0, )",
           "Evil.Engine.Mathematics": "[0.2.0, )",
           "Evil.Engine.Platform": "[0.2.0, )",
@@ -45,6 +46,13 @@
       },
       "evil.engine.core": {
         "type": "Project"
+      },
+      "evil.engine.input": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.Cameras": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
       },
       "evil.engine.lighting": {
         "type": "Project",
