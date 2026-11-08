@@ -96,7 +96,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   check (lambda logic, LINQ chains, tuples as data, `switch` on strings, `Func`/`Action` parameters, several types in
   one file). check.sh runs them as a ratchet: a committed baseline per file, a count may only go down, the rounds
   below bring it to zero.
-- [ ] **R17 Folders and files with meaning**: one type per file in every library, folders by meaning inside each
+- [x] **R17 Folders and files with meaning**: one type per file in every library, folders by meaning inside each
   (World: Objects, Shapes, Materials, Models; Input: Keyboard and Mouse, Picking; Screen: Window, Canvas, Capture;
   Motion: Tweens), namespaces unchanged so games do not break.
 - [ ] **R18 No duplicate code in the engine**: one button-state class for Keyboard and Mouse, one loader per
@@ -232,3 +232,12 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   the style check only read files git already tracked, so R15's new tests slipped a target-typed `new (...)` in;
   both checks now read new files too, and the test's int switch over a tuple array became a `TransformStep`
   record hierarchy (Move, Turn, Scale). 285 left, 125 in `src/`. check.sh green.
+- 2026-11-09 00:09 R17: every engine file holds one type, named after it, and the bigger libraries have folders by meaning
+  (Mathematics 2D/3D; World Objects/Shapes/Materials/Models; Lighting Lights/Atmosphere; Input Keyboard/Mouse/Picking;
+  Screen Window/Canvas/Overlay/Capture; Motion Tweens; Engine Hosting/Content/Scenes). Split: ObjectTweens.cs (8
+  tweens), Background.cs (4 records), GameOptions.cs (2), SceneStack's nested change types. Moved with `git mv` so
+  history follows; namespaces unchanged, so no game breaks; unused usings left by the split removed (15, by
+  `dotnet format` with IDE0005 on for that run). Found on the way: my splitter deleted `Background` when a part had
+  the source's own name (caught by the build, restored from git, splitter fixed); and the clean-code ratchet keyed
+  files by path, so every moved file looked new: it now keys by project and file name (self-tested). Types per file
+  in `src/`: 13 -> 0; clean code 285 -> 272 (112 in `src/`). check.sh green, tests and driven run unchanged.

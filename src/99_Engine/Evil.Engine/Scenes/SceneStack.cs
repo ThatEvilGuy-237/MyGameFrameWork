@@ -159,13 +159,4 @@ public sealed class SceneStack
 
         return first;
     }
-
-    private enum SceneChangeKind
-    {
-        Push,
-        Pop,
-        Switch,
-    }
-
-    private readonly record struct SceneChange(SceneChangeKind Kind, Scene? Scene);
 }

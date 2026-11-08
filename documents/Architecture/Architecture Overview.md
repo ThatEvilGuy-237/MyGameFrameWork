@@ -51,6 +51,22 @@ flowchart BT
   godot[(Godot 4.7.2)] -.renders.- platform
 ```
 
+## Inside each library
+
+One type per file, named after it. A library with more than a handful of files groups them in folders by meaning;
+the folders do not change the namespace, so `using Evil.Engine.World;` still reaches every shape.
+
+| Library | Folders |
+|---|---|
+| Core, Platform, Cameras, Audio | none: four or five files each |
+| Mathematics | `2D/` (rects, Transform2D, the transform stack, polygons, triangulation), `3D/` (Pose, Rotations, Bounds3, Ray3, Orbit); `Angle`, `Smoothing` and the `Finite` validators at the root, used by both |
+| World | `Objects/` (WorldObject, MeshObject, ShapeObject), `Shapes/` (the seven shapes), `Materials/` (Material, Texture), `Models/` (Model, ModelPart) |
+| Lighting | `Lights/` (Light, Sun, Lamp, Spotlight), `Atmosphere/` (Atmosphere, the four backgrounds, Fog, ToneMapping) |
+| Input | `Keyboard/` (Key, Keyboard, the Godot key table), `Mouse/` (Mouse, MouseButton), `Picking/` (Picker, Hit); `InputFeed` at the root feeds both devices |
+| Screen | `Window/` (WindowSettings, WindowSetup, Display), `Canvas/` (Canvas, Font, TextAlign, the canvas targets), `Overlay/` (the overlay node and painter), `Capture/` (FrameCapture) |
+| Motion | `Tweens/` (Tween, ValueTween and one file per object tween); `MotionPlayer` at the root |
+| Engine | `Hosting/` (builder, host, context, GameMain, options), `Content/` (ContentLibrary), `Scenes/` (Scene, SceneStack, scene changes) |
+
 ## How a game starts
 
 1. Godot opens the game's `main.tscn`. Its root node runs `Main.cs`, the game's one Godot-facing line:
