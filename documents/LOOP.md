@@ -48,7 +48,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 - [x] **R3 World deep**: 3D math in Mathematics (Transform3D, Ray, Bounds, Quaternion helpers, LookAt), WorldObject
   `ToWorld/ToLocal`, more shapes (Cylinder, Capsule, Torus?), materials (colour, roughness, metal, texture),
   `Destroy`, names and finding.
-- [ ] **R4 Camera**: perspective and orthographic, field of view, near/far, `LookAt`, `OrbitCamera` (turn, tilt,
+- [x] **R4 Camera**: perspective and orthographic, field of view, near/far, `LookAt`, `OrbitCamera` (turn, tilt,
   zoom, pan, smooth) for a tactics view; screen point to world ray.
 - [ ] **R5 Lighting**: Sun with shadows, Lamp (point), Spotlight, Environment (sky colour, ambient, fog, glow),
   light presets.
@@ -80,3 +80,8 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   LookAt in a turned parent; Material (shareable, Matte/Shiny/Metal/Glowing); Cylinder, Cone, Capsule, Torus.
   Found and fixed: a throwing Capsule/Torus leaked its Godot node; check.sh now fails on Godot leaks. 33 pure +
   37 Godot tests green. Textures moved to R8. ![[r3-world.png]]
+- 2026-11-08 18:30 R4: Camera projection (perspective, orthographic), ScreenToRay, PointOnGround, WorldToScreen,
+  CanSee; OrbitCamera (turn, tilt, zoom, pan, smooth glide, Snap) with an `OrbitLimits` settings record after a
+  test showed `{ Pitch = 0, MinPitch = 0 }` depended on property order; pure `Orbit` and `Smoothing` maths. The demo
+  circles with the orbit camera and a glowing ring marks where the screen middle hits the floor (it lands at
+  640,358 of 1280x720). 36 pure + 45 Godot tests green. ![[r4-cameras.png]]

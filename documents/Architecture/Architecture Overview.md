@@ -13,10 +13,10 @@ number.
 | Folder | Library | What | Uses Godot |
 |---|---|---|---|
 | `src/00_Core` | `Evil.Engine.Core` | `GameTime`, `Color` | no |
-| `src/01_Mathematics` | `Evil.Engine.Mathematics` | rectangles, angles, transforms, transform stack, polygons | no |
+| `src/01_Mathematics` | `Evil.Engine.Mathematics` | 2D and 3D math: poses, rotations, rays, bounds, orbit, smoothing, polygons | no |
 | `src/02_Platform` | `Evil.Engine.Platform` | the one place that converts our types to Godot's and back | inside |
-| `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), `Box`, `Sphere`, `Floor` | inside |
-| `src/04_Cameras` | `Evil.Engine.Cameras` | `Camera` | inside |
+| `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), seven shapes, `Material` | inside |
+| `src/04_Cameras` | `Evil.Engine.Cameras` | `Camera`, `OrbitCamera`, screen rays | inside |
 | `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun` | inside |
 | `src/06_Input` | `Evil.Engine.Input` | keyboard, mouse, picking (round 6) | inside |
 | `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, frame capture, overlay later | inside |

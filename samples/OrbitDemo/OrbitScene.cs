@@ -6,12 +6,20 @@ internal sealed class OrbitScene : Scene
     private Box? _green;
     private Box? _blue;
     private Sphere? _yellow;
+    private OrbitCamera? _view;
+    private Torus? _marker;
 
     protected override void Enter()
     {
-        Camera.Position = new Vector3(0f, 7f, 11f);
         Camera.FieldOfView = 50f;
-        Camera.LookAt(new Vector3(0f, 0.5f, 0f));
+        _view = new OrbitCamera(Camera, new OrbitLimits(MinDistance: 6f, MaxDistance: 30f))
+        {
+            Target = new Vector3(0f, 0f, 2.2f),
+            Distance = 13f,
+            Pitch = 32f,
+            Yaw = -15f,
+        };
+        _view.Snap();
 
         World.Add(new Sun(new Vector3(-0.6f, -1f, -0.4f)));
         World.Add(new Floor(new Vector2(24f, 24f), Color.FromHex("#3C5A5A")));
@@ -43,6 +51,8 @@ internal sealed class OrbitScene : Scene
 
         AddPawn(new Vector3(-2.5f, 0f, 3.5f), Color.FromHex("#E5484D"));
         AddPawn(new Vector3(2.5f, 0f, 3.5f), Color.FromHex("#3E63DD"));
+
+        _marker = World.Add(new Torus(0.22f, 0.34f, Color.White) { Material = Material.Glowing(Color.FromHex("#FFC53D"), 1f), CastsShadow = false });
     }
 
     private void AddPawn(Vector3 place, Color team)
@@ -60,5 +70,12 @@ internal sealed class OrbitScene : Scene
         _green!.RotateY(-90f * step);
         _blue!.RotateY(-50f * step);
         _yellow!.RotateY(160f * step);
+
+        _view!.Turn(12f * step);
+        _view.Update(time);
+        if (Camera.PointOnGround(Game.ScreenSize / 2f) is { } ground)
+        {
+            _marker!.Position = ground + new Vector3(0f, 0.02f, 0f);
+        }
     }
 }
