@@ -56,7 +56,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   of WorldObjects through the camera ray.
 - [x] **R7 Screen**: window settings applied (title, size, fullscreen, VSync), `CaptureFrame`, `CaptureAndExit`,
   2D overlay with our `Group()` canvas and text (Godot fonts), screen size changes.
-- [ ] **R8 Models**: textures on materials (moved here from R3, one place for file loading), load `.glb` / `.gltf` from Content at runtime, a Blender-made test model through the Blender
+- [x] **R8 Models**: textures on materials (moved here from R3, one place for file loading), load `.glb` / `.gltf` from Content at runtime, a Blender-made test model through the Blender
   MCP, model parts as WorldObjects.
 - [ ] **R9 Motion**: tweens for moves and turns (move to a tile over time, ease curves), pure timing in Core,
   applied each frame; waiting for a move to finish (turn-based).
@@ -105,3 +105,11 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   text), Move/Attack/Wait bar with UI clicks before 3D picks. Driven check now also resizes and clicks Attack.
   Full screen cannot be shown under xvfb (no window manager). llvmpipe runs the lit demo at about 8 fps.
   36 pure + 71 Godot tests green. ![[r7-screen.png]]
+- 2026-11-08 20:30 R8: `Game.Content` (Model, Texture, Font) from a content folder (`GameBuilder.Content`, default
+  `res://`): Godot-imported resources when imported, straight from the file otherwise; textures and fonts loaded
+  once; missing files name where they looked. `MeshObject` base for shapes and `ModelPart`s, so model parts pick
+  and paint; `Model.Parts/Part/Paint`; `Material.Texture/TextureScale`; `canvas.Font` (reset per scene and frame).
+  Demo: tiled floor, two Blender towers (made with the Blender 5.2.3 CLI from a committed script rather than the
+  MCP, so it can be rebuilt), outpost flag repainted, Lato title. check.sh imports the demo first. Test slips caught
+  on the way (array compare, drawing outside `_draw`, unfreed test nodes). 36 pure + 78 Godot tests green.
+  ![[r8-models.png]]

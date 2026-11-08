@@ -49,7 +49,7 @@ internal sealed class OrbitScene : Scene
 src/00_Core          Evil.Engine.Core           GameTime, Color (no dependencies)
 src/01_Mathematics   Evil.Engine.Mathematics    math, transform stacks, polygons (no dependencies)
 src/02_Platform      Evil.Engine.Platform       the Godot glue, internal to the SDK
-src/03_World         Evil.Engine.World          WorldObject groups, Box, Sphere, Floor
+src/03_World         Evil.Engine.World          WorldObject groups, shapes, materials, textures, models
 src/04_Cameras       Evil.Engine.Cameras        Camera
 src/05_Lighting      Evil.Engine.Lighting       Sun
 src/07_Screen        Evil.Engine.Screen         display, frame capture, 2D overlay canvas with text
