@@ -3,7 +3,7 @@ using Color = Evil.Engine.Core.Color;
 
 namespace Evil.Engine.World;
 
-public sealed class Cylinder : ShapeObject
+public sealed class Cylinder : RoundShape
 {
     public Cylinder()
         : this(0.5f, 1f, Color.White)
@@ -11,26 +11,15 @@ public sealed class Cylinder : ShapeObject
     }
 
     public Cylinder(float radius, float height, Color color)
-        : base(new CylinderMesh(), color)
-    {
-        Radius = radius;
-        Height = height;
-    }
+        : base(new CylinderMesh(), height, color) => Radius = radius;
 
     public float Radius
     {
-        get => ((CylinderMesh)Mesh).BottomRadius;
+        get => Round.BottomRadius;
         set
         {
-            CylinderMesh mesh = (CylinderMesh)Mesh;
-            mesh.TopRadius = value;
-            mesh.BottomRadius = value;
+            Round.TopRadius = value;
+            Round.BottomRadius = value;
         }
-    }
-
-    public float Height
-    {
-        get => ((CylinderMesh)Mesh).Height;
-        set => ((CylinderMesh)Mesh).Height = value;
     }
 }

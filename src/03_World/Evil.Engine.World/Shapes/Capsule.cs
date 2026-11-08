@@ -5,6 +5,8 @@ namespace Evil.Engine.World;
 
 public sealed class Capsule : ShapeObject
 {
+    private readonly CapsuleMesh _mesh;
+
     public Capsule()
         : this(0.5f, 2f, Color.White)
     {
@@ -13,18 +15,19 @@ public sealed class Capsule : ShapeObject
     public Capsule(float radius, float height, Color color)
         : base(Checked(radius, height), color)
     {
+        _mesh = (CapsuleMesh)Mesh;
     }
 
     public float Radius
     {
-        get => ((CapsuleMesh)Mesh).Radius;
-        set => ((CapsuleMesh)Mesh).Radius = value;
+        get => _mesh.Radius;
+        set => _mesh.Radius = value;
     }
 
     public float Height
     {
-        get => ((CapsuleMesh)Mesh).Height;
-        set => ((CapsuleMesh)Mesh).Height = value;
+        get => _mesh.Height;
+        set => _mesh.Height = value;
     }
 
     private static CapsuleMesh Checked(float radius, float height)

@@ -8,6 +8,7 @@ import sys
 BASELINE = "scripts/clean-code-baseline.json"
 EXACT_WINDOW = 5
 SHAPE_WINDOW = 8
+TABLE_SHARE = 6
 
 RULES = {
     "lambda": "logic in an anonymous function: give it a name (a method or a class)",
@@ -22,11 +23,12 @@ RULES = {
 LINQ = re.compile(r"(?<!\bMath)(?<!\bMathF)(?<!\bVector2)(?<!\bVector3)(?<!\bVector4)\.(Select|SelectMany|Where|Any|All|First|FirstOrDefault|Last|LastOrDefault|Single|OrderBy|OrderByDescending|ThenBy|Sum|Min|Max|Count|Aggregate|Cast|OfType|Zip|Skip|Take|Distinct|GroupBy|ToDictionary|ToLookup)\(")
 TUPLE_TYPE = re.compile(r"(?<![\w>\]])\(\s*[A-Z_a-z][\w.<>?\[\]]*\s+[A-Z]\w*\s*,\s*[A-Z_a-z][\w.<>?\[\]]*\s+[A-Z]\w*")
 TUPLE_LITERAL = re.compile(r"(?<![\w>\]])\(\s*[A-Z]\w*\s*:\s*[^,()]+(\([^()]*\))?[^,()]*,\s*[A-Z]\w*\s*:")
-VALUE_CASE = re.compile(r"\bcase\s+(\"|-?\d)")
+VALUE_CASE = re.compile(r"\bcase\s+(\"|-?\d)|^\s*(\"\"|-?\d[\w.]*)\s*(when\b.*)?=>")
 DELEGATE = re.compile(r"\b(Func|Action)\s*<|\bAction\s+\w+\s*[,)=;]|\bAction\[\]")
 TYPE_DECLARATION = re.compile(r"^\s*(?:(?:public|internal|private|protected|file|sealed|abstract|static|readonly|partial|unsafe|ref)\s+)*(?:class|record|struct|enum|interface)\b(?:\s+(?:class|struct))?\s+\w+", re.M)
 LAMBDA_START = re.compile(r"(?:\(\s*[^()]*\)|\b[A-Za-z_]\w*)\s*=>")
 BEFORE_LAMBDA = re.compile(r"(?:[(,=?:]|\breturn|&&|\|\|)\s*$")
+TRIVIAL_ACCESSOR = re.compile(r"^((get|set|init)\s*(=>[^;{}]*)?;|: (this|base)\(.*\)( => .*;)?)$")
 IGNORED_LINE = re.compile(r"^(\{|\}|\);?|\}\);?|\]|\[|\]\)?;?|using .*;|global using .*;|namespace .*;|break;|return;|else|default:|\[Test\])$")
 KEYWORDS = set(
     "public private protected internal static sealed readonly override virtual abstract class record struct enum interface "
@@ -119,7 +121,12 @@ def duplicates(sources):
         numbers[path] = [number for number, _ in lines]
         for size, shaped in ((EXACT_WINDOW, False), (SHAPE_WINDOW, True)):
             for start in range(len(lines) - size + 1):
-                chunk = tuple(normalize_shape(line) if shaped else line for _, line in lines[start:start + size])
+                window = lines[start:start + size]
+                if shaped and any(TRIVIAL_ACCESSOR.match(line) for _, line in window):
+                    continue
+                chunk = tuple(normalize_shape(line) if shaped else line for _, line in window)
+                if shaped and collections.Counter(chunk).most_common(1)[0][1] >= TABLE_SHARE:
+                    continue
                 windows[(size, shaped, chunk)].append((path, start, size))
     hits = collections.Counter()
     places = []
@@ -182,6 +189,9 @@ def self_test():
         ("case \"Move\":", "value switch", 1),
         ("case 0:", "value switch", 1),
         ("case Key.Escape:", "value switch", 0),
+        ("    \".wav\" => AudioStreamWav.LoadFromFile(full),", "value switch", 1),
+        ("    0 => new MoveStep(point),", "value switch", 1),
+        ("    Key.Control => \"Ctrl\",", "value switch", 0),
         ("internal sealed class A { }\ninternal sealed record B(int X);", "types per file", 1),
         ("public enum Key\n{\n    A,\n}", "types per file", 0),
         ("Check.Throws<ArgumentException>(() => new Ray3(o, d), \"=> no\");", "lambda", 1),
@@ -197,11 +207,17 @@ def self_test():
         "b.cs": "class B\n{\n    void Two()\n    {\n        int alpha = 1;\n        int beta = alpha + 2;\n        int gamma = beta * 3;\n        Print(gamma);\n        Save(gamma, beta);\n    }\n}\n",
         "c.cs": "class C\n{\n    void Three()\n    {\n        int x = 5;\n        int y = x + 7;\n        int z = y * 9;\n        Show(z);\n        Keep(z, y);\n        Done(z);\n        Last(y);\n        End(x);\n    }\n}\n",
         "d.cs": "class D\n{\n    void Four()\n    {\n        int p = 5;\n        int q = p + 7;\n        int r = q * 9;\n        Show(r);\n        Keep(r, q);\n        Done(r);\n        Last(q);\n        End(p);\n    }\n}\n",
+        "g.cs": "class G\n{\n    public float Radius\n    {\n        get => _mesh.Radius;\n        set => _mesh.Radius = value;\n    }\n\n    public float Height\n    {\n        get => _mesh.Height;\n        set => _mesh.Height = value;\n    }\n}\n",
+        "h.cs": "class H\n{\n    public float Inner\n    {\n        get => _ring.Inner;\n        set => _ring.Inner = value;\n    }\n\n    public float Outer\n    {\n        get => _ring.Outer;\n        set => _ring.Outer = value;\n    }\n}\n",
+        "t.cs": "class T\n{\n    void Keys()\n    {\n" + "".join(f"        CheckMapped(GodotKey.K{n}, Key.K{n});\n" for n in range(9)) + "    }\n}\n",
+        "u.cs": "class U\n{\n    void Codes()\n    {\n" + "".join(f"        Expect(Code.C{n}, Name.N{n});\n" for n in range(9)) + "    }\n}\n",
+        "s.cs": "public sealed class S : Shape\n{\n    public S()\n        : this(0.5f, 2f, Color.White)\n    {\n    }\n\n    public S(float radius, float height, Color color)\n        : base(Checked(radius, height), color)\n    {\n    }\n}\n",
+        "r.cs": "public sealed class R : Shape\n{\n    public R()\n        : this(0.4f, 0.6f, Color.White)\n    {\n    }\n\n    public R(float inner, float outer, Color color)\n        : base(Checked(inner, outer), color)\n    {\n    }\n}\n",
         "e.cs": "enum E\n{\n    A,\n    B,\n    C,\n    D,\n    F,\n    G,\n    H,\n    I,\n}\n",
         "f.cs": "enum F\n{\n    A,\n    B,\n    C,\n    D,\n    F,\n    G,\n    H,\n    I,\n}\n",
     }
     hits, _ = duplicates(planted)
-    for path, expected in (("a.cs", 1), ("b.cs", 1), ("c.cs", 1), ("d.cs", 1), ("e.cs", 0), ("f.cs", 0)):
+    for path, expected in (("a.cs", 1), ("b.cs", 1), ("c.cs", 1), ("d.cs", 1), ("e.cs", 0), ("f.cs", 0), ("g.cs", 0), ("h.cs", 0), ("t.cs", 0), ("u.cs", 0), ("s.cs", 0), ("r.cs", 0)):
         if hits[path] != expected:
             failed += 1
             print(f"self-test: duplicate in {path} counted {hits[path]}, expected {expected}")

@@ -24,6 +24,24 @@ internal static class ContentTests
     }
 
     [Test]
+    public static void EachModelCallGivesItsOwnCopyOfOneLoadedFile()
+    {
+        string folder = TempFolder();
+        WriteRobot(Path.Combine(folder, "robot.glb"));
+        ContentLibrary content = new ContentLibrary(folder);
+        Model first = content.Model("robot.glb");
+        File.Delete(Path.Combine(folder, "robot.glb"));
+        Model second = content.Model("robot.glb");
+        Check.True(!ReferenceEquals(first, second) && !ReferenceEquals(first.Part("Hand"), second.Part("Hand")), "two separate models");
+        Check.Equal(2, second.Parts.Count, "the second copy has its parts too");
+        first.Part("Hand")!.Position = new Vector3(9f, 0f, 0f);
+        Check.Near(new Vector3(1f, 0f, 0f), second.Part("Hand")!.Position, "moving a part of one copy leaves the other alone");
+        first.Destroy();
+        second.Destroy();
+        content.Close();
+    }
+
+    [Test]
     public static void ModelPartsCanBePickedAndPainted()
     {
         string folder = TempFolder();

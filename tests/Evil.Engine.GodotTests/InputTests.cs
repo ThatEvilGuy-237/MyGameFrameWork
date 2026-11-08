@@ -18,6 +18,20 @@ internal static class InputTests
     }
 
     [Test]
+    public static void KeysWithOtherNamesInGodotMapToTheRightKey()
+    {
+        CheckMapped(GodotKey.Ctrl, Key.Control);
+        CheckMapped(GodotKey.Bracketleft, Key.LeftBracket);
+        CheckMapped(GodotKey.Bracketright, Key.RightBracket);
+        CheckMapped(GodotKey.Quoteleft, Key.GraveAccent);
+        CheckMapped(GodotKey.KpPeriod, Key.KeyPadDecimal);
+        CheckMapped(GodotKey.Kp7, Key.KeyPad7);
+        CheckMapped(GodotKey.Key3, Key.D3);
+        CheckMapped(GodotKey.Pageup, Key.PageUp);
+        CheckMapped(GodotKey.F12, Key.F12);
+    }
+
+    [Test]
     public static void ATapInsideOneFrameIsKept()
     {
         Keyboard keyboard = new Keyboard();
@@ -170,6 +184,12 @@ internal static class InputTests
         input.Factor = factor;
         input.Position = new Godot.Vector2(20f, 20f);
         return input;
+    }
+
+    private static void CheckMapped(GodotKey godot, Key ours)
+    {
+        Check.True(GodotKeys.TryMap(godot, out Key mapped), $"{godot} is known");
+        Check.Equal(ours, mapped, $"{godot}");
     }
 
     private static Camera Camera(Stage stage)

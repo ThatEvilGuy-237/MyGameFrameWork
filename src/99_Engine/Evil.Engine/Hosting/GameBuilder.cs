@@ -60,7 +60,7 @@ public sealed class GameBuilder
         }
 
         if (string.IsNullOrWhiteSpace(_contentRoot)
-            || (!ContentLibrary.IsGodotPath(_contentRoot) && !Directory.Exists(_contentRoot)))
+            || (!ContentLocation.IsGodotPath(_contentRoot) && !Directory.Exists(_contentRoot)))
         {
             throw new InvalidOperationException($"GameBuilder.Content: '{_contentRoot}' is neither a res:// path nor a folder that exists.");
         }
@@ -76,7 +76,7 @@ public sealed class GameBuilder
         }
 
         FrameSnapshot? snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
-        string contentRoot = ContentLibrary.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
+        string contentRoot = ContentLocation.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
         return new GameHost(new GameOptions(_window, _clearColor, contentRoot, _startScene, snapshot));
     }
 }

@@ -22,10 +22,10 @@ public readonly record struct Ray3
         float leave = float.PositiveInfinity;
         for (int axis = 0; axis < 3; axis++)
         {
-            float origin = Component(Origin, axis);
-            float direction = Component(Direction, axis);
-            float min = Component(box.Min, axis);
-            float max = Component(box.Max, axis);
+            float origin = Origin[axis];
+            float direction = Direction[axis];
+            float min = box.Min[axis];
+            float max = box.Max[axis];
             if (MathF.Abs(direction) < 1e-9f)
             {
                 if (origin < min || origin > max)
@@ -95,11 +95,4 @@ public readonly record struct Ray3
         float near = closestAlong - halfChord;
         return near >= 0f ? near : 0f;
     }
-
-    private static float Component(Vector3 vector, int axis) => axis switch
-    {
-        0 => vector.X,
-        1 => vector.Y,
-        _ => vector.Z,
-    };
 }

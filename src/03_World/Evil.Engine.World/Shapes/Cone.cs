@@ -3,7 +3,7 @@ using Color = Evil.Engine.Core.Color;
 
 namespace Evil.Engine.World;
 
-public sealed class Cone : ShapeObject
+public sealed class Cone : RoundShape
 {
     public Cone()
         : this(0.5f, 1f, Color.White)
@@ -11,22 +11,12 @@ public sealed class Cone : ShapeObject
     }
 
     public Cone(float radius, float height, Color color)
-        : base(PointedMesh(), color)
-    {
-        Radius = radius;
-        Height = height;
-    }
+        : base(PointedMesh(), height, color) => Radius = radius;
 
     public float Radius
     {
-        get => ((CylinderMesh)Mesh).BottomRadius;
-        set => ((CylinderMesh)Mesh).BottomRadius = value;
-    }
-
-    public float Height
-    {
-        get => ((CylinderMesh)Mesh).Height;
-        set => ((CylinderMesh)Mesh).Height = value;
+        get => Round.BottomRadius;
+        set => Round.BottomRadius = value;
     }
 
     private static CylinderMesh PointedMesh()

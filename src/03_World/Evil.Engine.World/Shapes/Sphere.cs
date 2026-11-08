@@ -6,22 +6,27 @@ namespace Evil.Engine.World;
 
 public sealed class Sphere : ShapeObject
 {
+    private readonly SphereMesh _mesh;
+
     public Sphere()
         : this(0.5f, Color.White)
     {
     }
 
     public Sphere(float radius, Color color)
-        : base(new SphereMesh(), color) => Radius = radius;
+        : base(new SphereMesh(), color)
+    {
+        _mesh = (SphereMesh)Mesh;
+        Radius = radius;
+    }
 
     public float Radius
     {
-        get => ((SphereMesh)Mesh).Radius;
+        get => _mesh.Radius;
         set
         {
-            SphereMesh mesh = (SphereMesh)Mesh;
-            mesh.Radius = value;
-            mesh.Height = value * 2f;
+            _mesh.Radius = value;
+            _mesh.Height = value * 2f;
         }
     }
 
