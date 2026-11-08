@@ -32,6 +32,15 @@ why things are the way they are is in `documents/Decisions.md`.
   - Allowed: constructor arguments and named arguments (`new OrbitLimits(MinDistance: 6f)`), collection
     expressions (`[a, b]`), `with` copies of records. A preset or helper that sets several properties is a small
     method with statements, not an expression-bodied initializer.
+- **Clean code (owner, 2026-11-08): C#, object oriented, not JavaScript style**, checked by
+  `scripts/clean-code-check.py` (a ratchet: counts per file may only go down, see `documents/Architecture/Clean Code.md`):
+  - Behaviour lives in classes with one job; vary it with types (an interface, an abstract class), not with a
+    `switch` on strings or numbers, not with lambdas or `Func`/`Action` handed around. Name the method instead of
+    writing an anonymous function; write the loop or a named method instead of a LINQ chain.
+  - Data gets a named type (a record or class), never a tuple (`(A: x, B: y)`, `(int Kind, Vector2 Value)`).
+  - No duplicate code: shared logic gets one home (a base class, a shared type, one method).
+  - One type per file, named after it. Folders group by meaning (`Shapes/`, `Materials/`), never "misc".
+  - Static classes only for pure maths like `System.Math` (Angle, Rotations, Smoothing, Ease) and extension glue.
 - The builder takes values or settings records, never lambdas; the engine reads no config and no environment
   variable. Fail early with the call's name. No code comments.
 - Packages only from the checked list (`evil-packages one nuget <name> <version> --save`), exact versions in

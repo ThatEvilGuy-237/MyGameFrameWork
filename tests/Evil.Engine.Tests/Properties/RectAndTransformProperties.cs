@@ -1,5 +1,6 @@
 using System.Numerics;
 using Evil.Engine.Mathematics;
+using Evil.Engine.Tests.Properties.Steps;
 
 namespace Evil.Engine.Tests.Properties;
 
@@ -60,15 +61,15 @@ internal static class RectAndTransformProperties
     {
         Property.ForAll(
             nameof(PopPutsTheStackBackExactly),
-            random => (Before: RandomSteps(random), Inside: RandomSteps(random)),
+            random => (Before: TransformStep.RandomSequence(random), Inside: TransformStep.RandomSequence(random)),
             input =>
             {
                 TransformStack stack = new TransformStack();
-                Run(stack, input.Before);
+                TransformStep.ApplyAll(stack, input.Before);
                 Matrix3x2 saved = stack.Current;
                 using (stack.Group())
                 {
-                    Run(stack, input.Inside);
+                    TransformStep.ApplyAll(stack, input.Inside);
                 }
 
                 Check.Equal(saved, stack.Current, "after the group");
@@ -81,7 +82,7 @@ internal static class RectAndTransformProperties
     {
         Property.ForAll(
             nameof(TheStackAppliesTheInnermostStepFirst),
-            random => (Move: Gen.Point2(random, 100f), Degrees: Gen.Number(random, -360f, 360f), Scale: NonZeroScale(random), Point: Gen.Point2(random, 50f)),
+            random => (Move: Gen.Point2(random, 100f), Degrees: Gen.Number(random, -360f, 360f), Scale: ScaleStep.RandomFactor(random), Point: Gen.Point2(random, 50f)),
             input =>
             {
                 TransformStack stack = new TransformStack();
@@ -98,11 +99,11 @@ internal static class RectAndTransformProperties
     {
         Property.ForAll(
             nameof(ToLocalUndoesToWorld),
-            random => (Steps: RandomSteps(random), Point: Gen.Point2(random, 50f)),
+            random => (Steps: TransformStep.RandomSequence(random), Point: Gen.Point2(random, 50f)),
             input =>
             {
                 TransformStack stack = new TransformStack();
-                Run(stack, input.Steps);
+                TransformStep.ApplyAll(stack, input.Steps);
                 Vector2 back = stack.ToLocal(stack.ToWorld(input.Point));
                 Check.Near(input.Point, back, "there and back", 1e-2f * (1f + input.Point.Length()));
             });
@@ -113,7 +114,7 @@ internal static class RectAndTransformProperties
     {
         Property.ForAll(
             nameof(ATransformTurnsAndScalesAroundItsOrigin),
-            random => new Transform2D(Gen.Point2(random, 100f), Gen.Number(random, -360f, 360f), NonZeroScale(random), Gen.Point2(random, 20f)),
+            random => new Transform2D(Gen.Point2(random, 100f), Gen.Number(random, -360f, 360f), ScaleStep.RandomFactor(random), Gen.Point2(random, 20f)),
             transform =>
             {
                 Matrix3x2 matrix = transform.ToMatrix();
@@ -139,45 +140,5 @@ internal static class RectAndTransformProperties
         float cos = (float)Math.Cos(radians);
         float sin = (float)Math.Sin(radians);
         return new Vector2(point.X * cos - point.Y * sin, point.X * sin + point.Y * cos);
-    }
-
-    private static Vector2 NonZeroScale(Random random) =>
-        new Vector2(Gen.Number(random, 0.2f, 3f) * (Gen.Chance(random, 0.2) ? -1f : 1f), Gen.Number(random, 0.2f, 3f));
-
-    private static (int Kind, Vector2 Value)[] RandomSteps(Random random)
-    {
-        (int Kind, Vector2 Value)[] steps = new (int Kind, Vector2 Value)[random.Next(0, 6)];
-        for (int i = 0; i < steps.Length; i++)
-        {
-            int kind = random.Next(3);
-            Vector2 value = kind switch
-            {
-                0 => Gen.Point2(random, 100f),
-                1 => new Vector2(Gen.Number(random, -360f, 360f), 0f),
-                _ => NonZeroScale(random),
-            };
-            steps[i] = (kind, value);
-        }
-
-        return steps;
-    }
-
-    private static void Run(TransformStack stack, (int Kind, Vector2 Value)[] steps)
-    {
-        foreach ((int kind, Vector2 value) in steps)
-        {
-            switch (kind)
-            {
-                case 0:
-                    stack.Translate(value);
-                    break;
-                case 1:
-                    stack.Rotate(value.X);
-                    break;
-                default:
-                    stack.Scale(value);
-                    break;
-            }
-        }
     }
 }
