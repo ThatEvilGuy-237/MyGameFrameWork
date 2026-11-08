@@ -72,6 +72,9 @@ Shapes and model parts are both `MeshObject`s: they share `CastsShadow`, `Pickab
 can be picked (see [[Input]]). Every shape also has `Color` and `Material`. Sizes are checked before anything is created, so a bad
 size never leaves a half-made object behind.
 
+`Cylinder` and `Cone` are both a `RoundShape`: a round mesh with a `Height`; a cylinder's `Radius` sets both
+ends, a cone's only the bottom.
+
 ## Materials
 
 A `Material` can be shared: give ten pillars the same `stone` and recolour them all at once.

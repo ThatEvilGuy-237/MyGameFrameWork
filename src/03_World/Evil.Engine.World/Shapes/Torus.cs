@@ -5,6 +5,8 @@ namespace Evil.Engine.World;
 
 public sealed class Torus : ShapeObject
 {
+    private readonly TorusMesh _mesh;
+
     public Torus()
         : this(0.4f, 0.6f, Color.White)
     {
@@ -13,18 +15,19 @@ public sealed class Torus : ShapeObject
     public Torus(float innerRadius, float outerRadius, Color color)
         : base(Checked(innerRadius, outerRadius), color)
     {
+        _mesh = (TorusMesh)Mesh;
     }
 
     public float InnerRadius
     {
-        get => ((TorusMesh)Mesh).InnerRadius;
-        set => ((TorusMesh)Mesh).InnerRadius = value;
+        get => _mesh.InnerRadius;
+        set => _mesh.InnerRadius = value;
     }
 
     public float OuterRadius
     {
-        get => ((TorusMesh)Mesh).OuterRadius;
-        set => ((TorusMesh)Mesh).OuterRadius = value;
+        get => _mesh.OuterRadius;
+        set => _mesh.OuterRadius = value;
     }
 
     private static TorusMesh Checked(float innerRadius, float outerRadius)

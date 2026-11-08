@@ -60,9 +60,7 @@
  "src/02_Platform/Evil.Engine.Platform::Facing.cs": {},
  "src/02_Platform/Evil.Engine.Platform::GodotConvert.cs": {},
  "src/03_World/Evil.Engine.World::Box.cs": {},
- "src/03_World/Evil.Engine.World::Capsule.cs": {
-  "duplicate": 1
- },
+ "src/03_World/Evil.Engine.World::Capsule.cs": {},
  "src/03_World/Evil.Engine.World::Cone.cs": {},
  "src/03_World/Evil.Engine.World::Cylinder.cs": {},
  "src/03_World/Evil.Engine.World::Floor.cs": {},
@@ -73,16 +71,13 @@
   "linq": 1
  },
  "src/03_World/Evil.Engine.World::ModelPart.cs": {},
+ "src/03_World/Evil.Engine.World::RoundShape.cs": {},
  "src/03_World/Evil.Engine.World::ShapeObject.cs": {},
  "src/03_World/Evil.Engine.World::Sphere.cs": {},
  "src/03_World/Evil.Engine.World::Texture.cs": {},
- "src/03_World/Evil.Engine.World::Torus.cs": {
-  "duplicate": 1
- },
+ "src/03_World/Evil.Engine.World::Torus.cs": {},
  "src/03_World/Evil.Engine.World::WorldObject.cs": {},
- "src/04_Cameras/Evil.Engine.Cameras::Camera.cs": {
-  "duplicate": 2
- },
+ "src/04_Cameras/Evil.Engine.Cameras::Camera.cs": {},
  "src/04_Cameras/Evil.Engine.Cameras::CameraProjection.cs": {},
  "src/04_Cameras/Evil.Engine.Cameras::OrbitCamera.cs": {},
  "src/04_Cameras/Evil.Engine.Cameras::OrbitLimits.cs": {},
@@ -97,19 +92,13 @@
  "src/05_Lighting/Evil.Engine.Lighting::Spotlight.cs": {},
  "src/05_Lighting/Evil.Engine.Lighting::Sun.cs": {},
  "src/05_Lighting/Evil.Engine.Lighting::ToneMapping.cs": {},
- "src/06_Input/Evil.Engine.Input::GodotKeys.cs": {
-  "duplicate": 86,
-  "tuple": 1
- },
+ "src/06_Input/Evil.Engine.Input::ButtonStates.cs": {},
+ "src/06_Input/Evil.Engine.Input::GodotKeys.cs": {},
  "src/06_Input/Evil.Engine.Input::Hit.cs": {},
  "src/06_Input/Evil.Engine.Input::InputFeed.cs": {},
  "src/06_Input/Evil.Engine.Input::Key.cs": {},
- "src/06_Input/Evil.Engine.Input::Keyboard.cs": {
-  "duplicate": 1
- },
- "src/06_Input/Evil.Engine.Input::Mouse.cs": {
-  "duplicate": 1
- },
+ "src/06_Input/Evil.Engine.Input::Keyboard.cs": {},
+ "src/06_Input/Evil.Engine.Input::Mouse.cs": {},
  "src/06_Input/Evil.Engine.Input::MouseButton.cs": {},
  "src/06_Input/Evil.Engine.Input::Picker.cs": {},
  "src/07_Screen/Evil.Engine.Screen::Canvas.cs": {},
@@ -144,26 +133,38 @@
  "src/09_Audio/Evil.Engine.Audio::MusicTrack.cs": {},
  "src/09_Audio/Evil.Engine.Audio::Sound.cs": {},
  "src/09_Audio/Evil.Engine.Audio::SoundPlayback.cs": {},
- "src/99_Engine/Evil.Engine::ContentLibrary.cs": {
-  "duplicate": 2
- },
+ "src/99_Engine/Evil.Engine::ContentLibrary.cs": {},
+ "src/99_Engine/Evil.Engine::ContentLoader.cs": {},
+ "src/99_Engine/Evil.Engine::ContentLocation.cs": {},
+ "src/99_Engine/Evil.Engine::FontLoader.cs": {},
  "src/99_Engine/Evil.Engine::FrameSnapshot.cs": {},
  "src/99_Engine/Evil.Engine::GameBuilder.cs": {},
  "src/99_Engine/Evil.Engine::GameContext.cs": {},
  "src/99_Engine/Evil.Engine::GameHost.cs": {},
  "src/99_Engine/Evil.Engine::GameMain.cs": {},
  "src/99_Engine/Evil.Engine::GameOptions.cs": {},
+ "src/99_Engine/Evil.Engine::ModelLoader.cs": {},
+ "src/99_Engine/Evil.Engine::OggFormat.cs": {},
  "src/99_Engine/Evil.Engine::Scene.cs": {
   "lambda": 3
  },
  "src/99_Engine/Evil.Engine::SceneChange.cs": {},
  "src/99_Engine/Evil.Engine::SceneChangeKind.cs": {},
+ "src/99_Engine/Evil.Engine::SceneLoader.cs": {},
  "src/99_Engine/Evil.Engine::SceneStack.cs": {
   "lambda": 1
  },
+ "src/99_Engine/Evil.Engine::SoundFormat.cs": {},
+ "src/99_Engine/Evil.Engine::SoundLoader.cs": {},
+ "src/99_Engine/Evil.Engine::TextureLoader.cs": {},
+ "src/99_Engine/Evil.Engine::WavFormat.cs": {},
  "tests/Evil.Engine.GodotTests::AudioTests.cs": {
   "lambda": 4
  },
+ "tests/Evil.Engine.GodotTests::ButtonAction.cs": {},
+ "tests/Evil.Engine.GodotTests::ButtonHistory.cs": {},
+ "tests/Evil.Engine.GodotTests::ButtonStatesProperties.cs": {},
+ "tests/Evil.Engine.GodotTests::ButtonStep.cs": {},
  "tests/Evil.Engine.GodotTests::CameraTests.cs": {
   "duplicate": 1,
   "lambda": 4

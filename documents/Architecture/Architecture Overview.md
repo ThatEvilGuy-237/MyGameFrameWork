@@ -60,12 +60,12 @@ the folders do not change the namespace, so `using Evil.Engine.World;` still rea
 |---|---|
 | Core, Platform, Cameras, Audio | none: four or five files each |
 | Mathematics | `2D/` (rects, Transform2D, the transform stack, polygons, triangulation), `3D/` (Pose, Rotations, Bounds3, Ray3, Orbit); `Angle`, `Smoothing` and the `Finite` validators at the root, used by both |
-| World | `Objects/` (WorldObject, MeshObject, ShapeObject), `Shapes/` (the seven shapes), `Materials/` (Material, Texture), `Models/` (Model, ModelPart) |
+| World | `Objects/` (WorldObject, MeshObject, ShapeObject), `Shapes/` (the seven shapes and `RoundShape` under Cylinder and Cone), `Materials/` (Material, Texture), `Models/` (Model, ModelPart) |
 | Lighting | `Lights/` (Light, Sun, Lamp, Spotlight), `Atmosphere/` (Atmosphere, the four backgrounds, Fog, ToneMapping) |
-| Input | `Keyboard/` (Key, Keyboard, the Godot key table), `Mouse/` (Mouse, MouseButton), `Picking/` (Picker, Hit); `InputFeed` at the root feeds both devices |
+| Input | `Keyboard/` (Key, Keyboard, the Godot key table derived from the names), `Mouse/` (Mouse, MouseButton), `Picking/` (Picker, Hit); at the root `ButtonStates` (what is down, pressed, released; used by both devices) and `InputFeed` |
 | Screen | `Window/` (WindowSettings, WindowSetup, Display), `Canvas/` (Canvas, Font, TextAlign, the canvas targets), `Overlay/` (the overlay node and painter), `Capture/` (FrameCapture) |
 | Motion | `Tweens/` (Tween, ValueTween and one file per object tween); `MotionPlayer` at the root |
-| Engine | `Hosting/` (builder, host, context, GameMain, options), `Content/` (ContentLibrary), `Scenes/` (Scene, SceneStack, scene changes) |
+| Engine | `Hosting/` (builder, host, context, GameMain, options), `Content/` (ContentLibrary, ContentLocation, the `ContentLoader` base; `Loaders/` one per kind: textures, fonts, sounds, scenes, models; `SoundFormats/` wav and ogg), `Scenes/` (Scene, SceneStack, scene changes) |
 
 ## How a game starts
 

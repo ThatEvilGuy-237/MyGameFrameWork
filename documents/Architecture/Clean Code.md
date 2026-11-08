@@ -20,6 +20,11 @@ duplicate code; a file needs meaning, not just code here or there, and folders n
 | one type per file | `ObjectTweens.cs` with 8 classes | `MoveTween.cs`, `HopTween.cs`, ... in `Tweens/` |
 | folders with meaning | 25 files side by side in `Evil.Engine.World` | `Objects/`, `Shapes/`, `Materials/`, `Models/` |
 
+What the duplicate check does not count, because it is declaration or data, not copied logic: enum lists, one-line
+accessors (`get => _mesh.Radius;`), constructor chaining (`: this(...)`, `: base(...)`), and tables (a window where
+one line shape fills 6 of 8 lines, like nine `CheckMapped(...)` calls). Each of these has a self-test case, so the
+exemption cannot widen by accident.
+
 Explicit types, constructor then statements and no comments still hold (see the repo's `CLAUDE.md`).
 Expression-bodied members (`public float Area => Width * Height;`) and switch expressions over enums are C#, not
 lambdas, and stay.
@@ -40,3 +45,4 @@ is not LINQ, renamed copies are still copies, enum lists are not copies), so a b
 | R16 start (baseline) | 291 | 125 (86 of them the typed-out Godot key table) |
 | R16 end | 285 | 125 |
 | R17 end | 272 | 112 |
+| R18 end | 177 | 31 (no duplicates left in the engine) |

@@ -57,12 +57,7 @@ internal sealed class MusicTrack
         _fading = false;
         if (_stopAtEnd)
         {
-            IsGone = true;
-            if (GodotObject.IsInstanceValid(Player))
-            {
-                Player.Stop();
-                Player.QueueFree();
-            }
+            Release();
         }
     }
 

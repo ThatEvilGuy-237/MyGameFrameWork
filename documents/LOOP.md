@@ -99,7 +99,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
 - [x] **R17 Folders and files with meaning**: one type per file in every library, folders by meaning inside each
   (World: Objects, Shapes, Materials, Models; Input: Keyboard and Mouse, Picking; Screen: Window, Canvas, Capture;
   Motion: Tweens), namespaces unchanged so games do not break.
-- [ ] **R18 No duplicate code in the engine**: one button-state class for Keyboard and Mouse, one loader per
+- [x] **R18 No duplicate code in the engine**: one button-state class for Keyboard and Mouse, one loader per
   content kind behind one base class in ContentLibrary, the Godot key table derived instead of typed out, the shapes'
   checks shared, MusicTrack's repeats folded. Each with its tests still green.
 - [ ] **R19 Object-oriented engine**: lambdas, LINQ chains and tuples in `src/` replaced by named methods and named
@@ -241,3 +241,14 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   the source's own name (caught by the build, restored from git, splitter fixed); and the clean-code ratchet keyed
   files by path, so every moved file looked new: it now keys by project and file name (self-tested). Types per file
   in `src/`: 13 -> 0; clean code 285 -> 272 (112 in `src/`). check.sh green, tests and driven run unchanged.
+- 2026-11-09 00:20 R18: no duplicate code left in `src/`. Keyboard and Mouse use one `ButtonStates<T>`; the Godot key table
+  is derived from the names (two rules, five exceptions; a one-time test checked it equal to all 93 old pairs
+  before the table went); content loading is one `ContentLoader` base with a loader per kind and wav/ogg as
+  `SoundFormat` classes instead of a string switch, and runtime glTF files are packed into a cached `PackedScene`
+  (a new test loads a model, deletes the file, loads again: two separate copies from one parse); Cylinder and Cone
+  share `RoundShape`; every shape keeps one typed mesh field instead of a cast per accessor; MusicTrack's fade end
+  calls Release instead of repeating it; Ray3 indexes `Vector3` instead of switching on the axis number. New tests:
+  renamed keys, the two copies, and a property test that replays random button scripts against a history-based
+  spec (5,000 cases green; a planted ReleaseAll bug fails it on case 1). The checker now also catches string arms
+  in switch expressions and skips declarations and tables in its same-shape mode, each with self-test cases.
+  Clean code 272 -> 177, `src/` 112 -> 31. 82 + 107 tests, check.sh and driven run green. ![[orbit.png]]

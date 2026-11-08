@@ -4,9 +4,7 @@ namespace Evil.Engine.Input;
 
 public sealed class Mouse
 {
-    private readonly HashSet<MouseButton> _down = [];
-    private readonly HashSet<MouseButton> _pressed = [];
-    private readonly HashSet<MouseButton> _released = [];
+    private readonly ButtonStates<MouseButton> _buttons = new ButtonStates<MouseButton>();
 
     internal Mouse()
     {
@@ -18,11 +16,11 @@ public sealed class Mouse
 
     public float Scroll { get; private set; }
 
-    public bool IsDown(MouseButton button) => _down.Contains(button);
+    public bool IsDown(MouseButton button) => _buttons.IsDown(button);
 
-    public bool WasPressed(MouseButton button) => _pressed.Contains(button);
+    public bool WasPressed(MouseButton button) => _buttons.WasPressed(button);
 
-    public bool WasReleased(MouseButton button) => _released.Contains(button);
+    public bool WasReleased(MouseButton button) => _buttons.WasReleased(button);
 
     internal void Place(Vector2 position) => Position = position;
 
@@ -32,34 +30,17 @@ public sealed class Mouse
         Position = position;
     }
 
-    internal void Press(MouseButton button)
-    {
-        _down.Add(button);
-        _pressed.Add(button);
-    }
+    internal void Press(MouseButton button) => _buttons.Press(button);
 
-    internal void Release(MouseButton button)
-    {
-        _down.Remove(button);
-        _released.Add(button);
-    }
+    internal void Release(MouseButton button) => _buttons.Release(button);
 
-    internal void ReleaseAll()
-    {
-        foreach (MouseButton button in _down)
-        {
-            _released.Add(button);
-        }
-
-        _down.Clear();
-    }
+    internal void ReleaseAll() => _buttons.ReleaseAll();
 
     internal void Wheel(float steps) => Scroll += steps;
 
     internal void EndFrame()
     {
-        _pressed.Clear();
-        _released.Clear();
+        _buttons.EndFrame();
         Delta = Vector2.Zero;
         Scroll = 0f;
     }
