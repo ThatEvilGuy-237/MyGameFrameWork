@@ -8,7 +8,7 @@ public static class Angle
 
     public static float Wrap(float degrees)
     {
-        float wrapped = degrees % 360f;
+        float wrapped = Finite.Number(degrees, "Angle.Wrap's degrees") % 360f;
         if (wrapped < 0f)
         {
             wrapped += 360f;

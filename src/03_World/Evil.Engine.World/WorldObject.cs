@@ -56,25 +56,33 @@ public class WorldObject
     public Vector3 Position
     {
         get => Live.Position.ToEvil();
-        set => Live.Position = value.ToGodot();
+        set => Live.Position = Finite.Point(value, $"{Name}'s Position").ToGodot();
     }
 
     public Vector3 Rotation
     {
         get => Live.RotationDegrees.ToEvil();
-        set => Live.RotationDegrees = value.ToGodot();
+        set => Live.RotationDegrees = Finite.Point(value, $"{Name}'s Rotation").ToGodot();
     }
 
     public Quaternion Orientation
     {
         get => Live.Quaternion.ToEvil();
-        set => Live.Quaternion = Quaternion.Normalize(value).ToGodot();
+        set
+        {
+            if (Finite.Rotation(value, $"{Name}'s Orientation").LengthSquared() < 1e-12f)
+            {
+                throw new ArgumentException($"{Name}'s Orientation has no length, so it is no turn at all. Use Quaternion.Identity for no turn.", nameof(value));
+            }
+
+            Live.Quaternion = Quaternion.Normalize(value).ToGodot();
+        }
     }
 
     public Vector3 Scale
     {
         get => Live.Scale.ToEvil();
-        set => Live.Scale = value.ToGodot();
+        set => Live.Scale = Finite.Point(value, $"{Name}'s Scale").ToGodot();
     }
 
     public Pose Pose

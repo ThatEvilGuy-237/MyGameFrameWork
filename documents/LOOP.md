@@ -80,7 +80,7 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   `documents/Usability.md` as a numbered finding with severity; the rounds below fix them, worst first.
 - [x] **R14 The sample reads like a guide**: OrbitScene (426 lines, `Update` 91 and `Enter` 85) split by concern
   (board, pawns, action bar, camera controls, sound) so a reader follows it top-down; no method over ~30 lines.
-- [ ] **R15 Math proven**: owner, 22:43: "also do some math validators and tests to be sure you're right". A seeded
+- [x] **R15 Math proven**: owner, 22:43: "also do some math validators and tests to be sure you're right". A seeded
   random property checker in `tests/Shared` (no new packages; a failure prints the seed and the input), properties
   for every type in Core and Mathematics (round trips, inverses, invariants), brute-force validators for the
   geometry (ray hits against marching, triangulation against area and point sampling), cross-checks of the 3D maths
@@ -194,3 +194,16 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   path, Unshaded for exact colours, the tile-under-the-mouse recipe, an honest style note); the API and tooling
   ones went into R17 and R19. Found while checking: `Ancestor<T>()` skips the object itself. Make a Game check
   green on the edited note. ![[r13-fresh-eyes.png]]
+- 2026-11-08 23:59 R15: math proven three ways. Our own seeded property checker (`tests/Shared/Property.cs` + `Gen.cs`,
+  300 cases per rule, the seed and count changeable): 41 rules over Core and Mathematics (easing ends, clamps,
+  order and mirror symmetry; hex round trips; angles; smoothing the same at any frame rate; rects; the transform
+  stack; polygons, triangles, centroids; turns against a hand-written Rodrigues; Euler order; LookAlong; poses,
+  matrices and composition; orbits), brute force for rays (walking in 1 cm steps) and polygons (sampled points),
+  and 8 cross-checks against Godot's own maths. Validators refuse NaN, infinity and impossible values at every
+  entry point with a message that says what to do; world objects name themselves. Found and fixed: (1) a ray
+  grazing a small far sphere missed it (float cancellation; now the gap at the closest point; regression test
+  fails on the old code), (2) any object scaled to zero made every click throw "Matrix determinant is zero"
+  (picking now skips it; the test fails without the fix), (3) my own star property was wrong (a 3-point star with
+  fat arms is convex: the engine was right). Stress: 41 rules x 20,000 cases x 5 seeds = 4.1 million inputs and
+  the Godot checks at 3,000 x 2 seeds, all green. Tests 38 -> 82 pure, 96 -> 104 Godot; check.sh green, driven run
+  unchanged. ![[orbit-driven.png]]

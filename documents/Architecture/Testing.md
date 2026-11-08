@@ -34,6 +34,43 @@ public static void ChildrenFollowTheParentsTurn()
 }
 ```
 
+## Property tests: proving the maths
+
+A test with fixed numbers proves a handful of cases. The maths is also checked with **properties**: rules that must
+hold for any input, tried on hundreds of seeded random inputs (`tests/Shared/Property.cs`, generators in
+`tests/Shared/Gen.cs`, no package).
+
+```csharp
+[Test]
+public static void ToLocalUndoesToWorld()
+{
+    Property.ForAll(
+        nameof(ToLocalUndoesToWorld),
+        random => (Pose: Gen.Placement(random, false), Point: Gen.Point3(random, 20f)),
+        input => Check.Near(input.Point, input.Pose.ToLocal(input.Pose.ToWorld(input.Point)), "there and back", 1e-3f));
+}
+```
+
+Each property gets 300 cases with a seed made from its name, so a run is the same every time. A failure prints the
+case, the seed and the input. To search harder, change the seed or the count:
+
+```bash
+EVIL_PROPERTY_SEED=4 EVIL_PROPERTY_CASES=20000 dotnet tests/Evil.Engine.Tests/bin/Debug/net10.0/Evil.Engine.Tests.dll Properties
+```
+
+Three kinds of checks, each answering "how do we know it is right" a different way:
+
+| Kind | Example | Where |
+|---|---|---|
+| rules that must hold | to world and back is the same point; two half steps of smoothing are one full step; the triangles of a polygon cover its area once | `tests/Evil.Engine.Tests/Properties` |
+| brute force | walking along a ray in 1 cm steps finds the box where `Intersect` says it is; points sampled in a polygon agree with its triangles | the same folder |
+| a second opinion | our Euler turns, LookAlong, poses, nested objects, bounds and ray hits against Godot's own Basis, Transform3D, Aabb, Plane and sphere code | `tests/Evil.Engine.GodotTests/MathAgainstGodotTests.cs` |
+
+What they found in R15: a ray grazing a small sphere far away missed it (`IntersectSphere` subtracted two numbers
+near 2500 to get one near 0.0004, and floats lose that; it now measures the gap at the closest point), any
+object scaled to zero made every click throw (Godot cannot invert its transform; picking now skips it), and one of
+our own properties was wrong (a 3-point star with fat arms is convex).
+
 ## The gate
 
 `scripts/check.sh` runs, in order:

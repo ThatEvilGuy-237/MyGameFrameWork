@@ -9,6 +9,11 @@ public sealed class Polygon
 
     public Polygon(params ReadOnlySpan<Vector2> points)
     {
+        foreach (Vector2 point in points)
+        {
+            Finite.Point(point, "A polygon corner");
+        }
+
         _points = points.ToArray();
         SignedArea = Triangulator.SignedArea(_points);
         Bounds = MeasureBounds(_points);

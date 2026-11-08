@@ -6,29 +6,25 @@ public static class Rotations
 {
     public static Vector3 Forward => -Vector3.UnitZ;
 
-    public static Quaternion FromEulerDegrees(Vector3 degrees) =>
-        Quaternion.CreateFromYawPitchRoll(
+    public static Quaternion FromEulerDegrees(Vector3 degrees)
+    {
+        Finite.Point(degrees, "Euler degrees");
+        return Quaternion.CreateFromYawPitchRoll(
             Angle.ToRadians(degrees.Y),
             Angle.ToRadians(degrees.X),
             Angle.ToRadians(degrees.Z));
+    }
 
     public static Quaternion AroundAxis(Vector3 axis, float degrees)
     {
-        if (axis.LengthSquared() < 1e-12f)
-        {
-            throw new ArgumentException("The axis to turn around has no length.", nameof(axis));
-        }
-
+        Finite.Direction(axis, "The axis to turn around");
+        Finite.Number(degrees, "The degrees to turn");
         return Quaternion.CreateFromAxisAngle(Vector3.Normalize(axis), Angle.ToRadians(degrees));
     }
 
     public static Quaternion LookAlong(Vector3 forward)
     {
-        if (forward.LengthSquared() < 1e-12f)
-        {
-            throw new ArgumentException("The direction to look along has no length.", nameof(forward));
-        }
-
+        Finite.Direction(forward, "The direction to look along");
         Vector3 front = Vector3.Normalize(forward);
         Vector3 up = MathF.Abs(Vector3.Dot(front, Vector3.UnitY)) > 0.999f ? Forward : Vector3.UnitY;
         Vector3 back = -front;

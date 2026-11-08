@@ -12,6 +12,8 @@ public readonly record struct Bounds3(Vector3 Min, Vector3 Max)
 
     public static Bounds3 FromCenter(Vector3 center, Vector3 size)
     {
+        Finite.Point(center, "The bounds' center");
+        Finite.Point(size, "The bounds' size");
         Vector3 half = Vector3.Abs(size) / 2f;
         return new Bounds3(center - half, center + half);
     }
@@ -27,6 +29,7 @@ public readonly record struct Bounds3(Vector3 Min, Vector3 Max)
         Vector3 max = points[0];
         foreach (Vector3 point in points)
         {
+            Finite.Point(point, "A point for the bounds");
             min = Vector3.Min(min, point);
             max = Vector3.Max(max, point);
         }

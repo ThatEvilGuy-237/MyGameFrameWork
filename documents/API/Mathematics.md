@@ -48,6 +48,27 @@ attached to something else is.
 `Triangulator.Triangulate(points)` does the cutting: concave shapes and points in a straight line work. A
 self-crossing outline still gives whole triangles, though the result is a best guess.
 
+## Validators
+
+Every entry point refuses NaN and infinity where it enters, with a message that names the value and says where
+NaN usually comes from, instead of letting it spread until an object silently vanishes:
+
+```
+A ray's direction must be finite, got <NaN, 1, 0>. NaN and infinity usually come from a division by zero or from
+normalizing a zero-length vector earlier on.
+```
+
+| Refused | Reason given |
+|---|---|
+| NaN or infinity in rays, rotations, Euler angles, `Angle.Wrap`, smoothing, orbits, polygon corners, bounds, `TransformStack` steps, `Ease.Apply` | must be finite |
+| a zero-length ray direction, turn axis, look direction or plane normal | "has no length, so it points nowhere" |
+| a negative sphere radius or orbit distance, negative smoothing time | cannot be negative; time cannot run backwards |
+| `Pose.ToLocal` with a zero scale | there is no way back through a flat scale |
+| `Pose.ToWorld(pose)` with an unevenly scaled parent and a turned child | the result would be skewed, which a `Pose` cannot hold |
+
+World objects check their `Position`, `Rotation`, `Scale` and `Orientation` the same way, with the object's name
+(`pawn-red's Position must be finite`). Scale zero stays allowed: things grow from nothing.
+
 ## 3D (since 0.2)
 
 The same library, still without Godot, so game rules can work out positions and facing on their own. Directions
