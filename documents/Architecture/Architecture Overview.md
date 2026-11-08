@@ -12,7 +12,7 @@ number.
 
 | Folder | Library | What | Uses Godot |
 |---|---|---|---|
-| `src/00_Core` | `Evil.Engine.Core` | `GameTime`, `Color` | no |
+| `src/00_Core` | `Evil.Engine.Core` | `GameTime`, `Color`, `Easing` | no |
 | `src/01_Mathematics` | `Evil.Engine.Mathematics` | 2D and 3D math: poses, rotations, rays, bounds, orbit, smoothing, polygons | no |
 | `src/02_Platform` | `Evil.Engine.Platform` | the one place that converts our types to Godot's and back | inside |
 | `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), seven shapes, `Material` | inside |
@@ -20,7 +20,8 @@ number.
 | `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun`, `Lamp`, `Spotlight`, `Atmosphere` | inside |
 | `src/06_Input` | `Evil.Engine.Input` | `Keyboard`, `Mouse`, `Picker` | inside |
 | `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, `Display`, frame capture, `Canvas` overlay with text | inside |
-| `src/08_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
+| `src/08_Motion` | `Evil.Engine.Motion` | `MotionPlayer`, `Tween` (queued per object) | no Godot types used |
+| `src/09_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
 
 "Inside" means Godot types never show in the public API: a game sees Evil Engine types and `System.Numerics`
 vectors only. Wrappers keep their Godot node `internal`, and the constructors that take one are
@@ -36,7 +37,9 @@ flowchart BT
   world --> cameras[04 Cameras]
   cameras --> lighting[05 Lighting]
   cameras --> input[06 Input]
-  input --> engine[08 Engine]
+  world --> motion[08 Motion]
+  motion --> engine[09 Engine]
+  input --> engine
   cameras --> engine
   lighting --> engine
   screen --> engine

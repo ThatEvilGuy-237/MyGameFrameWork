@@ -41,6 +41,13 @@
       "evil.engine.mathematics": {
         "type": "Project"
       },
+      "evil.engine.motion": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.World": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
       "evil.engine.platform": {
         "type": "Project",
         "dependencies": {

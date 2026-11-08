@@ -28,7 +28,8 @@ src/04_Cameras/Evil.Engine.Cameras          Camera, orbit camera for a turn-base
 src/05_Lighting/Evil.Engine.Lighting        Sun, lamps, spotlights, sky and ambient
 src/06_Input/Evil.Engine.Input              keyboard, mouse, picking objects under the mouse
 src/07_Screen/Evil.Engine.Screen            window, capture, 2D overlay (our Group() canvas) and text
-src/08_Engine/Evil.Engine                   GameBuilder, GameHost, GameContext, scenes (the composition root)
+src/08_Motion/Evil.Engine.Motion            tweens queued per object (added in R9)
+src/09_Engine/Evil.Engine                   GameBuilder, GameHost, GameContext, scenes (the composition root)
 samples/OrbitDemo                           Godot project: the orbit demo in 3D
 tests/Evil.Engine.Tests                     pure tests (Core, Mathematics)
 tests/Evil.Engine.GodotTests                tests that run inside Godot against real nodes
@@ -58,7 +59,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   2D overlay with our `Group()` canvas and text (Godot fonts), screen size changes.
 - [x] **R8 Models**: textures on materials (moved here from R3, one place for file loading), load `.glb` / `.gltf` from Content at runtime, a Blender-made test model through the Blender
   MCP, model parts as WorldObjects.
-- [ ] **R9 Motion**: tweens for moves and turns (move to a tile over time, ease curves), pure timing in Core,
+- [x] **R9 Motion**: tweens for moves and turns (move to a tile over time, ease curves), pure timing in Core,
   applied each frame; waiting for a move to finish (turn-based).
 - [ ] **R10 Audio**: sounds and music wrappers (one-shot, loop, volume groups).
 - [ ] **R11 Docs and pack**: documents/ rewritten for the Godot SDK, Decisions updated, `0.2.0` packed.
@@ -113,3 +114,11 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   MCP, so it can be rebuilt), outpost flag repainted, Lato title. check.sh imports the demo first. Test slips caught
   on the way (array compare, drawing outside `_draw`, unfreed test nodes). 36 pure + 78 Godot tests green.
   ![[r8-models.png]]
+- 2026-11-08 21:00 R9: easing curves in Core (10 curves, pure tests); new library `08_Motion` (engine moved to
+  `09_Engine` so the numbers still only point down): `Game.Motion` with MoveTo, Hop, MoveAlong (faces each step),
+  Face, TurnTo, Spin, ScaleTo, ColorTo, Wait, Value; one queue per object, leftover time carried over, starting
+  values read when a motion's turn comes; `Tween.IsDone/Progress/Finished` (awaitable), Stop, Complete, Speed;
+  destroyed targets dropped. Demo actions now act: Move walks two tiles, Attack hops in and knocks the enemy back,
+  Wait spins; the bar locks while a pawn is busy. Driven check clicks Move, waits for `arrived:`, clicks Attack,
+  waits for `done: attack`. 38 pure + 89 Godot tests green (motion tests passed on the first run).
+  ![[r9-motion.png]]

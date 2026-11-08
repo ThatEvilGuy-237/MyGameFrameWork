@@ -13,6 +13,7 @@
     <InternalsVisibleTo Include="Evil.Engine.Lighting" />
     <InternalsVisibleTo Include="Evil.Engine.Input" />
     <InternalsVisibleTo Include="Evil.Engine.Screen" />
+    <InternalsVisibleTo Include="Evil.Engine.Motion" />
     <InternalsVisibleTo Include="Evil.Engine" />
     <InternalsVisibleTo Include="Evil.Engine.Tests" />
     <InternalsVisibleTo Include="Evil.Engine.GodotTests" />

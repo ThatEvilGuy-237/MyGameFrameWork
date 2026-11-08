@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Evil.Engine.Core;
 using Evil.Engine.Input;
+using Evil.Engine.Motion;
 using Evil.Engine.Scenes;
 using Evil.Engine.Screen;
 using Evil.Engine.World;
@@ -23,6 +24,7 @@ public sealed class GameContext
         Mouse = mouse;
         Display = display;
         Content = content;
+        Motion = new MotionPlayer();
         Scenes = new SceneStack(this, worlds);
     }
 
@@ -35,6 +37,8 @@ public sealed class GameContext
     public Display Display { get; }
 
     public ContentLibrary Content { get; }
+
+    public MotionPlayer Motion { get; }
 
     public Vector2 ScreenSize { get; internal set; }
 

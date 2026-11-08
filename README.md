@@ -53,7 +53,8 @@ src/03_World         Evil.Engine.World          WorldObject groups, shapes, mate
 src/04_Cameras       Evil.Engine.Cameras        Camera
 src/05_Lighting      Evil.Engine.Lighting       Sun
 src/07_Screen        Evil.Engine.Screen         display, frame capture, 2D overlay canvas with text
-src/08_Engine        Evil.Engine                GameBuilder, GameMain, scenes
+src/08_Motion        Evil.Engine.Motion         moves, hops, turns, fades, queued per object
+src/09_Engine        Evil.Engine                GameBuilder, GameMain, scenes
 samples/OrbitDemo                               a Godot project using only our API
 tests/Evil.Engine.Tests                         pure tests (Core, Mathematics)
 tests/Evil.Engine.GodotTests                    tests that run inside Godot against real nodes
