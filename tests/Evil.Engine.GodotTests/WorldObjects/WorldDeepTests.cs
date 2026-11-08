@@ -1,6 +1,6 @@
 using Evil.Engine.Mathematics;
 
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.WorldObjects;
 
 internal static class WorldDeepTests
 {
@@ -119,9 +119,11 @@ internal static class WorldDeepTests
         Check.Equal(0, arm.Children.Count, "gone from the parent");
         Check.True(hand.IsDestroyed && finger.IsDestroyed, "it and its children are destroyed");
         Check.True(hand.Node.IsQueuedForDeletion(), "Godot frees it at the end of the frame");
-        Check.Throws<ObjectDisposedException>(() => _ = hand.Position, "'hand' was destroyed");
+        void ReadADestroyedHand() => _ = hand.Position;
+        Check.Throws<ObjectDisposedException>(ReadADestroyedHand, "'hand' was destroyed");
         hand.Destroy();
-        Check.Throws<ObjectDisposedException>(() => arm.Add(finger));
+        void AddToADestroyedArm() => arm.Add(finger);
+        Check.Throws<ObjectDisposedException>(AddToADestroyedArm);
     }
 
     [Test]
@@ -136,7 +138,7 @@ internal static class WorldDeepTests
         Check.True(ReferenceEquals(near, root.Find("target")), "the closer one wins");
         Check.True(ReferenceEquals(deep, arm.Find("target")), "search inside a branch");
         Check.True(root.Find("missing") is null, "nothing found");
-        Check.Equal(2, root.Descendants<Box>().Count(), "every box below");
+        Check.Equal(2, new List<Box>(root.Descendants<Box>()).Count, "every box below");
         root.Destroy();
     }
 
@@ -152,8 +154,10 @@ internal static class WorldDeepTests
         Check.Near(1.2f, capsule.Height, "capsule height");
         Torus torus = new Torus(0.5f, 0.8f, Color.Gray);
         Check.Near(0.8f, torus.OuterRadius, "torus outer radius");
-        Check.Throws<ArgumentOutOfRangeException>(() => _ = new Capsule(1f, 1f, Color.Gray), "twice the radius");
-        Check.Throws<ArgumentOutOfRangeException>(() => _ = new Torus(1f, 0.5f, Color.Gray), "bigger than the inner one");
+        void MakeAShortCapsule() => _ = new Capsule(1f, 1f, Color.Gray);
+        Check.Throws<ArgumentOutOfRangeException>(MakeAShortCapsule, "twice the radius");
+        void MakeAnInsideOutTorus() => _ = new Torus(1f, 0.5f, Color.Gray);
+        Check.Throws<ArgumentOutOfRangeException>(MakeAnInsideOutTorus, "bigger than the inner one");
         foreach (WorldObject shape in new WorldObject[] { cylinder, cone, capsule, torus })
         {
             shape.Destroy();

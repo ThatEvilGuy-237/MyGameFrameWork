@@ -1,4 +1,4 @@
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Scenes;
 
 internal static class SceneStackTests
 {
@@ -20,18 +20,15 @@ internal static class SceneStackTests
     public static void AFullSceneHidesTheOneBelow()
     {
         using Stage stage = Stage.Open();
-        List<string> log = new List<string>();
-        SceneStack scenes = new SceneStack(null, stage.Root);
-        ProbeScene map = new ProbeScene("map", log);
-        ProbeScene battle = new ProbeScene("battle", log);
-        scenes.Push(map);
-        scenes.ApplyChanges();
-        scenes.Push(battle);
-        scenes.ApplyChanges();
-        Check.True(!map.OwnWorld.Visible, "map hidden");
-        Check.True(battle.OwnWorld.Visible, "battle shown");
-        Check.True(battle.OwnCamera.IsCurrent, "battle camera on screen");
-        Check.Equal("map.enter map.pause battle.enter", string.Join(' ', log), "hooks");
+        MapAndBattle game = new MapAndBattle(stage);
+        game.Scenes.Push(game.Map);
+        game.Scenes.ApplyChanges();
+        game.Scenes.Push(game.Battle);
+        game.Scenes.ApplyChanges();
+        Check.True(!game.Map.OwnWorld.Visible, "map hidden");
+        Check.True(game.Battle.OwnWorld.Visible, "battle shown");
+        Check.True(game.Battle.OwnCamera.IsCurrent, "battle camera on screen");
+        Check.Equal("map.enter map.pause battle.enter", game.Hooks, "hooks");
     }
 
     [Test]
@@ -53,22 +50,20 @@ internal static class SceneStackTests
     public static void PopFreesTheWorldAndGivesTheViewBack()
     {
         using Stage stage = Stage.Open();
-        List<string> log = new List<string>();
-        SceneStack scenes = new SceneStack(null, stage.Root);
-        ProbeScene map = new ProbeScene("map", log);
-        ProbeScene battle = new ProbeScene("battle", log);
-        scenes.Push(map);
-        scenes.Push(battle);
-        scenes.ApplyChanges();
-        WorldObject battleWorld = battle.OwnWorld;
-        scenes.Pop();
-        scenes.ApplyChanges();
+        MapAndBattle game = new MapAndBattle(stage);
+        game.Scenes.Push(game.Map);
+        game.Scenes.Push(game.Battle);
+        game.Scenes.ApplyChanges();
+        WorldObject battleWorld = game.Battle.OwnWorld;
+        game.Scenes.Pop();
+        game.Scenes.ApplyChanges();
         Check.Equal(1, stage.Root.Children.Count, "battle world removed");
         Check.True(battleWorld.Node.IsQueuedForDeletion(), "battle world freed");
-        Check.True(map.OwnWorld.Visible, "map shown again");
-        Check.True(map.OwnCamera.IsCurrent, "map camera on screen again");
-        Check.Throws<InvalidOperationException>(() => _ = battle.OwnWorld, "not on the scene stack");
-        Check.Equal("map.enter map.pause battle.enter battle.exit map.resume", string.Join(' ', log), "hooks");
+        Check.True(game.Map.OwnWorld.Visible, "map shown again");
+        Check.True(game.Map.OwnCamera.IsCurrent, "map camera on screen again");
+        void ReadTheWorldOffTheStack() => _ = game.Battle.OwnWorld;
+        Check.Throws<InvalidOperationException>(ReadTheWorldOffTheStack, "not on the scene stack");
+        Check.Equal("map.enter map.pause battle.enter battle.exit map.resume", game.Hooks, "hooks");
     }
 
     [Test]
@@ -111,26 +106,5 @@ internal static class SceneStackTests
         scenes.ExitAll();
         Check.Equal("battle.exit map.exit", string.Join(' ', log), "hooks");
         Check.Equal(0, scenes.Count, "empty");
-    }
-
-    private sealed class ProbeScene(string name, List<string> log, bool overlay = false) : Scene
-    {
-        public override bool IsOverlay => overlay;
-
-        public WorldObject OwnWorld => World;
-
-        public Camera OwnCamera => Camera;
-
-        protected override void Enter()
-        {
-            log.Add($"{name}.enter");
-            World.Add(new Box());
-        }
-
-        protected override void Exit() => log.Add($"{name}.exit");
-
-        protected override void Pause() => log.Add($"{name}.pause");
-
-        protected override void Resume() => log.Add($"{name}.resume");
     }
 }

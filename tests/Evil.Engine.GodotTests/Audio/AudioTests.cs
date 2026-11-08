@@ -1,6 +1,6 @@
 using Evil.Engine.Audio;
 
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Audio;
 
 internal static class AudioTests
 {
@@ -11,12 +11,14 @@ internal static class AudioTests
         Sound click = content.Sound("click.wav");
         Check.Near(0.05f, click.Seconds, "a 50 ms click", 0.01f);
         Check.True(ReferenceEquals(click, content.Sound("click.wav")), "loaded once");
-        Check.Throws<FileNotFoundException>(() => content.Sound("missing.wav"), "'missing.wav' was not found");
+        void LoadMissingSound() => content.Sound("missing.wav");
+        Check.Throws<FileNotFoundException>(LoadMissingSound, "'missing.wav' was not found");
 
         string folder = Path.Combine(Path.GetTempPath(), $"evil-engine-audio-{Guid.NewGuid():N}");
         Directory.CreateDirectory(folder);
         File.WriteAllText(Path.Combine(folder, "notes.txt"), "not a sound");
-        Check.Throws<InvalidDataException>(() => new ContentLibrary(folder).Sound("notes.txt"), "not a .wav or .ogg sound");
+        void LoadTextAsSound() => new ContentLibrary(folder).Sound("notes.txt");
+        Check.Throws<InvalidDataException>(LoadTextAsSound, "not a .wav or .ogg sound");
     }
 
     [Test]
@@ -74,26 +76,33 @@ internal static class AudioTests
         pawn.Destroy();
         Check.True(!playing.IsPlaying, "and goes with it");
         WorldObject loose = new WorldObject("loose");
-        Check.Throws<InvalidOperationException>(() => mixer.PlayAt(hit, loose), "in a scene's world");
+        void PlayFromALooseObject() => mixer.PlayAt(hit, loose);
+        Check.Throws<InvalidOperationException>(PlayFromALooseObject, "in a scene's world");
         loose.Destroy();
     }
 
     [Test]
-    public static void MusicCrossfadesAndStops()
+    public static void MusicFadesInOnTheMusicBus()
     {
         using Stage stage = Stage.Open();
         AudioMixer mixer = new AudioMixer(stage.Root.Node);
-        ContentLibrary content = new ContentLibrary(SoundsFolder());
-        Sound music = content.Sound("music.wav");
-        Sound other = content.Sound("hop.wav");
-        mixer.PlayMusic(music, 1f);
+        mixer.PlayMusic(Sounds().Sound("music.wav"), 1f);
         Check.Near(0f, mixer.Tracks[0].Level, "starts silent");
         mixer.Update(0.5f);
         Check.Near(0.5f, mixer.Tracks[0].Level, "fading in");
         mixer.Update(0.5f);
         Check.Near(1f, mixer.Tracks[0].Level, "full");
         Check.Equal("Music", mixer.Tracks[0].Player.Bus.ToString(), "on the music bus");
+    }
 
+    [Test]
+    public static void ANewTrackCrossfadesTheOldOne()
+    {
+        using Stage stage = Stage.Open();
+        AudioMixer mixer = new AudioMixer(stage.Root.Node);
+        ContentLibrary content = Sounds();
+        Sound other = content.Sound("hop.wav");
+        mixer.PlayMusic(content.Sound("music.wav"), 0f);
         mixer.PlayMusic(other, 1f);
         Check.Equal(2, mixer.Tracks.Count, "both during the crossfade");
         mixer.Update(0.5f);
@@ -104,7 +113,14 @@ internal static class AudioTests
         Check.True(ReferenceEquals(other, mixer.Music), "now playing");
         mixer.PlayMusic(other, 1f);
         Check.Equal(1, mixer.Tracks.Count, "asking for the same music changes nothing");
+    }
 
+    [Test]
+    public static void StoppingMusicWithoutAFadeEndsItAtOnce()
+    {
+        using Stage stage = Stage.Open();
+        AudioMixer mixer = new AudioMixer(stage.Root.Node);
+        mixer.PlayMusic(Sounds().Sound("music.wav"), 0f);
         mixer.StopMusic(0f);
         mixer.Update(0f);
         Check.Equal(0, mixer.Tracks.Count, "stopped at once");
@@ -116,9 +132,12 @@ internal static class AudioTests
     {
         using Stage stage = Stage.Open();
         AudioMixer mixer = new AudioMixer(stage.Root.Node);
-        Check.Throws<InvalidOperationException>(() => mixer.SaveRecording("x.wav"), "StartRecording first");
+        void SaveWithoutRecording() => mixer.SaveRecording("x.wav");
+        Check.Throws<InvalidOperationException>(SaveWithoutRecording, "StartRecording first");
         Check.True(!mixer.IsRecording, "not recording");
     }
+
+    private static ContentLibrary Sounds() => new ContentLibrary(SoundsFolder());
 
     private static string SoundsFolder() =>
         Path.GetFullPath(Path.Combine(Godot.ProjectSettings.GlobalizePath("res://"), "..", "..", "samples", "OrbitDemo", "content", "sounds"));

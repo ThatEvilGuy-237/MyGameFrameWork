@@ -1,6 +1,6 @@
 using Evil.Engine.Input;
 
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Content;
 
 internal static class ContentTests
 {
@@ -11,7 +11,7 @@ internal static class ContentTests
         WriteRobot(Path.Combine(folder, "robot.glb"));
         Model model = new ContentLibrary(folder).Model("robot.glb");
         Check.Equal("robot", model.Name, "named after the file");
-        Check.Equal("Body Hand", string.Join(' ', model.Parts.Select(part => part.Name).Order()), "both meshes are parts");
+        Check.Equal("Body Hand", PartNames(model), "both meshes are parts");
         Check.True(model.Find("Arm") is { } arm && arm is not ModelPart, "the empty node is a group");
         Check.Equal("Arm", model.Part("Hand")?.Parent?.Name, "the hand hangs on the arm");
 
@@ -49,12 +49,8 @@ internal static class ContentTests
         Model model = new ContentLibrary(folder).Model("robot.glb");
         using Stage stage = Stage.Open();
         stage.Root.Add(model);
-        Camera camera = new Camera();
-        camera.Position = new Vector3(0f, 0f, 10f);
-        stage.Root.Add(camera);
-        camera.LookAt(Vector3.Zero);
-        camera.MakeCurrent();
-        Vector2 middle = Stage.Host!.GetViewport().GetVisibleRect().Size.ToEvil() / 2f;
+        Camera camera = stage.AddCamera(new Vector3(0f, 0f, 10f));
+        Vector2 middle = Stage.ScreenMiddle;
         Hit? hit = Picker.Pick(camera, stage.Root, middle);
         Check.Equal("Body", hit?.Target.Name, "the body is under the middle of the screen");
         Check.True(hit!.Target.Ancestor<Model>() == model, "and belongs to the model");
@@ -107,8 +103,10 @@ internal static class ContentTests
     {
         string folder = TempFolder();
         ContentLibrary content = new ContentLibrary(folder);
-        Check.Throws<FileNotFoundException>(() => content.Texture("nope.png"), "'nope.png' was not found");
-        Check.Throws<FileNotFoundException>(() => content.Model("models/nope.glb"), Path.Combine(folder, "models", "nope.glb"));
+        void LoadMissingTexture() => content.Texture("nope.png");
+        Check.Throws<FileNotFoundException>(LoadMissingTexture, "'nope.png' was not found");
+        void LoadMissingModel() => content.Model("models/nope.glb");
+        Check.Throws<FileNotFoundException>(LoadMissingModel, Path.Combine(folder, "models", "nope.glb"));
     }
 
     [Test]
@@ -120,6 +118,18 @@ internal static class ContentTests
         string folder = TempFolder();
         Check.Equal(folder, GameBuilder.Create("test", 320, 240).Content(folder).Start(new EmptyScene()).Build().Options.ContentRoot, "a real folder");
         Check.Equal("res://", GameBuilder.Create("test", 320, 240).Start(new EmptyScene()).Build().Options.ContentRoot, "the game project by default");
+    }
+
+    private static string PartNames(Model model)
+    {
+        List<string> names = new List<string>();
+        foreach (ModelPart part in model.Parts)
+        {
+            names.Add(part.Name);
+        }
+
+        names.Sort(StringComparer.Ordinal);
+        return string.Join(' ', names);
     }
 
     private static string TempFolder()
@@ -159,6 +169,4 @@ internal static class ContentTests
             throw new CheckFailed($"could not write the test model: {appended}, {written}");
         }
     }
-
-    private sealed class EmptyScene : Scene;
 }

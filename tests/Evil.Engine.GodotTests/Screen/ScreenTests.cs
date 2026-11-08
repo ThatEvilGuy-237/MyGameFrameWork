@@ -1,13 +1,14 @@
 using Evil.Engine.Mathematics;
 
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Screen;
 
 internal static class ScreenTests
 {
     [Test]
     public static void GroupsMoveWhatIsDrawn()
     {
-        (Canvas? canvas, RecordingTarget? target) = Drawing();
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = target.OpenCanvas();
         using (canvas.Group())
         {
             canvas.Translate(100f, 50f);
@@ -22,9 +23,10 @@ internal static class ScreenTests
     [Test]
     public static void TextInABoxIsCentred()
     {
-        (Canvas? canvas, RecordingTarget? target) = Drawing();
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = target.OpenCanvas();
         canvas.DrawText("Move", new RectF(100f, 500f, 120f, 40f), 18f, Color.White, TextAlign.Center);
-        (Vector2 Baseline, int Size, float Width, TextAlign Align, Font? Font) text = target.Texts.Single();
+        DrawnText text = target.OnlyText;
         Check.Near(new Vector2(100f, 525f), text.Baseline, "baseline: box top + (40 - 20) / 2 + ascent 15");
         Check.Equal(18, text.Size, "size in pixels");
         Check.Near(120f, text.Width, "aligned inside the box width");
@@ -34,15 +36,17 @@ internal static class ScreenTests
     [Test]
     public static void TextAtAPointStartsAtItsTopLeft()
     {
-        (Canvas? canvas, RecordingTarget? target) = Drawing();
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = target.OpenCanvas();
         canvas.DrawText("hi", new Vector2(10f, 10f), 16f, Color.White);
-        Check.Near(new Vector2(10f, 25f), target.Texts.Single().Baseline, "top + ascent");
+        Check.Near(new Vector2(10f, 25f), target.OnlyText.Baseline, "top + ascent");
     }
 
     [Test]
     public static void EachSceneAndFrameStartsWithTheBuiltInFont()
     {
-        (Canvas? canvas, RecordingTarget? target) = Drawing();
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = target.OpenCanvas();
         Font font = new Font(new Godot.FontFile(), "test");
         canvas.Font = font;
         canvas.DrawText("styled", new Vector2(0f, 0f), 16f, Color.White);
@@ -61,7 +65,8 @@ internal static class ScreenTests
     {
         RecordingTarget target = new RecordingTarget();
         Canvas canvas = new Canvas(target);
-        Check.Throws<InvalidOperationException>(() => canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.Red), "only draws inside a scene's Draw");
+        void DrawOutsideDraw() => canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.Red);
+        Check.Throws<InvalidOperationException>(DrawOutsideDraw, "only draws inside a scene's Draw");
         Check.Near(new Vector2(60f, 20f), canvas.MeasureText("anything", 18f), "measuring works any time");
         canvas.Begin(new Vector2(800f, 600f));
         canvas.Push();
@@ -77,7 +82,8 @@ internal static class ScreenTests
         scenes.Push(new DrawingScene("map", log, overlay: false, moveWithoutGroup: true));
         scenes.Push(new DrawingScene("menu", log, overlay: true, moveWithoutGroup: false));
         scenes.ApplyChanges();
-        (Canvas? canvas, RecordingTarget? target) = Drawing();
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = target.OpenCanvas();
         scenes.Draw(canvas);
         Check.Equal("map menu", string.Join(' ', log), "bottom first");
         Check.True(target.Script.EndsWith("transform 0,0 | rect", StringComparison.Ordinal), $"the menu starts clean, got {target.Script}");
@@ -96,8 +102,9 @@ internal static class ScreenTests
         SceneStack scenes = new SceneStack(null, stage.Root);
         scenes.Push(new LeakyScene());
         scenes.ApplyChanges();
-        (Canvas? canvas, RecordingTarget _) = Drawing();
-        Check.Throws<InvalidOperationException>(() => scenes.Draw(canvas), "LeakyScene.Draw left 1 Push()");
+        Canvas canvas = new RecordingTarget().OpenCanvas();
+        void DrawWithALeakyScene() => scenes.Draw(canvas);
+        Check.Throws<InvalidOperationException>(DrawWithALeakyScene, "LeakyScene.Draw left 1 Push()");
     }
 
     [Test]
@@ -123,69 +130,9 @@ internal static class ScreenTests
         Check.Equal("Start", display.Title, "title from the settings");
         display.Title = "Battle";
         Check.Equal("Battle", display.Title, "title changes");
-        Check.Throws<ArgumentException>(() => display.Title = " ");
-        Check.Throws<ArgumentOutOfRangeException>(() => display.Resize(0, 600), "positive size");
-    }
-
-    private static (Canvas Canvas, RecordingTarget Target) Drawing()
-    {
-        RecordingTarget target = new RecordingTarget();
-        Canvas canvas = new Canvas(target);
-        canvas.Begin(new Vector2(800f, 600f));
-        return (canvas, target);
-    }
-
-    private sealed class DrawingScene(string name, List<string> log, bool overlay, bool moveWithoutGroup) : Scene
-    {
-        public override bool IsOverlay => overlay;
-
-        protected override void Draw(Canvas canvas)
-        {
-            log.Add(name);
-            if (moveWithoutGroup)
-            {
-                canvas.Translate(300f, 200f);
-            }
-
-            canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.White);
-        }
-    }
-
-    private sealed class LeakyScene : Scene
-    {
-        protected override void Draw(Canvas canvas) => canvas.Push();
-    }
-
-    private sealed class RecordingTarget : ICanvasTarget
-    {
-        private readonly List<string> _steps = [];
-
-        public List<(Vector2 Baseline, int Size, float Width, TextAlign Align, Font? Font)> Texts { get; } = [];
-
-        public string Script => string.Join(" | ", _steps);
-
-        public void SetTransform(Matrix3x2 matrix) => _steps.Add($"transform {matrix.M31:0},{matrix.M32:0}");
-
-        public void Rect(RectF rect, Color color, bool filled, float thickness) => _steps.Add("rect");
-
-        public void Line(Vector2 from, Vector2 to, Color color, float thickness) => _steps.Add("line");
-
-        public void Circle(Vector2 center, float radius, Color color) => _steps.Add("circle");
-
-        public void Polygon(ReadOnlySpan<Vector2> points, Color color) => _steps.Add("polygon");
-
-        public void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width, Font? font)
-        {
-            _steps.Add("text");
-            Texts.Add((baseline, size, width, align, font));
-        }
-
-        public void Paragraph(string text, Vector2 baseline, int size, Color color, float width, Font? font) => _steps.Add("paragraph");
-
-        public Vector2 Measure(string text, int size, Font? font) => new Vector2(60f, 20f);
-
-        public Vector2 MeasureParagraph(string text, int size, float width, Font? font) => new Vector2(width, 60f);
-
-        public float Ascent(int size, Font? font) => 15f;
+        void BlankTheTitle() => display.Title = " ";
+        Check.Throws<ArgumentException>(BlankTheTitle);
+        void ResizeToNothing() => display.Resize(0, 600);
+        Check.Throws<ArgumentOutOfRangeException>(ResizeToNothing, "positive size");
     }
 }

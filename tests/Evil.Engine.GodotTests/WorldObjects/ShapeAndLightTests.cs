@@ -1,4 +1,4 @@
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.WorldObjects;
 
 internal static class ShapeAndLightTests
 {
@@ -59,7 +59,8 @@ internal static class ShapeAndLightTests
         Check.Near(1f, sun.Intensity, "intensity");
         sun.Direction = new Vector3(0f, -3f, 0f);
         Check.Near(new Vector3(0f, -1f, 0f), sun.Direction, "straight down works");
-        Check.Throws<ArgumentException>(() => sun.Direction = Vector3.Zero, "direction with a length");
+        void PointTheSunNowhere() => sun.Direction = Vector3.Zero;
+        Check.Throws<ArgumentException>(PointTheSunNowhere, "direction with a length");
         sun.Node.Free();
     }
 }

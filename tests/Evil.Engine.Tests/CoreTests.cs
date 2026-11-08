@@ -13,7 +13,8 @@ internal static class CoreTests
         Check.Near(1f, orange.A, "alpha defaults to opaque");
         Check.Equal("#FF8000FF", orange.ToHex(), "hex");
         Check.Near(0x44 / 255f, Color.FromHex("11223344").A, "alpha from hex");
-        Check.Throws<FormatException>(() => Color.FromHex("#12345"), "#RRGGBB");
+        void ReadFiveDigits() => Color.FromHex("#12345");
+        Check.Throws<FormatException>(ReadFiveDigits, "#RRGGBB");
     }
 
     [Test]

@@ -1,4 +1,4 @@
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.WorldObjects;
 
 internal static class WorldObjectTests
 {
@@ -19,9 +19,12 @@ internal static class WorldObjectTests
         WorldObject first = new WorldObject("first");
         WorldObject second = new WorldObject("second");
         WorldObject child = first.Add(new WorldObject("child"));
-        Check.Throws<InvalidOperationException>(() => second.Add(child), "already belongs to 'first'");
-        Check.Throws<InvalidOperationException>(() => child.Add(first), "cannot go inside itself");
-        Check.Throws<InvalidOperationException>(() => first.Add(first), "cannot go inside itself");
+        void AddToASecondParent() => second.Add(child);
+        Check.Throws<InvalidOperationException>(AddToASecondParent, "already belongs to 'first'");
+        void PutTheParentInTheChild() => child.Add(first);
+        Check.Throws<InvalidOperationException>(PutTheParentInTheChild, "cannot go inside itself");
+        void PutItInsideItself() => first.Add(first);
+        Check.Throws<InvalidOperationException>(PutItInsideItself, "cannot go inside itself");
         first.Node.Free();
         second.Node.Free();
     }
@@ -34,7 +37,8 @@ internal static class WorldObjectTests
         parent.Remove(child);
         Check.True(child.Parent is null, "no parent");
         Check.True(child.Node.GetParent() is null, "the Godot node is out too");
-        Check.Throws<InvalidOperationException>(() => parent.Remove(child), "is not inside 'parent'");
+        void RemoveAStranger() => parent.Remove(child);
+        Check.Throws<InvalidOperationException>(RemoveAStranger, "is not inside 'parent'");
         parent.Node.Free();
         child.Node.Free();
     }
@@ -122,7 +126,8 @@ internal static class WorldObjectTests
     public static void RotateNeedsAnAxis()
     {
         WorldObject thing = new WorldObject("thing");
-        Check.Throws<ArgumentException>(() => thing.Rotate(Vector3.Zero, 10f), "no length");
+        void TurnAroundNothing() => thing.Rotate(Vector3.Zero, 10f);
+        Check.Throws<ArgumentException>(TurnAroundNothing, "no length");
         thing.Node.Free();
     }
 

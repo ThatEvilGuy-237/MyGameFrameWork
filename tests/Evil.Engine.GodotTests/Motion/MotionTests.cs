@@ -1,13 +1,14 @@
 using Evil.Engine.Motion;
 
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Motion;
 
 internal static class MotionTests
 {
     [Test]
     public static void MoveToArrivesOnTime()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         Tween move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
         motion.Update(0.5f);
         Check.Near(new Vector3(2f, 0f, 0f), pawn.Position, "halfway after half the time");
@@ -22,7 +23,8 @@ internal static class MotionTests
     [Test]
     public static void EasingShapesTheWay()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.InOutCubic);
         motion.Update(0.25f);
         Check.Near(4f * Ease.Apply(Easing.InOutCubic, 0.25f), pawn.Position.X, "slow start");
@@ -32,7 +34,8 @@ internal static class MotionTests
     [Test]
     public static void MovesOnOneObjectWaitTheirTurnAndKeepLeftoverTime()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         Tween first = motion.MoveTo(pawn, new Vector3(2f, 0f, 0f), 1f, Easing.Linear);
         Tween second = motion.MoveTo(pawn, new Vector3(2f, 0f, 2f), 1f, Easing.Linear);
         motion.Update(0.5f);
@@ -48,7 +51,8 @@ internal static class MotionTests
     [Test]
     public static void DifferentObjectsMoveTogether()
     {
-        (MotionPlayer? motion, WorldObject? red) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject red = new WorldObject("pawn");
         WorldObject blue = new WorldObject("blue");
         motion.MoveTo(red, new Vector3(2f, 0f, 0f), 1f, Easing.Linear);
         motion.MoveTo(blue, new Vector3(0f, 0f, 2f), 1f, Easing.Linear);
@@ -62,7 +66,8 @@ internal static class MotionTests
     [Test]
     public static void HopsArcAndLand()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         motion.Hop(pawn, new Vector3(4f, 0f, 0f), 2f, 1f);
         motion.Update(0.5f);
         Check.Near(new Vector3(2f, 2f, 0f), pawn.Position, "top of the arc");
@@ -74,7 +79,8 @@ internal static class MotionTests
     [Test]
     public static void TurnsFacesAndSpins()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         motion.Face(pawn, new Vector3(5f, 0f, 0f), 0.2f);
         motion.Update(1f);
         Check.Near(new Vector3(1f, 0f, 0f), pawn.Forward, "faces the point");
@@ -95,7 +101,8 @@ internal static class MotionTests
     [Test]
     public static void MoveAlongWalksThePathFacingEachStep()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         Tween last = motion.MoveAlong(pawn, [new Vector3(0f, 0f, -2f), new Vector3(2f, 0f, -2f)], 1f);
         motion.Update(1.25f);
         Check.Near(new Vector3(0f, 0f, -2f), pawn.Position, "first tile");
@@ -105,14 +112,16 @@ internal static class MotionTests
         Check.Near(new Vector3(1f, 0f, 0f), pawn.Forward, "facing the second step");
         motion.Update(0.5f);
         Check.True(last.IsDone, "the returned motion is the last step");
-        Check.Throws<ArgumentException>(() => motion.MoveAlong(pawn, [], 1f), "at least one point");
+        void WalkAnEmptyPath() => motion.MoveAlong(pawn, [], 1f);
+        Check.Throws<ArgumentException>(WalkAnEmptyPath, "at least one point");
         pawn.Destroy();
     }
 
     [Test]
     public static void StopLeavesItWhereItIsAndCompleteSkipsAhead()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         Tween move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
         motion.Update(0.5f);
         motion.Stop(pawn);
@@ -131,18 +140,21 @@ internal static class MotionTests
     [Test]
     public static void DestroyedObjectsDropTheirMotions()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         Tween move = motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f);
         pawn.Destroy();
         motion.Update(0.5f);
         Check.True(move.WasCancelled && !motion.IsBusy(), "dropped without a crash");
-        Check.Throws<ObjectDisposedException>(() => motion.MoveTo(pawn, Vector3.One, 1f));
+        void MoveADestroyedPawn() => motion.MoveTo(pawn, Vector3.One, 1f);
+        Check.Throws<ObjectDisposedException>(MoveADestroyedPawn);
     }
 
     [Test]
     public static void SpeedSlowsAndPauses()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         motion.MoveTo(pawn, new Vector3(4f, 0f, 0f), 1f, Easing.Linear);
         motion.Speed = 0f;
         motion.Update(1f);
@@ -156,7 +168,8 @@ internal static class MotionTests
     [Test]
     public static void ValuesColoursAndInstantMoves()
     {
-        (MotionPlayer? motion, WorldObject? pawn) = Setup();
+        MotionPlayer motion = new MotionPlayer();
+        WorldObject pawn = new WorldObject("pawn");
         ValueTween fade = motion.Value(0f, 10f, 1f, Easing.Linear);
         Material glass = new Material(Color.Red);
         motion.ColorTo(glass, Color.Blue, 1f, Easing.Linear);
@@ -167,9 +180,8 @@ internal static class MotionTests
         motion.Update(0f);
         Check.True(jump.IsDone, "zero seconds is instant");
         Check.Near(new Vector3(9f, 0f, 0f), pawn.Position, "and lands");
-        Check.Throws<ArgumentOutOfRangeException>(() => motion.MoveTo(pawn, Vector3.One, -1f), "0 seconds or more");
+        void MoveBackInTime() => motion.MoveTo(pawn, Vector3.One, -1f);
+        Check.Throws<ArgumentOutOfRangeException>(MoveBackInTime, "0 seconds or more");
         pawn.Destroy();
     }
-
-    private static (MotionPlayer Motion, WorldObject Pawn) Setup() => (new MotionPlayer(), new WorldObject("pawn"));
 }

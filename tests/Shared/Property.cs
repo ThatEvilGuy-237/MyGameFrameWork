@@ -1,16 +1,27 @@
 namespace Evil.Engine.Testing;
 
-internal static class Property
+internal abstract class Property<TCase> : TestCase
 {
-    public static void ForAll<T>(string name, Func<Random, T> generate, Action<T> check)
+    public override string Name => $"{Area}.{GetType().Name}";
+
+    private string Area
     {
-        PropertyRun run = new PropertyRun(name);
+        get
+        {
+            string space = GetType().Namespace ?? string.Empty;
+            return space[(space.LastIndexOf('.') + 1)..];
+        }
+    }
+
+    public override void Execute()
+    {
+        PropertyRun run = new PropertyRun(GetType().Name);
         for (int i = 0; i < run.Cases; i++)
         {
-            T sample = generate(run.Random);
+            TCase sample = Generate(run.Random);
             try
             {
-                check(sample);
+                Verify(sample);
             }
             catch (Exception failure)
             {
@@ -18,4 +29,8 @@ internal static class Property
             }
         }
     }
+
+    protected abstract TCase Generate(Random random);
+
+    protected abstract void Verify(TCase sample);
 }
