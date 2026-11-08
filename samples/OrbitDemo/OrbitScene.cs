@@ -28,8 +28,29 @@ internal sealed class OrbitScene : Scene
         _yellow = _blue.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));
         _yellow.Position = new Vector3(3f, 0f, 0f);
 
-        var moon = _yellow.Add(new Sphere(0.22f, Color.White));
-        moon.Position = new Vector3(1.2f, 0f, 0f);
+        var ring = _yellow.Add(new Torus(0.8f, 0.95f, Color.FromHex("#E8D9A8")));
+        ring.Rotation = new Vector3(20f, 0f, 10f);
+
+        var moon = _yellow.Add(new Sphere(0.22f, Color.White) { Material = Material.Glowing(Color.FromHex("#DDEBFF"), 1.5f) });
+        moon.Position = new Vector3(1.4f, 0f, 0f);
+
+        var stone = Material.Matte(Color.FromHex("#8C8A80"));
+        foreach (var x in new[] { -7f, 7f })
+        {
+            var pillar = World.Add(new Cylinder(0.45f, 3f, Color.White) { Material = stone });
+            pillar.Position = new Vector3(x, 1.5f, -5f);
+        }
+
+        AddPawn(new Vector3(-2.5f, 0f, 3.5f), Color.FromHex("#E5484D"));
+        AddPawn(new Vector3(2.5f, 0f, 3.5f), Color.FromHex("#3E63DD"));
+    }
+
+    private void AddPawn(Vector3 place, Color team)
+    {
+        var pawn = World.Add(new Capsule(0.35f, 1.4f, team));
+        pawn.Position = place + new Vector3(0f, 0.7f, 0f);
+        var hat = pawn.Add(new Cone(0.3f, 0.45f, Color.FromHex("#F0F0F0")));
+        hat.Position = new Vector3(0f, 0.9f, 0f);
     }
 
     protected override void Update(GameTime time)

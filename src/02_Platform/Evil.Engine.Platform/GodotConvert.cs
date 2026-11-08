@@ -1,7 +1,9 @@
 using Evil.Engine.Core;
 using GodotColor = Godot.Color;
+using GodotQuaternion = Godot.Quaternion;
 using GodotVector2 = Godot.Vector2;
 using GodotVector3 = Godot.Vector3;
+using Quaternion = System.Numerics.Quaternion;
 using Vector2 = System.Numerics.Vector2;
 using Vector3 = System.Numerics.Vector3;
 
@@ -16,6 +18,10 @@ internal static class GodotConvert
     public static GodotVector2 ToGodot(this Vector2 value) => new(value.X, value.Y);
 
     public static Vector2 ToEvil(this GodotVector2 value) => new(value.X, value.Y);
+
+    public static GodotQuaternion ToGodot(this Quaternion value) => new(value.X, value.Y, value.Z, value.W);
+
+    public static Quaternion ToEvil(this GodotQuaternion value) => new(value.X, value.Y, value.Z, value.W);
 
     public static GodotColor ToGodot(this Color value) => new(value.R, value.G, value.B, value.A);
 

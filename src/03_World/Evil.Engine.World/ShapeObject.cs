@@ -1,4 +1,3 @@
-using Evil.Engine.Platform;
 using Godot;
 using Color = Evil.Engine.Core.Color;
 
@@ -6,26 +5,31 @@ namespace Evil.Engine.World;
 
 public abstract class ShapeObject : WorldObject
 {
-    private readonly StandardMaterial3D _material = new();
+    private Material _material;
 
     private protected ShapeObject(PrimitiveMesh mesh, Color color)
         : base(new MeshInstance3D { Mesh = mesh })
     {
         Mesh = mesh;
-        Instance.MaterialOverride = _material;
-        Color = color;
+        _material = new Material(color);
+        Instance.MaterialOverride = _material.Native;
+    }
+
+    public Material Material
+    {
+        get => _material;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            _material = value;
+            Instance.MaterialOverride = value.Native;
+        }
     }
 
     public Color Color
     {
-        get => _material.AlbedoColor.ToEvil();
-        set
-        {
-            _material.AlbedoColor = value.ToGodot();
-            _material.Transparency = value.A < 1f
-                ? BaseMaterial3D.TransparencyEnum.Alpha
-                : BaseMaterial3D.TransparencyEnum.Disabled;
-        }
+        get => _material.Color;
+        set => _material.Color = value;
     }
 
     public bool CastsShadow

@@ -105,9 +105,7 @@ public sealed class SceneStack
         var top = _scenes[^1];
         _scenes.RemoveAt(_scenes.Count - 1);
         top.RunExit();
-        var world = top.Root!;
-        _worlds.Remove(world);
-        world.Node.QueueFree();
+        top.Root!.Destroy();
         top.Detach();
         RefreshViews();
     }
