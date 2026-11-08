@@ -7,11 +7,13 @@ using Godot;
 
 namespace Evil.Engine.Hosting;
 
-public abstract partial class GameMain : Node
+public abstract partial class GameMain : Node, IOverlayPainter
 {
     private readonly Keyboard _keyboard = new();
     private readonly Mouse _mouse = new();
     private GameOptions? _options;
+    private OverlayNode? _overlay;
+    private Canvas? _canvas;
     private GameContext? _game;
     private double _totalSeconds;
     private long _frame;
@@ -23,12 +25,17 @@ public abstract partial class GameMain : Node
     public override void _Ready()
     {
         _options = CreateGame().Options;
-        WindowSetup.Apply(_options.Window);
+        WindowSetup.Apply(_options.Window, GetTree().Root);
         RenderingServer.SetDefaultClearColor(_options.ClearColor.ToGodot());
         var worlds = new WorldObject("Worlds");
         AddChild(worlds.Node);
+        var layer = new CanvasLayer { Name = "Overlay", Layer = 1 };
+        AddChild(layer);
+        _overlay = new OverlayNode { Name = "Canvas", Painter = this };
+        layer.AddChild(_overlay);
+        _canvas = new Canvas(_overlay.Target);
         _mouse.Place(GetViewport().GetMousePosition().ToEvil());
-        _game = new GameContext(worlds, _keyboard, _mouse) { ScreenSize = ScreenSize() };
+        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root)) { ScreenSize = ScreenSize() };
         RenderingServer.FramePostDraw += OnFrameDrawn;
         _game.Scenes.Push(_options.StartScene);
         _game.Scenes.ApplyChanges();
@@ -48,6 +55,7 @@ public abstract partial class GameMain : Node
         _game.Scenes.ApplyChanges();
         _keyboard.EndFrame();
         _mouse.EndFrame();
+        _overlay?.QueueRedraw();
         if (_options.Snapshot is { } snapshot && snapshot.Frame == _frame)
         {
             _game.CaptureFrame(snapshot.Path);
@@ -87,6 +95,24 @@ public abstract partial class GameMain : Node
     }
 
     protected abstract GameHost CreateGame();
+
+    void IOverlayPainter.Paint(ICanvasTarget target)
+    {
+        if (_game is null || _canvas is null || _quitting)
+        {
+            return;
+        }
+
+        _canvas.Begin(ScreenSize());
+        try
+        {
+            _game.Scenes.Draw(_canvas);
+        }
+        finally
+        {
+            _canvas.End();
+        }
+    }
 
     private void OnFrameDrawn()
     {

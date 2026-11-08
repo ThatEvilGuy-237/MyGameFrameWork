@@ -1,21 +1,22 @@
 using Godot;
+using GodotWindow = Godot.Window;
 
 namespace Evil.Engine.Screen;
 
 internal static class WindowSetup
 {
-    public static void Apply(WindowSettings settings)
+    public static void Apply(WindowSettings settings, GodotWindow window)
     {
-        DisplayServer.WindowSetTitle(settings.Title);
+        window.Title = settings.Title;
+        window.Unresizable = !settings.Resizable;
         DisplayServer.WindowSetVsyncMode(settings.VSync ? DisplayServer.VSyncMode.Enabled : DisplayServer.VSyncMode.Disabled);
-        DisplayServer.WindowSetFlag(DisplayServer.WindowFlags.ResizeDisabled, !settings.Resizable);
         if (settings.Fullscreen)
         {
-            DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
+            window.Mode = GodotWindow.ModeEnum.Fullscreen;
             return;
         }
 
-        DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
-        DisplayServer.WindowSetSize(new Vector2I(settings.Width, settings.Height));
+        window.Mode = GodotWindow.ModeEnum.Windowed;
+        window.Size = new Vector2I(settings.Width, settings.Height);
     }
 }

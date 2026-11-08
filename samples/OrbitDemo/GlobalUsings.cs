@@ -7,3 +7,4 @@ global using Evil.Engine.Scenes;
 global using Evil.Engine.Screen;
 global using Evil.Engine.World;
 global using Evil.Engine.Input;
+global using Evil.Engine.Mathematics;

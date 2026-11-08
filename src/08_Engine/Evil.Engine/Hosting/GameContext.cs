@@ -3,6 +3,7 @@ using System.Numerics;
 using Evil.Engine.Core;
 using Evil.Engine.Input;
 using Evil.Engine.Scenes;
+using Evil.Engine.Screen;
 using Evil.Engine.World;
 
 namespace Evil.Engine.Hosting;
@@ -12,14 +13,15 @@ public sealed class GameContext
     private readonly Queue<string> _captures = new();
 
     internal GameContext(WorldObject worlds)
-        : this(worlds, new Keyboard(), new Mouse())
+        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")))
     {
     }
 
-    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse)
+    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display)
     {
         Keyboard = keyboard;
         Mouse = mouse;
+        Display = display;
         Scenes = new SceneStack(this, worlds);
     }
 
@@ -28,6 +30,8 @@ public sealed class GameContext
     public Keyboard Keyboard { get; }
 
     public Mouse Mouse { get; }
+
+    public Display Display { get; }
 
     public Vector2 ScreenSize { get; internal set; }
 

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\01_Mathematics\Evil.Engine.Mathematics\Evil.Engine.Mathematics.csproj" />
     <ProjectReference Include="..\..\02_Platform\Evil.Engine.Platform\Evil.Engine.Platform.csproj" />
   </ItemGroup>
 

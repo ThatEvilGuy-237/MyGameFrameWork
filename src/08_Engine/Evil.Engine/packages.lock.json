@@ -51,6 +51,7 @@
       "evil.engine.screen": {
         "type": "Project",
         "dependencies": {
+          "Evil.Engine.Mathematics": "[0.2.0, )",
           "Evil.Engine.Platform": "[0.2.0, )",
           "GodotSharp": "[4.7.2, )"
         }
