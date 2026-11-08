@@ -33,7 +33,7 @@ motion ends goes into the next one, so the result is the same at any frame rate.
 |---|---|
 | `MoveTo(obj, position, seconds, easing)` | slide to a position (relative to the parent, like `Position`) |
 | `Hop(obj, position, height, seconds)` | jump there in an arc |
-| `MoveAlong(obj, path, secondsPerStep, face: true)` | walk a list of points (tiles), turning to face each step |
+| `MoveAlong(obj, path, secondsPerStep, face: true)` | walk a list of points (tiles), turning to face each step; the path starts at the first step, not where the object stands |
 | `Face(obj, point, seconds)` | turn around the vertical axis to face a point |
 | `TurnTo(obj, yawDegrees, seconds)` | turn to a heading (0 looks along -Z, 90 along -X) |
 | `Spin(obj, degrees, seconds)` | turn by an amount, more than 180 included |

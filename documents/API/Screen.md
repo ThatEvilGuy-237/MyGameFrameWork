@@ -68,6 +68,16 @@ The display drives Godot's root `Window` node. Changing the size through the low
 shrank the OS window, but Godot never told the game, so `Game.ScreenSize` stayed at the old size. With the root
 `Window` the game sees the new size on the next frame.
 
+## Screenshots
+
+| Call | What |
+|---|---|
+| `Game.CaptureFrame(path)` | saves the next drawn frame as a `.png`, 3D world and overlay together |
+| `GameBuilder.CaptureAndExit(path, frame)` | saves frame number `frame` and quits: a picture of a game nobody plays |
+
+`CaptureAndExit` takes one picture. For pictures along the way, call `CaptureFrame` from your own key (the demo saves
+on F12) or capture the window from outside: see "Driving a game on the server" in [[Testing]].
+
 > [!note] Checked on the server
 > The driven check presses F10 (resize to 1024x640), waits for the demo to report `screen: 1024x640`, then clicks
 > "Attack" at the button position the new layout logged. Full screen (F11) cannot be shown on the server: the
