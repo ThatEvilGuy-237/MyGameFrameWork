@@ -83,7 +83,7 @@ public class Camera : WorldObject
     {
         if (!Lens.IsInsideTree())
         {
-            throw new InvalidOperationException($"Camera.{call} needs the camera in a scene's world.");
+            throw new InvalidOperationException($"Camera.{call} needs the camera in a scene's world: use the scene's own Camera, or World.Add this one first.");
         }
     }
 }

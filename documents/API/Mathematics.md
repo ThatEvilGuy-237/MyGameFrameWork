@@ -48,6 +48,32 @@ attached to something else is.
 `Triangulator.Triangulate(points)` does the cutting: concave shapes and points in a straight line work. A
 self-crossing outline still gives whole triangles, though the result is a best guess.
 
+## Grids
+
+A `Grid` is a board of square cells lying on the ground (X and Z), for tile games. A `Cell` is a column and a row.
+
+```csharp
+Grid board = Grid.Centered(8, 8, 1f, GridMoves.Four);
+Cell? under = board.CellAt(new Vector3(0.5f, 0f, 0.5f));
+Vector3 middle = board.CenterOf(new Cell(4, 4));
+HashSet<Cell> occupied = [new Cell(4, 5)];
+IReadOnlyList<Cell> path = board.Path(new Cell(4, 4), new Cell(4, 7), occupied);
+IReadOnlyList<Cell> range = board.Reachable(new Cell(4, 4), 3, occupied);
+```
+
+| Member | What |
+|---|---|
+| `new Grid(columns, rows, cellSize, corner, moves)`, `Grid.Centered(...)` | the board; `corner` is the outer corner of cell (0, 0); `Centered` puts the board's middle on the origin |
+| `CellAt(point)`, `CenterOf(cell)`, `Contains(cell)` | world point to cell (`null` off the board) and back |
+| `Neighbours(cell)` | the cells one step away: four sides, or eight with `GridMoves.Eight` (a diagonal step counts as one) |
+| `Path(from, to, blocked)` | the shortest walk around blocked cells, without the start and ending on the goal, like `MoveAlong` wants; empty when there is none |
+| `Reachable(from, steps, blocked)` | every cell within that many steps, the start included: a unit's move range |
+| `cell.StepsTo(other, moves)` | the distance in steps on an empty board |
+
+Proven three ways: properties (a cell's center is in that cell, every point belongs to the cell under it,
+neighbours are mutual and one step away), a brute-force distance table that agrees with every `Path` and
+`Reachable` on random boards with walls, and Godot's own `AStarGrid2D` giving the same number of steps.
+
 ## Validators
 
 Every entry point refuses NaN and infinity where it enters, with a message that names the value and says where

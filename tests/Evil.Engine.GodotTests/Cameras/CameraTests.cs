@@ -44,7 +44,7 @@ internal static class CameraTests
     {
         Camera camera = new Camera();
         void RayFromALooseCamera() => camera.ScreenToRay(Vector2.Zero);
-        Check.Throws<InvalidOperationException>(RayFromALooseCamera, "needs the camera in a scene's world");
+        Check.Throws<InvalidOperationException>(RayFromALooseCamera, "needs the camera in a scene's world: use the scene's own Camera, or World.Add this one first.");
         camera.Destroy();
     }
 

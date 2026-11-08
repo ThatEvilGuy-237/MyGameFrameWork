@@ -133,7 +133,7 @@ public sealed class Canvas
         _transforms.Reset();
         if (depth != 0)
         {
-            throw new InvalidOperationException($"{depth} Push() without a matching Pop() in this frame.");
+            throw new InvalidOperationException($"{depth} Push() without a matching Pop() in this frame. Give each Push a Pop, or write using (canvas.Group()) so the group closes itself.");
         }
     }
 
@@ -143,7 +143,7 @@ public sealed class Canvas
     {
         if (!_drawing)
         {
-            throw new InvalidOperationException("The canvas only draws inside a scene's Draw(Canvas).");
+            throw new InvalidOperationException("The canvas only draws inside a scene's Draw(Canvas): move the drawing into your scene's Draw override.");
         }
 
         Matrix3x2 current = _transforms.Current;

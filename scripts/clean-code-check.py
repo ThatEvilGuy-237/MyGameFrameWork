@@ -70,7 +70,7 @@ def count_lambdas(line):
     found = 0
     for match in LAMBDA_START.finditer(line):
         before = line[:match.start()]
-        if BEFORE_LAMBDA.search(before) and not re.search(r"\bcase\s*$", before):
+        if BEFORE_LAMBDA.search(before) and not re.search(r"\bcase\s*$", before) and not re.match(r"\s*where\s", line):
             found += 1
     return found
 
@@ -204,6 +204,7 @@ def self_test():
         ("    Easing.InQuad => t * t,", "lambda", 0),
         ("    _ => t,", "lambda", 0),
         ("get => _value;", "lambda", 0),
+        ("        where T : WorldObject => this as T ?? Ancestor<T>();", "lambda", 0),
         ("internal WorldObject? Root => _world;", "lambda", 0),
         ("public Scene? Current => _scenes.Count > 0 ? _scenes[^1] : null;", "lambda", 0),
         ("Shape pick = useAll ? (a => a) : Pick;", "lambda", 1),

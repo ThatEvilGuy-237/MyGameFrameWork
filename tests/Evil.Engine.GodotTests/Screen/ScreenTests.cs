@@ -66,7 +66,7 @@ internal static class ScreenTests
         RecordingTarget target = new RecordingTarget();
         Canvas canvas = new Canvas(target);
         void DrawOutsideDraw() => canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.Red);
-        Check.Throws<InvalidOperationException>(DrawOutsideDraw, "only draws inside a scene's Draw");
+        Check.Throws<InvalidOperationException>(DrawOutsideDraw, "move the drawing into your scene's Draw override");
         Check.Near(new Vector2(60f, 20f), canvas.MeasureText("anything", 18f), "measuring works any time");
         canvas.Begin(new Vector2(800f, 600f));
         canvas.Push();
@@ -104,7 +104,7 @@ internal static class ScreenTests
         scenes.ApplyChanges();
         Canvas canvas = new RecordingTarget().OpenCanvas();
         void DrawWithALeakyScene() => scenes.Draw(canvas);
-        Check.Throws<InvalidOperationException>(DrawWithALeakyScene, "LeakyScene.Draw left 1 Push()");
+        Check.Throws<InvalidOperationException>(DrawWithALeakyScene, "LeakyScene.Draw left 1 Push() without a matching Pop(). Write using (canvas.Group())");
     }
 
     [Test]

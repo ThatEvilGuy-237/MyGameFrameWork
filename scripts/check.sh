@@ -47,6 +47,11 @@ if grep -qE "leaked at exit|still in use at exit" "$demo_log"; then
   rm -f "$demo_log"
   exit 1
 fi
+if ! grep -qE '^Evil Engine [0-9.]+: "Evil Engine orbit demo" 1280x720, first scene OrbitScene' "$demo_log"; then
+  echo "the engine did not say it started (the line a game prints first)" >&2
+  rm -f "$demo_log"
+  exit 1
+fi
 rm -f "$demo_log"
 test -s "$shots/orbit.png" || { echo "no frame was captured" >&2; exit 1; }
 echo "saved $shots/orbit.png"

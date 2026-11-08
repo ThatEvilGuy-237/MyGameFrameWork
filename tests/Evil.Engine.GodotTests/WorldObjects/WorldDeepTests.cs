@@ -120,7 +120,7 @@ internal static class WorldDeepTests
         Check.True(hand.IsDestroyed && finger.IsDestroyed, "it and its children are destroyed");
         Check.True(hand.Node.IsQueuedForDeletion(), "Godot frees it at the end of the frame");
         void ReadADestroyedHand() => _ = hand.Position;
-        Check.Throws<ObjectDisposedException>(ReadADestroyedHand, "'hand' was destroyed");
+        Check.Throws<ObjectDisposedException>(ReadADestroyedHand, "'hand' was destroyed: Destroy() took it out of the world for good.");
         hand.Destroy();
         void AddToADestroyedArm() => arm.Add(finger);
         Check.Throws<ObjectDisposedException>(AddToADestroyedArm);
@@ -189,5 +189,18 @@ internal static class WorldDeepTests
         Check.True(flat.Unshaded, "unshaded");
         left.Destroy();
         right.Destroy();
+    }
+
+    [Test]
+    public static void SelfOrAncestorFindsTheClickedShapeOrItsGroup()
+    {
+        Capsule pawn = new Capsule();
+        pawn.Name = "pawn";
+        Cone hat = pawn.Add(new Cone());
+        Check.True(ReferenceEquals(pawn, pawn.SelfOrAncestor<Capsule>()), "the pawn itself");
+        Check.True(ReferenceEquals(pawn, hat.SelfOrAncestor<Capsule>()), "from its hat");
+        Check.True(pawn.Ancestor<Capsule>() is null, "Ancestor alone starts above it");
+        Check.True(hat.SelfOrAncestor<Box>() is null, "nothing of that kind");
+        pawn.Destroy();
     }
 }

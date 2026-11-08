@@ -79,7 +79,7 @@ public sealed class SceneStack
             scene.RunDraw(canvas);
             if (canvas.Depth != 0)
             {
-                throw new InvalidOperationException($"{scene.GetType().Name}.Draw left {canvas.Depth} Push() without a matching Pop().");
+                throw new InvalidOperationException($"{scene.GetType().Name}.Draw left {canvas.Depth} Push() without a matching Pop(). Write using (canvas.Group()) so each group closes itself.");
             }
         }
     }
@@ -100,7 +100,7 @@ public sealed class SceneStack
     {
         if (_scenes.Contains(scene))
         {
-            throw new InvalidOperationException($"{scene.GetType().Name} is already on the scene stack.");
+            throw new InvalidOperationException($"{scene.GetType().Name} is already on the scene stack. A scene object can be there once: make a new one to show it again.");
         }
 
         WorldObject world = _worlds.Add(new WorldObject(scene.GetType().Name));
@@ -117,7 +117,7 @@ public sealed class SceneStack
     {
         if (_scenes.Count == 0)
         {
-            throw new InvalidOperationException("Scenes.Pop() with no scene on the stack.");
+            throw new InvalidOperationException("Scenes.Pop() with no scene on the stack. Push a scene first, or call Game.Exit() to end the game.");
         }
 
         Scene top = _scenes[^1];

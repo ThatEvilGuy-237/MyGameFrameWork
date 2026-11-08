@@ -33,15 +33,8 @@ internal sealed class Pawns
 
     public Capsule? Find(WorldObject? picked)
     {
-        for (WorldObject? current = picked; current is not null; current = current.Parent)
-        {
-            if (current is Capsule pawn && _all.Contains(pawn))
-            {
-                return pawn;
-            }
-        }
-
-        return null;
+        Capsule? pawn = picked?.SelfOrAncestor<Capsule>();
+        return pawn is not null && _all.Contains(pawn) ? pawn : null;
     }
 
     public void Hover(Capsule? pawn, Vector2 mouse)

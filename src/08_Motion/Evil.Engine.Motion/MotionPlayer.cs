@@ -130,7 +130,7 @@ public sealed class MotionPlayer
     private static WorldObject Live(WorldObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        ObjectDisposedException.ThrowIf(target.IsDestroyed, target);
+        target.RequireAlive();
         return target;
     }
 

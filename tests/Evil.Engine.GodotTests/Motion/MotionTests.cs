@@ -147,7 +147,7 @@ internal static class MotionTests
         motion.Update(0.5f);
         Check.True(move.WasCancelled && !motion.IsBusy(), "dropped without a crash");
         void MoveADestroyedPawn() => motion.MoveTo(pawn, Vector3.One, 1f);
-        Check.Throws<ObjectDisposedException>(MoveADestroyedPawn);
+        Check.Throws<ObjectDisposedException>(MoveADestroyedPawn, "Make a new one, or check IsDestroyed before using it.");
     }
 
     [Test]
