@@ -74,8 +74,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 - 2026-11-08 17:40 R2: `tests/Evil.Engine.GodotTests` (Godot project, headless) runs 26 tests inside Godot:
   WorldObject groups (3 levels, parent scale, LookAt), shapes, camera, sun, scene worlds (hide, overlay, pop frees,
   switch), builder; exit code 1 on a planted failure; shared runner in `tests/Shared`; check.sh runs both suites
-  (27 + 26 green). ![[orbit.png]]
-
+  (27 + 26 green); the demo frame is unchanged from R1. ![[r1-orbit.png]]
 - 2026-11-08 18:05 R3: 3D math without Godot (Pose, Rotations, Bounds3, Ray3) cross-checked against Godot;
   WorldObject Orientation, Pose, WorldPose, Forward/Right/Up, ToWorld/ToLocal, Destroy, Find, Descendants,
   LookAt in a turned parent; Material (shareable, Matte/Shiny/Metal/Glowing); Cylinder, Cone, Capsule, Torus.
