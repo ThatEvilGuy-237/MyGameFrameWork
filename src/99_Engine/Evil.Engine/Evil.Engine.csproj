@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\06_Input\Evil.Engine.Input\Evil.Engine.Input.csproj" />
     <ProjectReference Include="..\..\07_Screen\Evil.Engine.Screen\Evil.Engine.Screen.csproj" />
     <ProjectReference Include="..\..\08_Motion\Evil.Engine.Motion\Evil.Engine.Motion.csproj" />
+    <ProjectReference Include="..\..\09_Audio\Evil.Engine.Audio\Evil.Engine.Audio.csproj" />
   </ItemGroup>
 
 </Project>

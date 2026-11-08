@@ -29,7 +29,8 @@ src/05_Lighting/Evil.Engine.Lighting        Sun, lamps, spotlights, sky and ambi
 src/06_Input/Evil.Engine.Input              keyboard, mouse, picking objects under the mouse
 src/07_Screen/Evil.Engine.Screen            window, capture, 2D overlay (our Group() canvas) and text
 src/08_Motion/Evil.Engine.Motion            tweens queued per object (added in R9)
-src/09_Engine/Evil.Engine                   GameBuilder, GameHost, GameContext, scenes (the composition root)
+src/09_Audio/Evil.Engine.Audio              sounds, music, volume groups (added in R10)
+src/99_Engine/Evil.Engine                   GameBuilder, GameHost, GameContext, scenes (the composition root, always last)
 samples/OrbitDemo                           Godot project: the orbit demo in 3D
 tests/Evil.Engine.Tests                     pure tests (Core, Mathematics)
 tests/Evil.Engine.GodotTests                tests that run inside Godot against real nodes
@@ -61,7 +62,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   MCP, model parts as WorldObjects.
 - [x] **R9 Motion**: tweens for moves and turns (move to a tile over time, ease curves), pure timing in Core,
   applied each frame; waiting for a move to finish (turn-based).
-- [ ] **R10 Audio**: sounds and music wrappers (one-shot, loop, volume groups).
+- [x] **R10 Audio**: sounds and music wrappers (one-shot, loop, volume groups).
 - [ ] **R11 Docs and pack**: documents/ rewritten for the Godot SDK, Decisions updated, `0.2.0` packed.
 - [ ] **R12 On the PC**: build and run OrbitDemo on the owner's Windows PC through the Windows lab (**ask the
   owner first**, standing rule).
@@ -126,3 +127,11 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   the build now fails on `var` via IDE0008); objects built with their constructor and then statements, no
   initializer blocks and no target-typed `new()` (150 rewritten; `scripts/style-check.py` runs first in check.sh and
   was proven to catch a planted block). Rules in CLAUDE.md. All suites green afterwards (38 + 89, driven run).
+- 2026-11-08 22:00 R10: library `09_Audio` (engine moved to `99_Engine`, so it stays last whatever comes next):
+  `Game.Audio` with Play, PlayAt (follows a world object), PlayMusic with crossfade and loop, StopMusic, StopAll,
+  volume groups as Godot buses (Music, Effects, Ambience) with SetVolume/Mute/MasterVolume, StartRecording and
+  SaveRecording; `Game.Content.Sound` (.wav, .ogg). Demo: music, button click, hop from the attacker, hit from the
+  enemy, M mutes. Proof without speakers: the driven run records the final mix, 22.7 s at level 0.044, and
+  check.sh fails on silence. Found: music and its playback leaked at quit in 4 of 6 runs (audio thread race); the
+  engine now stops all audio and quits 3 frames later (6 of 6 clean), window close goes the same way, and
+  check.sh fails if any demo run leaks. 38 pure + 95 Godot tests green. ![[r10-audio.png]]

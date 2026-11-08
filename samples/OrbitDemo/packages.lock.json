@@ -26,6 +26,7 @@
       "evil.engine": {
         "type": "Project",
         "dependencies": {
+          "Evil.Engine.Audio": "[0.2.0, )",
           "Evil.Engine.Cameras": "[0.2.0, )",
           "Evil.Engine.Core": "[0.2.0, )",
           "Evil.Engine.Input": "[0.2.0, )",
@@ -34,6 +35,13 @@
           "Evil.Engine.Motion": "[0.2.0, )",
           "Evil.Engine.Platform": "[0.2.0, )",
           "Evil.Engine.Screen": "[0.2.0, )",
+          "Evil.Engine.World": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
+      "evil.engine.audio": {
+        "type": "Project",
+        "dependencies": {
           "Evil.Engine.World": "[0.2.0, )",
           "GodotSharp": "[4.7.2, )"
         }

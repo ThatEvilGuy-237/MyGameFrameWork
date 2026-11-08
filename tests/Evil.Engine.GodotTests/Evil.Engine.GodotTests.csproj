@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\09_Engine\Evil.Engine\Evil.Engine.csproj" />
+    <ProjectReference Include="..\..\src\99_Engine\Evil.Engine\Evil.Engine.csproj" />
   </ItemGroup>
 
 </Project>

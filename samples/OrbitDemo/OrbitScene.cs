@@ -20,6 +20,11 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     private bool _spinning = true;
     private Font? _titleFont;
     private Tween? _busy;
+    private Sound? _click;
+    private Sound? _hop;
+    private Sound? _hit;
+    private Capsule? _hitTarget;
+    private double _hitAt = -1;
     private string? _whenDone;
 
     protected override void Enter()
@@ -46,6 +51,16 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         outpost.Part("Flag")!.Material = Material.Matte(Color.FromHex("#E5484D"));
 
         _titleFont = Game.Content.Font("fonts/Lato-Bold.ttf");
+
+        _click = Game.Content.Sound("sounds/click.wav");
+        _hop = Game.Content.Sound("sounds/hop.wav");
+        _hit = Game.Content.Sound("sounds/hit.wav");
+        Game.Audio.SetVolume(AudioGroup.Music, 0.35f);
+        Game.Audio.PlayMusic(Game.Content.Sound("sounds/music.wav"), 2f);
+        if (options.RecordAudioPath is not null)
+        {
+            Game.Audio.StartRecording();
+        }
 
         _red = World.Add(new Box(new Vector3(1.4f, 1.4f, 1.4f), Color.FromHex("#E5484D")));
         _red.Position = new Vector3(-5f, 0.7f, -2f);
@@ -110,6 +125,26 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             Game.Exit();
         }
 
+        if (keys.WasPressed(Key.M))
+        {
+            bool muted = !Game.Audio.IsMuted(AudioGroup.Music);
+            Game.Audio.Mute(AudioGroup.Music, muted);
+            Console.WriteLine($"music muted: {muted}");
+        }
+
+        if (_hitTarget is not null && _hitAt >= 0 && Game.Time.TotalSeconds >= _hitAt)
+        {
+            Game.Audio.PlayAt(_hit!, _hitTarget);
+            Console.WriteLine("sound: hit");
+            _hitAt = -1;
+        }
+
+        if (keys.WasPressed(Key.F12) && options.RecordAudioPath is not null)
+        {
+            Game.Audio.SaveRecording(options.RecordAudioPath);
+            Console.WriteLine($"recorded: {options.RecordAudioPath}");
+        }
+
         if (keys.WasPressed(Key.F12) && options.CapturePath is not null)
         {
             Game.CaptureFrame(options.CapturePath);
@@ -158,6 +193,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             {
                 _lastAction = Actions[_hoveredAction];
                 Console.WriteLine($"action: {_lastAction}");
+                Game.Audio.Play(_click!);
                 Act(_lastAction, _selected!);
             }
 
@@ -183,7 +219,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
     private void DrawPanel(Canvas canvas)
     {
-        RectF panel = new RectF(16f, 16f, 380f, 112f);
+        RectF panel = new RectF(16f, 16f, 480f, 112f);
         canvas.FillRect(panel, Color.Black.WithAlpha(0.45f));
         canvas.DrawRect(panel, Color.White.WithAlpha(0.25f));
         canvas.Font = _titleFont;
@@ -191,7 +227,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         canvas.Font = null;
         string status = _selected is null ? "Click a pawn to select it" : $"Selected: {_selected.Tag}" + (_lastAction is null ? string.Empty : $"   Last action: {_lastAction}");
         canvas.DrawText(status, new Vector2(30f, 60f), 16f, Color.FromHex("#FFC53D"));
-        canvas.DrawText("Space pause   Q/E turn   wheel zoom   F10 small   F11 full screen", new Vector2(30f, 92f), 13f, Color.White.WithAlpha(0.7f));
+        canvas.DrawText("Space pause   Q/E turn   wheel zoom   M music   F10 small   F11 full screen", new Vector2(30f, 92f), 13f, Color.White.WithAlpha(0.7f));
     }
 
     private void DrawCompass(Canvas canvas)
@@ -346,6 +382,9 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
                 Vector3 reach = Vector3.Lerp(start, enemy.Position, 0.45f) with { Y = start.Y };
                 Vector3 push = enemy.Position + Vector3.Normalize(enemy.Position - start) * 0.6f;
                 motion.Face(pawn, enemy.Position, 0.25f);
+                Game.Audio.PlayAt(_hop!, pawn);
+                _hitTarget = enemy;
+                _hitAt = Game.Time.TotalSeconds + 0.7;
                 motion.Hop(pawn, reach, 1.2f, 0.45f);
                 _busy = motion.Hop(pawn, start, 0.5f, 0.4f);
                 motion.Wait(enemy, 0.7f);

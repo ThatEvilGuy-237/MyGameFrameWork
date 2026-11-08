@@ -12,7 +12,7 @@ why things are the way they are is in `documents/Decisions.md`.
   screenshot looks right (open it, do not trust the exit code alone). Every wrapper gets Godot tests.
 - Godot binary: `/mnt/hdd/tools/godot-4.7.2` (came in through `evil-repo-check intake`, SHA-512 checked).
   Run projects with `scripts/godot.sh <project> -- <args>` (compatibility renderer, 2 GB cap, xvfb).
-- Numbered libraries in `src/NN_Area/Evil.Engine.Area` (00 Core to 09 Engine); a library only references lower numbers. Core and
+- Numbered libraries in `src/NN_Area/Evil.Engine.Area` (00 Core to 09 Audio, the engine itself is always `99_Engine`); a library only references lower numbers. Core and
   Mathematics never reference Godot. In the others Godot types stay `internal`: games see Evil Engine types and
   `System.Numerics` only. A game's only Godot line is `Main : GameMain`.
 - **Code style (owner, 2026-11-08), checked by the build and `scripts/style-check.py`:**

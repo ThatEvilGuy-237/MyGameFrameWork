@@ -2,9 +2,12 @@
 set -uo pipefail
 out="$1"
 log="$2"
+audio="${3:-}"
 cd "$(dirname "$0")/.."
 
-bash scripts/godot.sh samples/OrbitDemo -- --capture "$out" --drive > "$log" 2>&1 &
+record=()
+[ -n "$audio" ] && record=(--record-audio "$audio")
+bash scripts/godot.sh samples/OrbitDemo -- --capture "$out" --drive "${record[@]}" > "$log" 2>&1 &
 game=$!
 trap 'kill "$game" 2>/dev/null || true' EXIT
 
@@ -68,6 +71,8 @@ sleep 0.4
 xdotool click 1
 wait_for "done: attack" || exit 1
 sleep 0.3
+xdotool key m
+wait_for "music muted: True" || exit 1
 xdotool key F12
 wait "$game"
 trap - EXIT

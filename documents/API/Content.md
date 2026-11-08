@@ -25,6 +25,7 @@ _title = Game.Content.Font("fonts/Lato-Bold.ttf");
 | `Model(path)` | a new `Model` each call (see [[World]]) | `.glb`, `.gltf` |
 | `Texture(path)` | a shared `Texture`, loaded once | `.png`, `.jpg`, `.webp`, ... |
 | `Font(path)` | a shared `Font`, loaded once (see [[Screen]]) | `.ttf`, `.otf` |
+| `Sound(path)` | a shared `Sound`, loaded once (see [[Audio]]) | `.wav`, `.ogg` |
 
 ## Two ways in, one call
 

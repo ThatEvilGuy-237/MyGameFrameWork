@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Evil.Engine.Audio;
 using Evil.Engine.Core;
 using Evil.Engine.Input;
 using Evil.Engine.Motion;
@@ -14,16 +15,17 @@ public sealed class GameContext
     private readonly Queue<string> _captures = new Queue<string>();
 
     internal GameContext(WorldObject worlds)
-        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")), new ContentLibrary("res://"))
+        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")), new ContentLibrary("res://"), new AudioMixer(worlds.Node))
     {
     }
 
-    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display, ContentLibrary content)
+    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display, ContentLibrary content, AudioMixer audio)
     {
         Keyboard = keyboard;
         Mouse = mouse;
         Display = display;
         Content = content;
+        Audio = audio;
         Motion = new MotionPlayer();
         Scenes = new SceneStack(this, worlds);
     }
@@ -39,6 +41,8 @@ public sealed class GameContext
     public ContentLibrary Content { get; }
 
     public MotionPlayer Motion { get; }
+
+    public AudioMixer Audio { get; }
 
     public Vector2 ScreenSize { get; internal set; }
 
