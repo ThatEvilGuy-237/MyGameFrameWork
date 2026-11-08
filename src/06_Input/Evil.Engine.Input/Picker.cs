@@ -1,5 +1,6 @@
 using System.Numerics;
 using Evil.Engine.Cameras;
+using Evil.Engine.Mathematics;
 using Evil.Engine.World;
 
 namespace Evil.Engine.Input;
@@ -10,9 +11,9 @@ public static class Picker
     {
         ArgumentNullException.ThrowIfNull(camera);
         ArgumentNullException.ThrowIfNull(root);
-        var ray = camera.ScreenToRay(screenPoint);
+        Ray3 ray = camera.ScreenToRay(screenPoint);
         Hit? nearest = null;
-        foreach (var shape in root.Descendants<MeshObject>())
+        foreach (MeshObject shape in root.Descendants<MeshObject>())
         {
             if (!shape.Pickable || !shape.IsShown)
             {

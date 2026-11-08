@@ -9,7 +9,7 @@ internal static class TestRunner
 {
     public static int Run(Assembly assembly, string suite, string? filter)
     {
-        var tests = assembly.GetTypes()
+        List<(string Name, MethodInfo Method)> tests = assembly.GetTypes()
             .SelectMany(type => type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
             .Where(method => method.GetCustomAttribute<TestAttribute>() is not null)
             .Select(method => (Name: $"{method.DeclaringType!.Name}.{method.Name}", Method: method))
@@ -17,8 +17,8 @@ internal static class TestRunner
             .OrderBy(test => test.Name, StringComparer.Ordinal)
             .ToList();
 
-        var failed = 0;
-        foreach (var (name, method) in tests)
+        int failed = 0;
+        foreach ((string? name, MethodInfo? method) in tests)
         {
             try
             {

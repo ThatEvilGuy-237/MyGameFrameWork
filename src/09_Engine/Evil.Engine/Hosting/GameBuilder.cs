@@ -7,7 +7,7 @@ namespace Evil.Engine.Hosting;
 public sealed class GameBuilder
 {
     private readonly WindowSettings _window;
-    private Color _clearColor = new(0.2f, 0.3f, 0.3f);
+    private Color _clearColor = new Color(0.2f, 0.3f, 0.3f);
     private string _contentRoot = "res://";
     private Scene? _startScene;
     private FrameSnapshot? _snapshot;
@@ -75,8 +75,8 @@ public sealed class GameBuilder
             throw new InvalidOperationException($"GameBuilder.CaptureAndExit needs a file path and a frame of 0 or more, got '{_snapshot.Path}' at frame {_snapshot.Frame}.");
         }
 
-        var snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
-        var contentRoot = ContentLibrary.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
+        FrameSnapshot? snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
+        string contentRoot = ContentLibrary.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
         return new GameHost(new GameOptions(_window, _clearColor, contentRoot, _startScene, snapshot));
     }
 }

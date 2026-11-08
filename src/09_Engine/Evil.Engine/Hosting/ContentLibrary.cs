@@ -7,9 +7,9 @@ namespace Evil.Engine.Hosting;
 
 public sealed class ContentLibrary
 {
-    private readonly Dictionary<string, EvilTexture> _textures = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, EvilFont> _fonts = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, PackedScene> _scenes = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, EvilTexture> _textures = new Dictionary<string, EvilTexture>(StringComparer.Ordinal);
+    private readonly Dictionary<string, EvilFont> _fonts = new Dictionary<string, EvilFont>(StringComparer.Ordinal);
+    private readonly Dictionary<string, PackedScene> _scenes = new Dictionary<string, PackedScene>(StringComparer.Ordinal);
 
     internal ContentLibrary(string root) => Root = root;
 
@@ -17,37 +17,37 @@ public sealed class ContentLibrary
 
     public EvilModel Model(string path)
     {
-        var full = Resolve(path);
-        var name = System.IO.Path.GetFileNameWithoutExtension(path);
+        string full = Resolve(path);
+        string name = System.IO.Path.GetFileNameWithoutExtension(path);
         if (IsImported(full))
         {
-            if (!_scenes.TryGetValue(full, out var scene))
+            if (!_scenes.TryGetValue(full, out PackedScene? scene))
             {
                 scene = ResourceLoader.Load<PackedScene>(full) ?? throw Unreadable(path, "a model");
                 _scenes[full] = scene;
             }
 
-            var imported = scene.Instantiate() as Node3D ?? throw Unreadable(path, "a 3D model");
+            Node3D imported = scene.Instantiate() as Node3D ?? throw Unreadable(path, "a 3D model");
             return EvilModel.Wrap(imported, name, full);
         }
 
         RequireFile(path, full);
-        var document = new GltfDocument();
-        var state = new GltfState();
-        var error = document.AppendFromFile(full, state);
+        GltfDocument document = new GltfDocument();
+        GltfState state = new GltfState();
+        Error error = document.AppendFromFile(full, state);
         if (error != Error.Ok)
         {
             throw new InvalidDataException($"Content: '{path}' could not be read as a glTF model ({error}).");
         }
 
-        var generated = document.GenerateScene(state) as Node3D ?? throw Unreadable(path, "a 3D model");
+        Node3D generated = document.GenerateScene(state) as Node3D ?? throw Unreadable(path, "a 3D model");
         return EvilModel.Wrap(generated, name, full);
     }
 
     public EvilTexture Texture(string path)
     {
-        var full = Resolve(path);
-        if (_textures.TryGetValue(full, out var cached))
+        string full = Resolve(path);
+        if (_textures.TryGetValue(full, out EvilTexture? cached))
         {
             return cached;
         }
@@ -60,19 +60,19 @@ public sealed class ContentLibrary
         else
         {
             RequireFile(path, full);
-            var image = Image.LoadFromFile(full) ?? throw Unreadable(path, "an image");
+            Image image = Image.LoadFromFile(full) ?? throw Unreadable(path, "an image");
             native = ImageTexture.CreateFromImage(image);
         }
 
-        var texture = new EvilTexture(native, path);
+        EvilTexture texture = new EvilTexture(native, path);
         _textures[full] = texture;
         return texture;
     }
 
     public EvilFont Font(string path)
     {
-        var full = Resolve(path);
-        if (_fonts.TryGetValue(full, out var cached))
+        string full = Resolve(path);
+        if (_fonts.TryGetValue(full, out EvilFont? cached))
         {
             return cached;
         }
@@ -85,8 +85,8 @@ public sealed class ContentLibrary
         else
         {
             RequireFile(path, full);
-            var file = new FontFile();
-            var error = file.LoadDynamicFont(full);
+            FontFile file = new FontFile();
+            Error error = file.LoadDynamicFont(full);
             if (error != Error.Ok)
             {
                 throw new InvalidDataException($"Content: '{path}' could not be read as a font ({error}).");
@@ -95,7 +95,7 @@ public sealed class ContentLibrary
             native = file;
         }
 
-        var font = new EvilFont(native, path);
+        EvilFont font = new EvilFont(native, path);
         _fonts[full] = font;
         return font;
     }
@@ -114,7 +114,7 @@ public sealed class ContentLibrary
     }
 
     private static InvalidDataException Unreadable(string path, string what) =>
-        new($"Content: '{path}' could not be loaded as {what}.");
+        new InvalidDataException($"Content: '{path}' could not be loaded as {what}.");
 
     private string Resolve(string path)
     {

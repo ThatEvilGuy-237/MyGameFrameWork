@@ -19,7 +19,7 @@ public sealed class Sphere : ShapeObject
         get => ((SphereMesh)Mesh).Radius;
         set
         {
-            var mesh = (SphereMesh)Mesh;
+            SphereMesh mesh = (SphereMesh)Mesh;
             mesh.Radius = value;
             mesh.Height = value * 2f;
         }

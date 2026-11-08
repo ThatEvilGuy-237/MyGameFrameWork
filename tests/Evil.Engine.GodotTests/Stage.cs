@@ -1,10 +1,12 @@
+using Godot;
+
 namespace Evil.Engine.GodotTests;
 
 internal sealed class Stage : IDisposable
 {
     private Stage()
     {
-        var host = Host ?? throw new InvalidOperationException("The runner has not set Stage.Host.");
+        Node host = Host ?? throw new InvalidOperationException("The runner has not set Stage.Host.");
         Root = new WorldObject("Stage");
         host.AddChild(Root.Node);
     }
@@ -13,7 +15,7 @@ internal sealed class Stage : IDisposable
 
     public WorldObject Root { get; }
 
-    public static Stage Open() => new();
+    public static Stage Open() => new Stage();
 
     public void Dispose()
     {

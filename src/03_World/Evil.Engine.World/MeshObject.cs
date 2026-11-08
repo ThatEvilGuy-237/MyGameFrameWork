@@ -31,8 +31,8 @@ public abstract class MeshObject : WorldObject
     {
         get
         {
-            var box = Instance.GetAabb();
-            var min = box.Position.ToEvil();
+            Aabb box = Instance.GetAabb();
+            Vector3 min = box.Position.ToEvil();
             return new Bounds3(min, min + box.Size.ToEvil());
         }
     }
@@ -41,21 +41,21 @@ public abstract class MeshObject : WorldObject
 
     internal float? HitDistance(Ray3 worldRay)
     {
-        var world = WorldTransform;
-        var inverse = world.AffineInverse();
-        var localDirection = inverse.Basis * worldRay.Direction.ToGodot();
+        Transform3D world = WorldTransform;
+        Transform3D inverse = world.AffineInverse();
+        Godot.Vector3 localDirection = inverse.Basis * worldRay.Direction.ToGodot();
         if (localDirection.LengthSquared() < 1e-12f)
         {
             return null;
         }
 
-        var localRay = new Ray3((inverse * worldRay.Origin.ToGodot()).ToEvil(), localDirection.ToEvil());
+        Ray3 localRay = new Ray3((inverse * worldRay.Origin.ToGodot()).ToEvil(), localDirection.ToEvil());
         if (LocalHit(localRay) is not { } along)
         {
             return null;
         }
 
-        var worldPoint = (world * localRay.PointAt(along).ToGodot()).ToEvil();
+        Vector3 worldPoint = (world * localRay.PointAt(along).ToGodot()).ToEvil();
         return Vector3.Distance(worldRay.Origin, worldPoint);
     }
 

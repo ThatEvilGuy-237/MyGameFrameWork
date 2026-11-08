@@ -5,9 +5,9 @@ internal sealed record SampleOptions(string? CapturePath, int CaptureFrame, bool
     public static SampleOptions Parse(IReadOnlyList<string> args)
     {
         string? capturePath = null;
-        var captureFrame = 90;
-        var driven = false;
-        for (var i = 0; i < args.Count; i++)
+        int captureFrame = 90;
+        bool driven = false;
+        for (int i = 0; i < args.Count; i++)
         {
             switch (args[i])
             {

@@ -122,3 +122,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   Wait spins; the bar locks while a pawn is busy. Driven check clicks Move, waits for `arrived:`, clicks Attack,
   waits for `done: attack`. 38 pure + 89 Godot tests green (motion tests passed on the first run).
   ![[r9-motion.png]]
+- 2026-11-08 21:30 style pass (owner): explicit types instead of `var` everywhere (559 rewritten by `dotnet format`,
+  the build now fails on `var` via IDE0008); objects built with their constructor and then statements, no
+  initializer blocks and no target-typed `new()` (150 rewritten; `scripts/style-check.py` runs first in check.sh and
+  was proven to catch a planted block). Rules in CLAUDE.md. All suites green afterwards (38 + 89, driven run).

@@ -68,7 +68,7 @@ public sealed class Material
 
     public Vector2 TextureScale
     {
-        get => new(Native.Uv1Scale.X, Native.Uv1Scale.Y);
+        get => new Vector2(Native.Uv1Scale.X, Native.Uv1Scale.Y);
         set => Native.Uv1Scale = new Godot.Vector3(value.X, value.Y, 1f);
     }
 
@@ -80,13 +80,35 @@ public sealed class Material
             : BaseMaterial3D.ShadingModeEnum.PerPixel;
     }
 
-    internal StandardMaterial3D Native { get; } = new();
+    internal StandardMaterial3D Native { get; } = new StandardMaterial3D();
 
-    public static Material Matte(Color color) => new(color) { Roughness = 1f };
+    public static Material Matte(Color color)
+    {
+        Material material = new Material(color);
+        material.Roughness = 1f;
+        return material;
+    }
 
-    public static Material Shiny(Color color) => new(color) { Roughness = 0.2f };
+    public static Material Shiny(Color color)
+    {
+        Material material = new Material(color);
+        material.Roughness = 0.2f;
+        return material;
+    }
 
-    public static Material Metal(Color color) => new(color) { Metallic = 1f, Roughness = 0.3f };
+    public static Material Metal(Color color)
+    {
+        Material material = new Material(color);
+        material.Metallic = 1f;
+        material.Roughness = 0.3f;
+        return material;
+    }
 
-    public static Material Glowing(Color color, float strength = 2f) => new(color) { Glow = color, GlowStrength = strength };
+    public static Material Glowing(Color color, float strength = 2f)
+    {
+        Material material = new Material(color);
+        material.Glow = color;
+        material.GlowStrength = strength;
+        return material;
+    }
 }

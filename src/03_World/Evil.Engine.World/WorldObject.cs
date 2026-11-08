@@ -79,7 +79,7 @@ public class WorldObject
 
     public Pose Pose
     {
-        get => new(Position, Orientation, Scale);
+        get => new Pose(Position, Orientation, Scale);
         set
         {
             Position = value.Position;
@@ -100,7 +100,7 @@ public class WorldObject
     {
         get
         {
-            var world = WorldTransform;
+            Transform3D world = WorldTransform;
             return new Pose(world.Origin.ToEvil(), world.Basis.GetRotationQuaternion().ToEvil(), world.Basis.Scale.ToEvil());
         }
     }
@@ -117,7 +117,7 @@ public class WorldObject
     {
         get
         {
-            var node = Live;
+            Node3D node = Live;
             if (node.IsInsideTree())
             {
                 return node.GlobalTransform;
@@ -141,7 +141,7 @@ public class WorldObject
             throw new InvalidOperationException($"'{child.Name}' already belongs to '{child.Parent.Name}'; remove it there first.");
         }
 
-        for (var ancestor = this; ancestor is not null; ancestor = ancestor.Parent)
+        for (WorldObject? ancestor = this; ancestor is not null; ancestor = ancestor.Parent)
         {
             if (ReferenceEquals(ancestor, child))
             {
@@ -174,22 +174,22 @@ public class WorldObject
         }
 
         Parent?.Detach(this);
-        var node = Node;
+        Node3D node = Node;
         MarkDestroyed();
         node.QueueFree();
     }
 
     public WorldObject? Find(string name)
     {
-        var waiting = new Queue<WorldObject>(_children);
-        while (waiting.TryDequeue(out var candidate))
+        Queue<WorldObject> waiting = new Queue<WorldObject>(_children);
+        while (waiting.TryDequeue(out WorldObject? candidate))
         {
             if (candidate.Name == name)
             {
                 return candidate;
             }
 
-            foreach (var child in candidate._children)
+            foreach (WorldObject child in candidate._children)
             {
                 waiting.Enqueue(child);
             }
@@ -201,7 +201,7 @@ public class WorldObject
     public T? Ancestor<T>()
         where T : WorldObject
     {
-        for (var current = Parent; current is not null; current = current.Parent)
+        for (WorldObject? current = Parent; current is not null; current = current.Parent)
         {
             if (current is T match)
             {
@@ -215,15 +215,15 @@ public class WorldObject
     public IEnumerable<T> Descendants<T>()
         where T : WorldObject
     {
-        var waiting = new Queue<WorldObject>(_children);
-        while (waiting.TryDequeue(out var candidate))
+        Queue<WorldObject> waiting = new Queue<WorldObject>(_children);
+        while (waiting.TryDequeue(out WorldObject? candidate))
         {
             if (candidate is T match)
             {
                 yield return match;
             }
 
-            foreach (var child in candidate._children)
+            foreach (WorldObject child in candidate._children)
             {
                 waiting.Enqueue(child);
             }
@@ -250,14 +250,14 @@ public class WorldObject
 
     public void LookAt(Vector3 target)
     {
-        var direction = target.ToGodot() - WorldTransform.Origin;
+        Godot.Vector3 direction = target.ToGodot() - WorldTransform.Origin;
         if (direction.LengthSquared() < 1e-12f)
         {
             return;
         }
 
-        var parentBasis = ParentWorldBasis();
-        var local = parentBasis.Inverse() * direction;
+        Basis parentBasis = ParentWorldBasis();
+        Godot.Vector3 local = parentBasis.Inverse() * direction;
         Live.Quaternion = Facing.Along(local).GetRotationQuaternion();
     }
 
@@ -300,7 +300,7 @@ public class WorldObject
     private void MarkDestroyed()
     {
         IsDestroyed = true;
-        foreach (var child in _children)
+        foreach (WorldObject child in _children)
         {
             child.MarkDestroyed();
         }

@@ -19,7 +19,7 @@ internal static class MathTests
     [Test]
     public static void RectFEdgesAndContains()
     {
-        var rect = new RectF(10f, 20f, 30f, 40f);
+        RectF rect = new RectF(10f, 20f, 30f, 40f);
         Check.Equal(40f, rect.Right, "right");
         Check.Equal(60f, rect.Bottom, "bottom");
         Check.Near(new Vector2(25f, 40f), rect.Center, "center");
@@ -31,8 +31,8 @@ internal static class MathTests
     [Test]
     public static void RectFIntersectAndUnion()
     {
-        var a = new RectF(0f, 0f, 10f, 10f);
-        var b = new RectF(5f, 5f, 10f, 10f);
+        RectF a = new RectF(0f, 0f, 10f, 10f);
+        RectF b = new RectF(5f, 5f, 10f, 10f);
         Check.True(a.Intersects(b), "overlapping rects intersect");
         Check.Equal(new RectF(5f, 5f, 5f, 5f), a.Intersect(b), "intersection");
         Check.Equal(new RectF(0f, 0f, 15f, 15f), a.Union(b), "union");
@@ -63,8 +63,8 @@ internal static class MathTests
     [Test]
     public static void Transform2DRotatesAroundOrigin()
     {
-        var transform = Transform2D.At(10f, 20f).Rotated(90f).Around(new Vector2(5f, 0f));
-        var matrix = transform.ToMatrix();
+        Transform2D transform = Transform2D.At(10f, 20f).Rotated(90f).Around(new Vector2(5f, 0f));
+        Matrix3x2 matrix = transform.ToMatrix();
         Check.Near(new Vector2(10f, 20f), Vector2.Transform(new Vector2(5f, 0f), matrix), "origin lands on position");
         Check.Near(new Vector2(10f, 21f), Vector2.Transform(new Vector2(6f, 0f), matrix), "one step right turns down");
     }
@@ -72,7 +72,7 @@ internal static class MathTests
     [Test]
     public static void Transform2DScales()
     {
-        var matrix = Transform2D.At(100f, 0f).Scaled(new Vector2(2f, 3f)).ToMatrix();
+        Matrix3x2 matrix = Transform2D.At(100f, 0f).Scaled(new Vector2(2f, 3f)).ToMatrix();
         Check.Near(new Vector2(102f, 3f), Vector2.Transform(new Vector2(1f, 1f), matrix), "scaled then moved");
     }
 }

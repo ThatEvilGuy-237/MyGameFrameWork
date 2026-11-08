@@ -10,7 +10,7 @@ namespace Evil.Engine.Scenes;
 public sealed class SceneStack
 {
     private readonly List<Scene> _scenes = [];
-    private readonly Queue<SceneChange> _pending = new();
+    private readonly Queue<SceneChange> _pending = new Queue<SceneChange>();
     private readonly GameContext? _game;
     private readonly WorldObject _worlds;
 
@@ -44,7 +44,7 @@ public sealed class SceneStack
 
     internal void ApplyChanges()
     {
-        while (_pending.TryDequeue(out var change))
+        while (_pending.TryDequeue(out SceneChange change))
         {
             switch (change.Kind)
             {
@@ -72,9 +72,9 @@ public sealed class SceneStack
 
     internal void Draw(Canvas canvas)
     {
-        for (var i = FirstVisible(); i < _scenes.Count; i++)
+        for (int i = FirstVisible(); i < _scenes.Count; i++)
         {
-            var scene = _scenes[i];
+            Scene scene = _scenes[i];
             canvas.ResetTransform();
             scene.RunDraw(canvas);
             if (canvas.Depth != 0)
@@ -87,7 +87,7 @@ public sealed class SceneStack
     internal void ExitAll()
     {
         _pending.Clear();
-        for (var i = _scenes.Count - 1; i >= 0; i--)
+        for (int i = _scenes.Count - 1; i >= 0; i--)
         {
             _scenes[i].RunExit();
             _scenes[i].Detach();
@@ -103,8 +103,10 @@ public sealed class SceneStack
             throw new InvalidOperationException($"{scene.GetType().Name} is already on the scene stack.");
         }
 
-        var world = _worlds.Add(new WorldObject(scene.GetType().Name));
-        var camera = world.Add(new Camera { Name = "Camera" });
+        WorldObject world = _worlds.Add(new WorldObject(scene.GetType().Name));
+        Camera camera = new Camera();
+        camera.Name = "Camera";
+        world.Add(camera);
         scene.Attach(_game, world, camera, new Atmosphere());
         _scenes.Add(scene);
         RefreshViews();
@@ -118,7 +120,7 @@ public sealed class SceneStack
             throw new InvalidOperationException("Scenes.Pop() with no scene on the stack.");
         }
 
-        var top = _scenes[^1];
+        Scene top = _scenes[^1];
         _scenes.RemoveAt(_scenes.Count - 1);
         top.RunExit();
         top.Root!.Destroy();
@@ -133,8 +135,8 @@ public sealed class SceneStack
             return;
         }
 
-        var first = FirstVisible();
-        for (var i = 0; i < _scenes.Count; i++)
+        int first = FirstVisible();
+        for (int i = 0; i < _scenes.Count; i++)
         {
             _scenes[i].Root!.Visible = i >= first;
         }
@@ -149,7 +151,7 @@ public sealed class SceneStack
             return 0;
         }
 
-        var first = _scenes.Count - 1;
+        int first = _scenes.Count - 1;
         while (first > 0 && _scenes[first].IsOverlay)
         {
             first--;

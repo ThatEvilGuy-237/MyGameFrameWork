@@ -4,7 +4,7 @@ namespace Evil.Engine.Motion;
 
 public abstract class Tween
 {
-    private readonly TaskCompletionSource<bool> _finished = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource<bool> _finished = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
     private protected Tween(float seconds, Easing easing)
     {
@@ -45,7 +45,7 @@ public abstract class Tween
             Start();
         }
 
-        var total = Elapsed + seconds;
+        float total = Elapsed + seconds;
         Elapsed = Math.Min(Duration, total);
         Apply(Progress);
         if (total < Duration)

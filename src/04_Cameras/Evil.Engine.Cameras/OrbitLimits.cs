@@ -6,7 +6,7 @@ public sealed record OrbitLimits(
     float MinPitch = 5f,
     float MaxPitch = 89f)
 {
-    public static OrbitLimits Default { get; } = new();
+    public static OrbitLimits Default { get; } = new OrbitLimits();
 
     internal void Validate()
     {

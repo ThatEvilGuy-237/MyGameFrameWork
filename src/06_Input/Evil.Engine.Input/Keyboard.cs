@@ -37,7 +37,7 @@ public sealed class Keyboard
 
     internal void ReleaseAll()
     {
-        foreach (var key in _down)
+        foreach (Key key in _down)
         {
             _released.Add(key);
         }

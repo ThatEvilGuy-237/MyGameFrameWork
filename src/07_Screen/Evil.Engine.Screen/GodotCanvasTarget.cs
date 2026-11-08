@@ -28,8 +28,8 @@ internal sealed class GodotCanvasTarget(CanvasItem item) : ICanvasTarget
 
     public void Polygon(ReadOnlySpan<Vector2> points, Color color)
     {
-        var converted = new Godot.Vector2[points.Length];
-        for (var i = 0; i < points.Length; i++)
+        Godot.Vector2[] converted = new Godot.Vector2[points.Length];
+        for (int i = 0; i < points.Length; i++)
         {
             converted[i] = points[i].ToGodot();
         }

@@ -7,7 +7,7 @@ internal static class CoreTests
     [Test]
     public static void ColorFromHexAndBack()
     {
-        var orange = Color.FromHex("#FF8000");
+        Color orange = Color.FromHex("#FF8000");
         Check.Near(1f, orange.R, "red");
         Check.Near(128f / 255f, orange.G, "green");
         Check.Near(1f, orange.A, "alpha defaults to opaque");

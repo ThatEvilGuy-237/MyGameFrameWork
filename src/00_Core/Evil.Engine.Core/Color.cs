@@ -4,24 +4,24 @@ namespace Evil.Engine.Core;
 
 public readonly record struct Color(float R, float G, float B, float A = 1f)
 {
-    public static Color White => new(1f, 1f, 1f);
-    public static Color Black => new(0f, 0f, 0f);
-    public static Color Transparent => new(0f, 0f, 0f, 0f);
-    public static Color Red => new(1f, 0f, 0f);
-    public static Color Green => new(0f, 1f, 0f);
-    public static Color Blue => new(0f, 0f, 1f);
-    public static Color Yellow => new(1f, 1f, 0f);
-    public static Color Gray => new(0.5f, 0.5f, 0.5f);
+    public static Color White => new Color(1f, 1f, 1f);
+    public static Color Black => new Color(0f, 0f, 0f);
+    public static Color Transparent => new Color(0f, 0f, 0f, 0f);
+    public static Color Red => new Color(1f, 0f, 0f);
+    public static Color Green => new Color(0f, 1f, 0f);
+    public static Color Blue => new Color(0f, 0f, 1f);
+    public static Color Yellow => new Color(1f, 1f, 0f);
+    public static Color Gray => new Color(0.5f, 0.5f, 0.5f);
 
     public static Color FromBytes(byte r, byte g, byte b, byte a = 255) =>
-        new(r / 255f, g / 255f, b / 255f, a / 255f);
+        new Color(r / 255f, g / 255f, b / 255f, a / 255f);
 
     public static Color FromHex(string hex)
     {
         ArgumentNullException.ThrowIfNull(hex);
-        var digits = hex.StartsWith('#') ? hex[1..] : hex;
+        string digits = hex.StartsWith('#') ? hex[1..] : hex;
         if ((digits.Length != 6 && digits.Length != 8)
-            || !uint.TryParse(digits, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var value))
+            || !uint.TryParse(digits, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint value))
         {
             throw new FormatException($"Color.FromHex needs #RRGGBB or #RRGGBBAA, got '{hex}'.");
         }
@@ -36,10 +36,10 @@ public readonly record struct Color(float R, float G, float B, float A = 1f)
 
     public Color WithAlpha(float alpha) => this with { A = alpha };
 
-    public Color Multiply(Color other) => new(R * other.R, G * other.G, B * other.B, A * other.A);
+    public Color Multiply(Color other) => new Color(R * other.R, G * other.G, B * other.B, A * other.A);
 
     public static Color Lerp(Color from, Color to, float amount) =>
-        new(
+        new Color(
             from.R + (to.R - from.R) * amount,
             from.G + (to.G - from.G) * amount,
             from.B + (to.B - from.B) * amount,

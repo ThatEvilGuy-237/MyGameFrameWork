@@ -6,6 +6,9 @@ shots="${EVIL_ENGINE_SHOTS:-documents/screenshots}"
 mkdir -p "$shots"
 shots="$(cd "$shots" && pwd)"
 
+echo "== code style (explicit types, constructor then statements)"
+python3 -I scripts/style-check.py | tail -n 1
+
 echo "== build (warnings are errors)"
 dotnet build EvilEngine.slnx -nologo -v q
 

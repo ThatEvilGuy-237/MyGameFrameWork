@@ -29,12 +29,12 @@ public static class Rotations
             throw new ArgumentException("The direction to look along has no length.", nameof(forward));
         }
 
-        var front = Vector3.Normalize(forward);
-        var up = MathF.Abs(Vector3.Dot(front, Vector3.UnitY)) > 0.999f ? Forward : Vector3.UnitY;
-        var back = -front;
-        var right = Vector3.Normalize(Vector3.Cross(up, back));
-        var top = Vector3.Cross(back, right);
-        var basis = new Matrix4x4(
+        Vector3 front = Vector3.Normalize(forward);
+        Vector3 up = MathF.Abs(Vector3.Dot(front, Vector3.UnitY)) > 0.999f ? Forward : Vector3.UnitY;
+        Vector3 back = -front;
+        Vector3 right = Vector3.Normalize(Vector3.Cross(up, back));
+        Vector3 top = Vector3.Cross(back, right);
+        Matrix4x4 basis = new Matrix4x4(
             right.X, right.Y, right.Z, 0f,
             top.X, top.Y, top.Z, 0f,
             back.X, back.Y, back.Z, 0f,

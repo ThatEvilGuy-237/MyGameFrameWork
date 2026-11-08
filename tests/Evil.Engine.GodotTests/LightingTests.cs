@@ -5,17 +5,19 @@ internal static class LightingTests
     [Test]
     public static void LampsShineAroundThem()
     {
-        var lamp = new Lamp(Color.Red, 6f) { Intensity = 2f };
+        Lamp lamp = new Lamp(Color.Red, 6f);
+        lamp.Intensity = 2f;
         Check.Equal(Color.Red, lamp.Color, "colour");
         Check.Near(6f, lamp.Range, "range");
         Check.Near(2f, lamp.Intensity, "intensity");
         Check.True(!lamp.Shadows, "lamp shadows start off");
         lamp.Shadows = true;
         Check.True(lamp.Shadows, "shadows on");
-        var dark = new Lamp { Intensity = -3f };
+        Lamp dark = new Lamp();
+        dark.Intensity = -3f;
         Check.Near(0f, dark.Intensity, "no negative light");
         dark.Destroy();
-        var warm = Lamp.Warm(4f);
+        Lamp warm = Lamp.Warm(4f);
         Check.True(warm.Color.R > warm.Color.B, "warm is warm");
         lamp.Destroy();
         warm.Destroy();
@@ -24,7 +26,7 @@ internal static class LightingTests
     [Test]
     public static void SpotlightsPointAndLimitTheirAngle()
     {
-        var spot = new Spotlight(Color.White, 12f, 25f);
+        Spotlight spot = new Spotlight(Color.White, 12f, 25f);
         Check.Near(25f, spot.Angle, "angle");
         Check.Near(12f, spot.Range, "range");
         Check.Near(-Vector3.UnitY, spot.Direction, "points down by default");
@@ -39,15 +41,15 @@ internal static class LightingTests
     [Test]
     public static void SunPresetsShineDown()
     {
-        foreach (var sun in new[] { Sun.Noon(), Sun.Golden(), Sun.Moonlight() })
+        foreach (Sun? sun in new[] { Sun.Noon(), Sun.Golden(), Sun.Moonlight() })
         {
             Check.True(sun.Direction.Y < 0f, "shines from above");
             Check.True(sun.Shadows, "casts shadows");
             sun.Destroy();
         }
 
-        var moon = Sun.Moonlight();
-        var noon = Sun.Noon();
+        Sun moon = Sun.Moonlight();
+        Sun noon = Sun.Noon();
         Check.True(moon.Intensity < noon.Intensity, "the moon is dimmer than noon");
         moon.Destroy();
         noon.Destroy();
@@ -56,7 +58,7 @@ internal static class LightingTests
     [Test]
     public static void ADefaultAtmosphereLightsTheDarkSides()
     {
-        var air = new Atmosphere();
+        Atmosphere air = new Atmosphere();
         Check.Near(0.5f, air.AmbientStrength, "ambient light on");
         Check.Equal(ToneMapping.Filmic, air.ToneMapping, "filmic tone");
         Check.Equal(Background.ClearColor, air.Background, "background is the game's clear colour");
@@ -67,13 +69,15 @@ internal static class LightingTests
     [Test]
     public static void BackgroundsSwitchAndFeedTheAmbientLight()
     {
-        var air = new Atmosphere { Background = Background.Solid(Color.Blue), AmbientFromSky = true };
+        Atmosphere air = new Atmosphere();
+        air.Background = Background.Solid(Color.Blue);
+        air.AmbientFromSky = true;
         Check.True(air.Native.BackgroundMode == Godot.Environment.BGMode.Color, "solid colour");
         Check.True(air.Native.AmbientLightSource == Godot.Environment.AmbientSource.Color, "no sky to take light from");
 
         air.Background = Background.Gradient(Color.Blue, Color.White, Color.Gray);
         Check.True(air.Native.BackgroundMode == Godot.Environment.BGMode.Sky, "sky");
-        var sky = (Godot.ProceduralSkyMaterial)air.Native.Sky.SkyMaterial;
+        Godot.ProceduralSkyMaterial sky = (Godot.ProceduralSkyMaterial)air.Native.Sky.SkyMaterial;
         Check.Equal(Color.Blue, sky.SkyTopColor.ToEvil(), "top colour");
         Check.Equal(Color.White, sky.SkyHorizonColor.ToEvil(), "horizon colour");
         Check.True(air.Native.AmbientLightSource == Godot.Environment.AmbientSource.Sky, "ambient from the sky");
@@ -82,7 +86,11 @@ internal static class LightingTests
     [Test]
     public static void FogGlowToneAndExposure()
     {
-        var air = new Atmosphere { Fog = new Fog(Color.Gray, 0.02f), Glow = 0.7f, ToneMapping = ToneMapping.Aces, Exposure = 1.3f };
+        Atmosphere air = new Atmosphere();
+        air.Fog = new Fog(Color.Gray, 0.02f);
+        air.Glow = 0.7f;
+        air.ToneMapping = ToneMapping.Aces;
+        air.Exposure = 1.3f;
         Check.True(air.Native.FogEnabled, "fog on");
         Check.Near(0.02f, air.Native.FogDensity, "fog density");
         Check.Near(0.7f, air.Glow, "glow");
@@ -106,17 +114,17 @@ internal static class LightingTests
     [Test]
     public static void EachSceneShowsItsOwnAtmosphere()
     {
-        using var stage = Stage.Open();
-        var scenes = new SceneStack(null, stage.Root);
-        var night = new SkyScene(useNight: true);
-        var plain = new SkyScene(useNight: false);
+        using Stage stage = Stage.Open();
+        SceneStack scenes = new SceneStack(null, stage.Root);
+        SkyScene night = new SkyScene(useNight: true);
+        SkyScene plain = new SkyScene(useNight: false);
         scenes.Push(night);
         scenes.Push(plain);
         scenes.ApplyChanges();
         Check.True(ReferenceEquals(night.OwnAtmosphere.Native, night.OwnCamera.Lens.Environment), "night scene's camera shows its night");
         Check.True(ReferenceEquals(plain.OwnAtmosphere.Native, plain.OwnCamera.Lens.Environment), "the other scene has its own");
         Check.True(!ReferenceEquals(night.OwnAtmosphere, plain.OwnAtmosphere), "not shared");
-        var dusk = Atmosphere.Dusk();
+        Atmosphere dusk = Atmosphere.Dusk();
         plain.Use(dusk);
         Check.True(ReferenceEquals(dusk.Native, plain.OwnCamera.Lens.Environment), "a new atmosphere shows at once");
     }

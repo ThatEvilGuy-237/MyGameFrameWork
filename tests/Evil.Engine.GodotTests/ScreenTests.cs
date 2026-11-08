@@ -7,7 +7,7 @@ internal static class ScreenTests
     [Test]
     public static void GroupsMoveWhatIsDrawn()
     {
-        var (canvas, target) = Drawing();
+        (Canvas? canvas, RecordingTarget? target) = Drawing();
         using (canvas.Group())
         {
             canvas.Translate(100f, 50f);
@@ -22,9 +22,9 @@ internal static class ScreenTests
     [Test]
     public static void TextInABoxIsCentred()
     {
-        var (canvas, target) = Drawing();
+        (Canvas? canvas, RecordingTarget? target) = Drawing();
         canvas.DrawText("Move", new RectF(100f, 500f, 120f, 40f), 18f, Color.White, TextAlign.Center);
-        var text = target.Texts.Single();
+        (Vector2 Baseline, int Size, float Width, TextAlign Align, Font? Font) text = target.Texts.Single();
         Check.Near(new Vector2(100f, 525f), text.Baseline, "baseline: box top + (40 - 20) / 2 + ascent 15");
         Check.Equal(18, text.Size, "size in pixels");
         Check.Near(120f, text.Width, "aligned inside the box width");
@@ -34,7 +34,7 @@ internal static class ScreenTests
     [Test]
     public static void TextAtAPointStartsAtItsTopLeft()
     {
-        var (canvas, target) = Drawing();
+        (Canvas? canvas, RecordingTarget? target) = Drawing();
         canvas.DrawText("hi", new Vector2(10f, 10f), 16f, Color.White);
         Check.Near(new Vector2(10f, 25f), target.Texts.Single().Baseline, "top + ascent");
     }
@@ -42,8 +42,8 @@ internal static class ScreenTests
     [Test]
     public static void EachSceneAndFrameStartsWithTheBuiltInFont()
     {
-        var (canvas, target) = Drawing();
-        var font = new Font(new Godot.FontFile(), "test");
+        (Canvas? canvas, RecordingTarget? target) = Drawing();
+        Font font = new Font(new Godot.FontFile(), "test");
         canvas.Font = font;
         canvas.DrawText("styled", new Vector2(0f, 0f), 16f, Color.White);
         canvas.ResetTransform();
@@ -59,8 +59,8 @@ internal static class ScreenTests
     [Test]
     public static void TheCanvasOnlyDrawsInsideDraw()
     {
-        var target = new RecordingTarget();
-        var canvas = new Canvas(target);
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = new Canvas(target);
         Check.Throws<InvalidOperationException>(() => canvas.FillRect(new RectF(0f, 0f, 1f, 1f), Color.Red), "only draws inside a scene's Draw");
         Check.Near(new Vector2(60f, 20f), canvas.MeasureText("anything", 18f), "measuring works any time");
         canvas.Begin(new Vector2(800f, 600f));
@@ -71,13 +71,13 @@ internal static class ScreenTests
     [Test]
     public static void ScenesDrawBottomUpFromAClearTransform()
     {
-        using var stage = Stage.Open();
-        var log = new List<string>();
-        var scenes = new SceneStack(null, stage.Root);
+        using Stage stage = Stage.Open();
+        List<string> log = new List<string>();
+        SceneStack scenes = new SceneStack(null, stage.Root);
         scenes.Push(new DrawingScene("map", log, overlay: false, moveWithoutGroup: true));
         scenes.Push(new DrawingScene("menu", log, overlay: true, moveWithoutGroup: false));
         scenes.ApplyChanges();
-        var (canvas, target) = Drawing();
+        (Canvas? canvas, RecordingTarget? target) = Drawing();
         scenes.Draw(canvas);
         Check.Equal("map menu", string.Join(' ', log), "bottom first");
         Check.True(target.Script.EndsWith("transform 0,0 | rect", StringComparison.Ordinal), $"the menu starts clean, got {target.Script}");
@@ -92,26 +92,26 @@ internal static class ScreenTests
     [Test]
     public static void ASceneThatForgetsPopIsNamed()
     {
-        using var stage = Stage.Open();
-        var scenes = new SceneStack(null, stage.Root);
+        using Stage stage = Stage.Open();
+        SceneStack scenes = new SceneStack(null, stage.Root);
         scenes.Push(new LeakyScene());
         scenes.ApplyChanges();
-        var (canvas, _) = Drawing();
+        (Canvas? canvas, RecordingTarget _) = Drawing();
         Check.Throws<InvalidOperationException>(() => scenes.Draw(canvas), "LeakyScene.Draw left 1 Push()");
     }
 
     [Test]
     public static void TheRealFontMeasures()
     {
-        var node = new Godot.Node2D();
-        var target = new GodotCanvasTarget(node);
-        var hello = target.Measure("Hello", 16, null);
-        var longer = target.Measure("Hello, turn-based world", 16, null);
+        Godot.Node2D node = new Godot.Node2D();
+        GodotCanvasTarget target = new GodotCanvasTarget(node);
+        Vector2 hello = target.Measure("Hello", 16, null);
+        Vector2 longer = target.Measure("Hello, turn-based world", 16, null);
         Check.True(hello.X > 0f && hello.Y > 0f, $"has a size, got {hello}");
         Check.True(longer.X > hello.X, "longer text is wider");
         Check.True(target.Measure("Hello", 32, null).Y > hello.Y, "bigger text is taller");
         Check.True(target.Ascent(16, null) > 0f, "ascent");
-        var wrapped = target.MeasureParagraph("one two three four five six seven eight nine ten", 16, 80f, null);
+        Vector2 wrapped = target.MeasureParagraph("one two three four five six seven eight nine ten", 16, 80f, null);
         Check.True(wrapped.Y > hello.Y * 1.5f, $"a narrow paragraph wraps onto several lines, got {wrapped}");
         node.Free();
     }
@@ -119,7 +119,7 @@ internal static class ScreenTests
     [Test]
     public static void DisplayChecksWhatItIsGiven()
     {
-        var display = new Display(new WindowSettings("Start"));
+        Display display = new Display(new WindowSettings("Start"));
         Check.Equal("Start", display.Title, "title from the settings");
         display.Title = "Battle";
         Check.Equal("Battle", display.Title, "title changes");
@@ -129,8 +129,8 @@ internal static class ScreenTests
 
     private static (Canvas Canvas, RecordingTarget Target) Drawing()
     {
-        var target = new RecordingTarget();
-        var canvas = new Canvas(target);
+        RecordingTarget target = new RecordingTarget();
+        Canvas canvas = new Canvas(target);
         canvas.Begin(new Vector2(800f, 600f));
         return (canvas, target);
     }
@@ -182,9 +182,9 @@ internal static class ScreenTests
 
         public void Paragraph(string text, Vector2 baseline, int size, Color color, float width, Font? font) => _steps.Add("paragraph");
 
-        public Vector2 Measure(string text, int size, Font? font) => new(60f, 20f);
+        public Vector2 Measure(string text, int size, Font? font) => new Vector2(60f, 20f);
 
-        public Vector2 MeasureParagraph(string text, int size, float width, Font? font) => new(width, 60f);
+        public Vector2 MeasureParagraph(string text, int size, float width, Font? font) => new Vector2(width, 60f);
 
         public float Ascent(int size, Font? font) => 15f;
     }
