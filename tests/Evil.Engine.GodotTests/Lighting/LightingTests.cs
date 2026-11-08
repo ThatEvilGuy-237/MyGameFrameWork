@@ -1,4 +1,4 @@
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Lighting;
 
 internal static class LightingTests
 {
@@ -32,9 +32,12 @@ internal static class LightingTests
         Check.Near(-Vector3.UnitY, spot.Direction, "points down by default");
         spot.Direction = new Vector3(1f, -1f, 0f);
         Check.Near(Vector3.Normalize(new Vector3(1f, -1f, 0f)), spot.Direction, "points where told");
-        Check.Throws<ArgumentOutOfRangeException>(() => spot.Angle = 0f, "between 0 and 180");
-        Check.Throws<ArgumentOutOfRangeException>(() => spot.Angle = 180f, "between 0 and 180");
-        Check.Throws<ArgumentOutOfRangeException>(() => _ = new Spotlight(Color.White, 5f, 200f), "between 0 and 180");
+        void CloseTheSpot() => spot.Angle = 0f;
+        Check.Throws<ArgumentOutOfRangeException>(CloseTheSpot, "between 0 and 180");
+        void OpenTheSpotFlat() => spot.Angle = 180f;
+        Check.Throws<ArgumentOutOfRangeException>(OpenTheSpotFlat, "between 0 and 180");
+        void SpotWiderThanHalfACircle() => _ = new Spotlight(Color.White, 5f, 200f);
+        Check.Throws<ArgumentOutOfRangeException>(SpotWiderThanHalfACircle, "between 0 and 180");
         spot.Destroy();
     }
 
@@ -150,22 +153,5 @@ internal static class LightingTests
         Atmosphere dusk = Atmosphere.Dusk();
         plain.Use(dusk);
         Check.True(ReferenceEquals(dusk.Native, plain.OwnCamera.Lens.Environment), "a new atmosphere shows at once");
-    }
-
-    private sealed class SkyScene(bool useNight) : Scene
-    {
-        public Atmosphere OwnAtmosphere => Atmosphere;
-
-        public Camera OwnCamera => Camera;
-
-        public void Use(Atmosphere atmosphere) => Atmosphere = atmosphere;
-
-        protected override void Enter()
-        {
-            if (useNight)
-            {
-                Atmosphere = Atmosphere.Night();
-            }
-        }
     }
 }

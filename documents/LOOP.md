@@ -105,7 +105,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
 - [x] **R19 Object-oriented engine**: lambdas, LINQ chains and tuples in `src/` replaced by named methods and named
   types, long methods (GodotKeys.Build, MotionPlayer.Update, GameMain._Process, InputFeed, GameBuilder.Build) cut
   into named steps; static classes only where they are pure maths like `System.Math`.
-- [ ] **R20 Object-oriented sample and tests**: the demo's actions become classes (`MoveAction`, `AttackAction`,
+- [x] **R20 Object-oriented sample and tests**: the demo's actions become classes (`MoveAction`, `AttackAction`,
   `WaitAction` : `PawnAction`) instead of a `switch` on strings; property tests become classes with named case
   records that the runner finds by itself; shared test setup (camera, stage) in one place; test folders by meaning.
 - [ ] **R21 An API that guides**: R13's findings: an engine line when the game starts, `Ancestor` that can include
@@ -280,3 +280,12 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   itself is an object and lost its LINQ. Proof: 83 tests green (the validators now four tests), 2 more seeds at
   20,000 cases green, a planted failing property printed FAIL with its seed and value and exit code 1. Clean code
   154 -> 87. Godot tests (part d) still use `Property.ForAll`, which goes when they move.
+- 2026-11-09 00:47 R20 part d (the Godot tests and the rest): **zero clean-code findings in the whole repository** (291 at
+  the start of R16). 41 `Check.Throws(() => ...)` became named local functions (`ZoomToNothing`, `ReadADestroyedHand`);
+  the six Godot maths cross-checks and the button-history check are property classes with named probes; five
+  copied camera setups became `stage.AddCamera` and `Stage.ScreenMiddle`; nested helper types got their own files
+  (`RecordingTarget` with `DrawnText` records, `SkyScene`, `ProbeScene`, one `EmptyScene` instead of two); the scene
+  stack tests share a `MapAndBattle` fixture; the 33-line music test became three tests; the motion and screen
+  tests lost their tuple setups; the static `Property.ForAll` is gone; the Godot suite sits in folders by library.
+  The checkers now skip files deleted but not yet unstaged (they crashed on one). One named allowance: the
+  `Action` that `Check.Throws` takes. 83 + 109 tests green, check.sh and the driven run green. R20 done.

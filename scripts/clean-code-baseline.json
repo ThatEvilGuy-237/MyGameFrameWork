@@ -1,14 +1,9 @@
 {
- ".::Check.cs": {
-  "delegate": 1
- },
+ ".::Check.cs": {},
  ".::CheckFailed.cs": {},
  ".::Gen.cs": {},
  ".::MethodTest.cs": {},
- ".::Property.cs": {
-  "delegate": 2
- },
- ".::PropertyOfCase.cs": {},
+ ".::Property.cs": {},
  ".::PropertyRun.cs": {},
  ".::TestAttribute.cs": {},
  ".::TestCase.cs": {},
@@ -152,69 +147,46 @@
  "src/99_Engine/Evil.Engine::SoundLoader.cs": {},
  "src/99_Engine/Evil.Engine::TextureLoader.cs": {},
  "src/99_Engine/Evil.Engine::WavFormat.cs": {},
- "tests/Evil.Engine.GodotTests::AudioTests.cs": {
-  "lambda": 4,
-  "long method": 1
- },
+ "tests/Evil.Engine.GodotTests::AudioTests.cs": {},
+ "tests/Evil.Engine.GodotTests::BoundsMatchGodotsAabb.cs": {},
+ "tests/Evil.Engine.GodotTests::BoxProbe.cs": {},
  "tests/Evil.Engine.GodotTests::ButtonAction.cs": {},
  "tests/Evil.Engine.GodotTests::ButtonHistory.cs": {},
- "tests/Evil.Engine.GodotTests::ButtonStatesProperties.cs": {},
  "tests/Evil.Engine.GodotTests::ButtonStep.cs": {},
- "tests/Evil.Engine.GodotTests::CameraTests.cs": {
-  "duplicate": 1,
-  "lambda": 4
- },
- "tests/Evil.Engine.GodotTests::ContentTests.cs": {
-  "duplicate": 1,
-  "lambda": 3,
-  "linq": 1,
-  "types per file": 1
- },
- "tests/Evil.Engine.GodotTests::GameBuilderTests.cs": {
-  "lambda": 1,
-  "types per file": 1
- },
+ "tests/Evil.Engine.GodotTests::ButtonsFollowTheirWholeHistory.cs": {},
+ "tests/Evil.Engine.GodotTests::CameraTests.cs": {},
+ "tests/Evil.Engine.GodotTests::ContentTests.cs": {},
+ "tests/Evil.Engine.GodotTests::DrawingScene.cs": {},
+ "tests/Evil.Engine.GodotTests::DrawnText.cs": {},
+ "tests/Evil.Engine.GodotTests::EmptyScene.cs": {},
+ "tests/Evil.Engine.GodotTests::EulerProbe.cs": {},
+ "tests/Evil.Engine.GodotTests::EulerTurnsMatchGodotsBasis.cs": {},
+ "tests/Evil.Engine.GodotTests::GameBuilderTests.cs": {},
  "tests/Evil.Engine.GodotTests::GlobalUsings.cs": {},
- "tests/Evil.Engine.GodotTests::InputTests.cs": {
-  "duplicate": 2,
-  "linq": 3
- },
- "tests/Evil.Engine.GodotTests::LightingTests.cs": {
-  "lambda": 3,
-  "types per file": 1
- },
- "tests/Evil.Engine.GodotTests::MathAgainstGodotTests.cs": {
-  "duplicate": 1,
-  "lambda": 5,
-  "tuple": 5
- },
- "tests/Evil.Engine.GodotTests::MotionTests.cs": {
-  "lambda": 3,
-  "tuple": 1
- },
+ "tests/Evil.Engine.GodotTests::GodotGeometry.cs": {},
+ "tests/Evil.Engine.GodotTests::GodotSafetyTests.cs": {},
+ "tests/Evil.Engine.GodotTests::InputTests.cs": {},
+ "tests/Evil.Engine.GodotTests::LeakyScene.cs": {},
+ "tests/Evil.Engine.GodotTests::LightingTests.cs": {},
+ "tests/Evil.Engine.GodotTests::LookAlongMatchesGodotsLookingAt.cs": {},
+ "tests/Evil.Engine.GodotTests::MapAndBattle.cs": {},
+ "tests/Evil.Engine.GodotTests::MotionTests.cs": {},
+ "tests/Evil.Engine.GodotTests::NestedObjectsMatchComposedPoses.cs": {},
+ "tests/Evil.Engine.GodotTests::NestedProbe.cs": {},
+ "tests/Evil.Engine.GodotTests::PoseProbe.cs": {},
+ "tests/Evil.Engine.GodotTests::PosesMatchGodotsTransforms.cs": {},
+ "tests/Evil.Engine.GodotTests::ProbeScene.cs": {},
+ "tests/Evil.Engine.GodotTests::RayHitsMatchGodots.cs": {},
+ "tests/Evil.Engine.GodotTests::RayProbe.cs": {},
+ "tests/Evil.Engine.GodotTests::RecordingTarget.cs": {},
  "tests/Evil.Engine.GodotTests::Runner.cs": {},
- "tests/Evil.Engine.GodotTests::SceneStackTests.cs": {
-  "duplicate": 2,
-  "lambda": 1,
-  "types per file": 1
- },
- "tests/Evil.Engine.GodotTests::ScreenTests.cs": {
-  "lambda": 4,
-  "linq": 2,
-  "tuple": 3,
-  "types per file": 3
- },
- "tests/Evil.Engine.GodotTests::ShapeAndLightTests.cs": {
-  "lambda": 1
- },
+ "tests/Evil.Engine.GodotTests::SceneStackTests.cs": {},
+ "tests/Evil.Engine.GodotTests::ScreenTests.cs": {},
+ "tests/Evil.Engine.GodotTests::ShapeAndLightTests.cs": {},
+ "tests/Evil.Engine.GodotTests::SkyScene.cs": {},
  "tests/Evil.Engine.GodotTests::Stage.cs": {},
- "tests/Evil.Engine.GodotTests::WorldDeepTests.cs": {
-  "lambda": 4,
-  "linq": 1
- },
- "tests/Evil.Engine.GodotTests::WorldObjectTests.cs": {
-  "lambda": 5
- },
+ "tests/Evil.Engine.GodotTests::WorldDeepTests.cs": {},
+ "tests/Evil.Engine.GodotTests::WorldObjectTests.cs": {},
  "tests/Evil.Engine.Tests::ARayHitsABoxWhereWalkingAlongItFindsIt.cs": {},
  "tests/Evil.Engine.Tests::ARayHitsAPlaneOnThePlaneOrNotAtAll.cs": {},
  "tests/Evil.Engine.Tests::ARayHitsASphereOnItsSurface.cs": {},
@@ -227,9 +199,7 @@
  "tests/Evil.Engine.Tests::CameraMathTests.cs": {},
  "tests/Evil.Engine.Tests::ColorPair.cs": {},
  "tests/Evil.Engine.Tests::ContainsAgreesWithTheTriangles.cs": {},
- "tests/Evil.Engine.Tests::CoreTests.cs": {
-  "lambda": 1
- },
+ "tests/Evil.Engine.Tests::CoreTests.cs": {},
  "tests/Evil.Engine.Tests::CornerPair.cs": {},
  "tests/Evil.Engine.Tests::CornersAndCentersBuildTheSameRect.cs": {},
  "tests/Evil.Engine.Tests::CornersAndSeed.cs": {},
@@ -238,10 +208,7 @@
  "tests/Evil.Engine.Tests::EaseCurveTests.cs": {},
  "tests/Evil.Engine.Tests::EaseMirror.cs": {},
  "tests/Evil.Engine.Tests::EaseSpan.cs": {},
- "tests/Evil.Engine.Tests::EaseTests.cs": {
-  "lambda": 3,
-  "linq": 6
- },
+ "tests/Evil.Engine.Tests::EaseTests.cs": {},
  "tests/Evil.Engine.Tests::EasingsWithoutOvershootNeverGoBack.cs": {},
  "tests/Evil.Engine.Tests::EulerTurn.cs": {},
  "tests/Evil.Engine.Tests::EulerTurnsRollThenPitchThenYaw.cs": {},
@@ -251,9 +218,7 @@
  "tests/Evil.Engine.Tests::IntersectIsInsideBothAndAgreesWithIntersects.cs": {},
  "tests/Evil.Engine.Tests::LerpHitsBothEndsAndTheMiddle.cs": {},
  "tests/Evil.Engine.Tests::LookAlongFacesTheDirectionWithALevelHorizon.cs": {},
- "tests/Evil.Engine.Tests::Math3DTests.cs": {
-  "lambda": 2
- },
+ "tests/Evil.Engine.Tests::Math3DTests.cs": {},
  "tests/Evil.Engine.Tests::MathTests.cs": {},
  "tests/Evil.Engine.Tests::MathValidatorTests.cs": {},
  "tests/Evil.Engine.Tests::MoveStep.cs": {},
@@ -264,10 +229,7 @@
  "tests/Evil.Engine.Tests::OutIsInPlayedBackwards.cs": {},
  "tests/Evil.Engine.Tests::PlaneTurn.cs": {},
  "tests/Evil.Engine.Tests::PolygonChange.cs": {},
- "tests/Evil.Engine.Tests::PolygonTests.cs": {
-  "lambda": 2,
-  "linq": 1
- },
+ "tests/Evil.Engine.Tests::PolygonTests.cs": {},
  "tests/Evil.Engine.Tests::PopPutsTheStackBackExactly.cs": {},
  "tests/Evil.Engine.Tests::PosePoint.cs": {},
  "tests/Evil.Engine.Tests::PoseTurns.cs": {},

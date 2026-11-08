@@ -31,6 +31,9 @@ Static classes in the engine, and why each may stay: pure maths like `System.Mat
 that carries state is an object: `InputFeed` owns the keyboard and mouse, `EarClipper` owns a polygon being cut,
 `TweenQueue` owns one object's tweens.
 
+One allowance, named in the checker with its reason and listed by `--show`: `Check.Throws` takes an `Action`, the
+call it expects to fail. Every caller hands it a named method, which the lambda rule still checks.
+
 Explicit types, constructor then statements and no comments still hold (see the repo's `CLAUDE.md`).
 Expression-bodied members (`public float Area => Width * Height;`) and switch expressions over enums are C#, not
 lambdas, and stay.
@@ -55,3 +58,4 @@ is not LINQ, renamed copies are still copies, enum lists are not copies), so a b
 | R19 end | 167 (with the new long-method rule) | **0** |
 | R20 part a (sample) | 154 | 0 |
 | R20 parts b and c (test runner, pure tests) | 87 | 0 |
+| **R20 end** | **0** | **0** |

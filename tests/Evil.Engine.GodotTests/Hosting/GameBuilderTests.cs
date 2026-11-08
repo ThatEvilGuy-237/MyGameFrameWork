@@ -1,11 +1,12 @@
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Hosting;
 
 internal static class GameBuilderTests
 {
     [Test]
     public static void BuildNeedsAFirstScene()
     {
-        Check.Throws<InvalidOperationException>(() => GameBuilder.Create("test", 320, 240).Build(), "GameBuilder.Start was not called");
+        void BuildWithoutAScene() => GameBuilder.Create("test", 320, 240).Build();
+        Check.Throws<InvalidOperationException>(BuildWithoutAScene, "GameBuilder.Start was not called");
     }
 
     [Test]
@@ -56,6 +57,4 @@ internal static class GameBuilderTests
         context.Exit();
         Check.True(context.IsExiting, "exiting");
     }
-
-    private sealed class EmptyScene : Scene;
 }

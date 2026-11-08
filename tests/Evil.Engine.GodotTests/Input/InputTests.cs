@@ -5,16 +5,16 @@ using GodotKey = Godot.Key;
 using Key = Evil.Engine.Input.Key;
 using MouseButton = Evil.Engine.Input.MouseButton;
 
-namespace Evil.Engine.GodotTests;
+namespace Evil.Engine.GodotTests.Input;
 
 internal static class InputTests
 {
     [Test]
     public static void EveryKeyHasExactlyOneGodotKey()
     {
-        List<Key> mapped = GodotKeys.All.Values.ToList();
-        Check.Equal(Enum.GetValues<Key>().Length, mapped.Count, "every key is mapped");
-        Check.Equal(mapped.Count, mapped.Distinct().Count(), "no key is mapped twice");
+        HashSet<Key> mapped = new HashSet<Key>(GodotKeys.All.Values);
+        Check.Equal(Enum.GetValues<Key>().Length, GodotKeys.All.Count, "every key is mapped");
+        Check.Equal(GodotKeys.All.Count, mapped.Count, "no key is mapped twice");
     }
 
     [Test]
@@ -115,7 +115,7 @@ internal static class InputTests
     public static void PickFindsTheNearestShapeUnderTheMouse()
     {
         using Stage stage = Stage.Open();
-        Camera camera = Camera(stage);
+        Camera camera = stage.AddCamera(new Vector3(0f, 0f, 10f));
         Box front = new Box();
         front.Name = "front";
         stage.Root.Add(front);
@@ -123,15 +123,15 @@ internal static class InputTests
         back.Name = "back";
         back.Position = new Vector3(0f, 0f, -5f);
         stage.Root.Add(back);
-        Hit? hit = Picker.Pick(camera, stage.Root, Middle());
+        Hit? hit = Picker.Pick(camera, stage.Root, Stage.ScreenMiddle);
         Check.True(hit is not null && ReferenceEquals(front, hit.Target), "the front box");
         Check.Near(new Vector3(0f, 0f, 0.5f), hit!.Point, "on its near face");
         Check.Near(9.5f, hit.Distance, "distance from the camera");
 
         front.Pickable = false;
-        Check.True(ReferenceEquals(back, Picker.Pick(camera, stage.Root, Middle())?.Target), "unpickable is skipped");
+        Check.True(ReferenceEquals(back, Picker.Pick(camera, stage.Root, Stage.ScreenMiddle)?.Target), "unpickable is skipped");
         back.Visible = false;
-        Check.True(Picker.Pick(camera, stage.Root, Middle()) is null, "hidden is skipped");
+        Check.True(Picker.Pick(camera, stage.Root, Stage.ScreenMiddle) is null, "hidden is skipped");
     }
 
     [Test]
@@ -196,16 +196,4 @@ internal static class InputTests
         Check.True(GodotKeys.TryMap(godot, out Key mapped), $"{godot} is known");
         Check.Equal(ours, mapped, $"{godot}");
     }
-
-    private static Camera Camera(Stage stage)
-    {
-        Camera camera = new Camera();
-        camera.Position = new Vector3(0f, 0f, 10f);
-        stage.Root.Add(camera);
-        camera.LookAt(Vector3.Zero);
-        camera.MakeCurrent();
-        return camera;
-    }
-
-    private static Vector2 Middle() => Stage.Host!.GetViewport().GetVisibleRect().Size.ToEvil() / 2f;
 }

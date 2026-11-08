@@ -22,7 +22,8 @@ internal static class Math3DTests
             Check.Near(Vector3.Normalize(direction), Rotations.Rotate(Rotations.Forward, rotation), $"front along {direction}");
         }
 
-        Check.Throws<ArgumentException>(() => Rotations.LookAlong(Vector3.Zero), "no length");
+        void LookNowhere() => Rotations.LookAlong(Vector3.Zero);
+        Check.Throws<ArgumentException>(LookNowhere, "no length");
     }
 
     [Test]
@@ -74,6 +75,7 @@ internal static class Math3DTests
 
         Check.Near(4f, new Ray3(new Vector3(0f, 0f, 5f), -Vector3.UnitZ).IntersectSphere(Vector3.Zero, 1f) ?? -1f, "sphere front");
         Check.True(new Ray3(new Vector3(0f, 2f, 5f), -Vector3.UnitZ).IntersectSphere(Vector3.Zero, 1f) is null, "sphere miss");
-        Check.Throws<ArgumentException>(() => _ = new Ray3(Vector3.Zero, Vector3.Zero), "no length");
+        void RayWithoutDirection() => _ = new Ray3(Vector3.Zero, Vector3.Zero);
+        Check.Throws<ArgumentException>(RayWithoutDirection, "no length");
     }
 }

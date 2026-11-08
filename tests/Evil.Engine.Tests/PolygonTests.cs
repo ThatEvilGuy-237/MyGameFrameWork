@@ -51,7 +51,10 @@ internal static class PolygonTests
             new Vector2(120f, 60f), new Vector2(110f, 180f), new Vector2(160f, 140f), new Vector2(220f, 190f), new Vector2(130f, 210f));
         IReadOnlyList<int> indices = cloud.Triangles;
         Check.Equal(0, indices.Count % 3, "whole triangles");
-        Check.True(indices.All(index => index >= 0 && index < cloud.Count), "indices in range");
+        foreach (int index in indices)
+        {
+            Check.True(index >= 0 && index < cloud.Count, $"index {index} in range");
+        }
     }
 
     [Test]
@@ -76,7 +79,8 @@ internal static class PolygonTests
         Check.True(hexagon.IsConvex, "convex");
         Check.Near(3f * MathF.Sqrt(3f) / 2f * 100f, hexagon.Area, "area", 0.01f);
         Check.Near(new Vector2(50f, 50f), hexagon.Centroid, "centroid");
-        Check.Throws<ArgumentOutOfRangeException>(() => Polygon.Regular(Vector2.Zero, 1f, 2));
+        void TwoSidedPolygon() => Polygon.Regular(Vector2.Zero, 1f, 2);
+        Check.Throws<ArgumentOutOfRangeException>(TwoSidedPolygon);
     }
 
     [Test]

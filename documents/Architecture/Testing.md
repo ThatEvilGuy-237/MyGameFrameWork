@@ -18,7 +18,14 @@ with exit code 0 (all passed), 1 (a test failed) or 2 (the runner broke). A plan
 give exit code 1.
 
 Tests that need the scene tree open a **stage**: a fresh `WorldObject` inside the tree, freed when the test
-ends.
+ends. `stage.AddCamera(position)` adds a current camera looking at the origin and `Stage.ScreenMiddle` is the pixel
+under it, so no test builds its own camera. The Godot suite sits in folders by library (`WorldObjects`, `Cameras`,
+`Lighting`, `Input`, `Screen`, `Motion`, `Audio`, `Content`, `Hosting`, `Scenes`, `Maths`), and each helper is its
+own type: `RecordingTarget` (a canvas target that records what was drawn as `DrawnText`), `MapAndBattle` (two
+scenes on a stack with their hooks logged), `EmptyScene`, `ProbeScene`, `SkyScene`.
+
+A test that expects a call to fail names it: `void ZoomToNothing() => orbit.Zoom(0f);` then
+`Check.Throws<ArgumentOutOfRangeException>(ZoomToNothing, "factor above 0");`, never an anonymous `() =>`.
 
 ```csharp
 [Test]

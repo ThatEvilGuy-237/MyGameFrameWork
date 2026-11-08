@@ -23,8 +23,37 @@ internal static class EaseTests
         Check.Near(0.5f, Ease.Apply(Easing.InOutCubic, 0.5f), "in-out is symmetric");
         Check.True(Ease.Apply(Easing.InCubic, 0.3f) < 0.3f, "in starts slow");
         Check.True(Ease.Apply(Easing.OutCubic, 0.3f) > 0.3f, "out starts fast");
-        Check.True(Enumerable.Range(1, 9).Any(i => Ease.Apply(Easing.OutBack, i / 10f) > 1f), "back overshoots");
-        List<float> steps = Enumerable.Range(0, 21).Select(i => Ease.Apply(Easing.InOutSine, i / 20f)).ToList();
-        Check.True(steps.Zip(steps.Skip(1)).All(pair => pair.Second >= pair.First), "sine never goes back");
+        Check.True(OutBackOvershoots(), "back overshoots");
+        Check.True(InOutSineNeverGoesBack(), "sine never goes back");
+    }
+
+    private static bool OutBackOvershoots()
+    {
+        for (int step = 1; step < 10; step++)
+        {
+            if (Ease.Apply(Easing.OutBack, step / 10f) > 1f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool InOutSineNeverGoesBack()
+    {
+        float last = 0f;
+        for (int step = 0; step <= 20; step++)
+        {
+            float now = Ease.Apply(Easing.InOutSine, step / 20f);
+            if (now < last)
+            {
+                return false;
+            }
+
+            last = now;
+        }
+
+        return true;
     }
 }
