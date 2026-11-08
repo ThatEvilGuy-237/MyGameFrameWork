@@ -78,7 +78,7 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   click a unit, click a tile to walk there, Space ends the turn, a HUD line) with only `documents/` and the packed
   `Evil.Engine` 0.2.0. Every place it got stuck, guessed or wished for something goes into
   `documents/Usability.md` as a numbered finding with severity; the rounds below fix them, worst first.
-- [ ] **R14 The sample reads like a guide**: OrbitScene (426 lines, `Update` 91 and `Enter` 85) split by concern
+- [x] **R14 The sample reads like a guide**: OrbitScene (426 lines, `Update` 91 and `Enter` 85) split by concern
   (board, pawns, action bar, camera controls, sound) so a reader follows it top-down; no method over ~30 lines.
 - [ ] **R15 One type per file, folders by concern**: ObjectTweens.cs (8 types), Background.cs (4) and
   GameOptions.cs (2) split; libraries with many files get subfolders (World: shapes, content); namespaces stay.
@@ -170,3 +170,11 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   Godot ignores ambient energy for sky light, so `AmbientStrength` from the sky is now the sky's share and Daylight
   takes 0.1, floor 159°). That run is now `scripts/make-a-game-check.sh`. 38 pure + 96 Godot tests green, driven run
   green, Dusk sample unchanged. ![[make-a-game.png]]
+- 2026-11-08 23:42 R14: OrbitScene split by job into 9 small classes (Scenery, SpinningShapes, Pawns, ActionBar,
+  PawnActions, CameraControls, Hud, DemoSounds); the scene went from 426 to 164 lines, `Update` from 91 to 21, the
+  longest method in the sample is now 30 lines (HandleKeys, one key per block). Named constants instead of bare
+  numbers for speeds and button layout; the attack reads as HopAtAndBack + KnockBack. Found on the way: F12 only
+  worked in the scripted run although README and Run the Sample promise a screenshot; now F12 saves
+  `orbit-<time>.png` next to the game on a desktop (tested: 1280x720 saved, exit 0), git ignores them. Run the
+  Sample has a file-by-file reading guide. Behaviour unchanged: every driven-run line seen, 38 + 96 tests green,
+  audio 24.5 s at 0.043. ![[orbit-driven.png]]

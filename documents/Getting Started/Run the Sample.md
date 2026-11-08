@@ -23,6 +23,24 @@ Open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play.
 | F12 | screenshot next to the game |
 | Escape | quit |
 
+## Read the code
+
+The demo is split by job, one class per file, so it reads top-down. Start at `OrbitScene.cs`: `Enter` builds the
+parts, `Update` runs them in order, `Draw` paints the overlay.
+
+| File | Does |
+|---|---|
+| `Main.cs` | the game's one Godot line: window, content folder, first scene |
+| `OrbitScene.cs` | the scene: builds the parts, handles keys, decides what a click means |
+| `Scenery.cs` | sun, tiled floor, the two Blender towers, torch pillars with lamps |
+| `SpinningShapes.cs` | grouped transforms: a planet in the blue box's group, a ring and a moon in the planet's |
+| `Pawns.cs` | the two pawns: hover glow, selection ring and the spotlight that follows it |
+| `ActionBar.cs` | the Move / Attack / Wait buttons: layout, hover, drawing |
+| `PawnActions.cs` | what the buttons do, with motion queued per object and sounds timed to the hit |
+| `CameraControls.cs` | the orbit camera: drift, Q/E, wheel zoom, right-drag |
+| `Hud.cs` | the panel and the compass on the 2D overlay |
+| `DemoSounds.cs`, `SampleOptions.cs` | sounds loaded once; the command-line switches the checks use |
+
 ## On the server
 
 ```bash
