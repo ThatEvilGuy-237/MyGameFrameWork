@@ -31,7 +31,8 @@ internal sealed class OrbitScene : Scene
     {
         Camera.Position = new Vector3(0f, 7f, 11f);
         Camera.LookAt(Vector3.Zero);
-        World.Add(new Sun(new Vector3(-0.6f, -1f, -0.4f)));
+        Atmosphere = Atmosphere.Dusk();
+        World.Add(Sun.Golden());
 
         _blue = World.Add(new Box(Vector3.One, Color.FromHex("#3E63DD")));
         var yellow = _blue.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));

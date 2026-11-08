@@ -1,6 +1,7 @@
 using Evil.Engine.Cameras;
 using Evil.Engine.Core;
 using Evil.Engine.Hosting;
+using Evil.Engine.Lighting;
 using Evil.Engine.World;
 
 namespace Evil.Engine.Scenes;
@@ -89,7 +90,7 @@ public sealed class SceneStack
 
         var world = _worlds.Add(new WorldObject(scene.GetType().Name));
         var camera = world.Add(new Camera { Name = "Camera" });
-        scene.Attach(_game, world, camera);
+        scene.Attach(_game, world, camera, new Atmosphere());
         _scenes.Add(scene);
         RefreshViews();
         scene.RunEnter();
