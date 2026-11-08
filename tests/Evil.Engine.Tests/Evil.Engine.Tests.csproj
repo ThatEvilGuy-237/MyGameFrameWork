@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Evil.Engine\Evil.Engine.csproj" />
+    <ProjectReference Include="..\..\src\Evil.Engine.Mathematics\Evil.Engine.Mathematics.csproj" />
+  </ItemGroup>
+
+</Project>

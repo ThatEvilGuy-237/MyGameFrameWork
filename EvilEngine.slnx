@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Evil.Engine.Sample/Evil.Engine.Sample.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Evil.Engine.Mathematics/Evil.Engine.Mathematics.csproj" />
+    <Project Path="src/Evil.Engine/Evil.Engine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Evil.Engine.Tests/Evil.Engine.Tests.csproj" />
+  </Folder>
+</Solution>

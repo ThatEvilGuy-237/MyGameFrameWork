@@ -1,0 +1,14 @@
+namespace Evil.Engine.Mathematics;
+
+public static class Angle
+{
+    public static float ToRadians(float degrees) => degrees * (MathF.PI / 180f);
+
+    public static float ToDegrees(float radians) => radians * (180f / MathF.PI);
+
+    public static float Wrap(float degrees)
+    {
+        var wrapped = degrees % 360f;
+        return wrapped < 0f ? wrapped + 360f : wrapped;
+    }
+}
