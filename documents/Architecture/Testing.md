@@ -37,21 +37,32 @@ public static void ChildrenFollowTheParentsTurn()
 ## Property tests: proving the maths
 
 A test with fixed numbers proves a handful of cases. The maths is also checked with **properties**: rules that must
-hold for any input, tried on hundreds of seeded random inputs (`tests/Shared/Property.cs`, generators in
-`tests/Shared/Gen.cs`, no package).
+hold for any input, tried on hundreds of seeded random inputs. A property is a class: it makes a case and checks
+it, and the runner finds it by itself (`tests/Shared/PropertyOfCase.cs`, generators in `tests/Shared/Gen.cs`, no
+package). The case is a named record next to it.
 
 ```csharp
-[Test]
-public static void ToLocalUndoesToWorld()
+internal sealed record PosePoint(Pose Pose, Vector3 Point);
+
+internal sealed class ToLocalUndoesToWorld : Property<PosePoint>
 {
-    Property.ForAll(
-        nameof(ToLocalUndoesToWorld),
-        random => (Pose: Gen.Placement(random, false), Point: Gen.Point3(random, 20f)),
-        input => Check.Near(input.Point, input.Pose.ToLocal(input.Pose.ToWorld(input.Point)), "there and back", 1e-3f));
+    protected override PosePoint Generate(Random random) =>
+        new PosePoint(Gen.Placement(random, false), Gen.Point3(random, 20f));
+
+    protected override void Verify(PosePoint sample)
+    {
+        Check.Near(sample.Point, sample.Pose.ToLocal(sample.Pose.ToWorld(sample.Point)), "there and back", 1e-3f);
+    }
 }
 ```
 
-Each property gets 300 cases with a seed made from its name, so a run is the same every time. A failure prints the
+The pure suite keeps them in folders by meaning (`Core/EaseCurves`, `Core/Colors`, `Mathematics/Angles`,
+`Bounds`, `GoalSmoothing`, `Orbits`, `Polygons`, `Poses`, `Rays`, `Rectangles`, `Transforms`, `Turns`,
+`Validators`). A folder never takes the name of an engine type (`Turns`, not `Rotations`): C# would let the folder's
+namespace hide the type in every test next to it. Plain example tests stay `[Test]` methods; both kinds run as a
+`TestCase`.
+
+Each property gets 300 cases with a seed made from its class name, so a run is the same every time. A failure prints the
 case, the seed and the input. To search harder, change the seed or the count:
 
 ```bash
@@ -62,8 +73,8 @@ Three kinds of checks, each answering "how do we know it is right" a different w
 
 | Kind | Example | Where |
 |---|---|---|
-| rules that must hold | to world and back is the same point; two half steps of smoothing are one full step; the triangles of a polygon cover its area once | `tests/Evil.Engine.Tests/Properties` |
-| brute force | walking along a ray in 1 cm steps finds the box where `Intersect` says it is; points sampled in a polygon agree with its triangles | the same folder |
+| rules that must hold | to world and back is the same point; two half steps of smoothing are one full step; the triangles of a polygon cover its area once | `tests/Evil.Engine.Tests/Core`, `.../Mathematics` |
+| brute force | walking along a ray in 1 cm steps finds the box where `Intersect` says it is; points sampled in a polygon agree with its triangles (a `Triangulation` helper that measures them) | the same folders |
 | a second opinion | our Euler turns, LookAlong, poses, nested objects, bounds and ray hits against Godot's own Basis, Transform3D, Aabb, Plane and sphere code | `tests/Evil.Engine.GodotTests/MathAgainstGodotTests.cs` |
 
 What they found in R15: a ray grazing a small sphere far away missed it (`IntersectSphere` subtracted two numbers

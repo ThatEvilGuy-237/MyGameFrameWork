@@ -53,3 +53,5 @@ is not LINQ, renamed copies are still copies, enum lists are not copies), so a b
 | R17 end | 272 | 112 |
 | R18 end | 177 | 31 (no duplicates left in the engine) |
 | R19 end | 167 (with the new long-method rule) | **0** |
+| R20 part a (sample) | 154 | 0 |
+| R20 parts b and c (test runner, pure tests) | 87 | 0 |
