@@ -55,6 +55,7 @@ src/07_Screen        Evil.Engine.Screen         window settings, frame capture
 src/08_Engine        Evil.Engine                GameBuilder, GameMain, scenes
 samples/OrbitDemo                               a Godot project using only our API
 tests/Evil.Engine.Tests                         pure tests (Core, Mathematics)
+tests/Evil.Engine.GodotTests                    tests that run inside Godot against real nodes
 documents/                                      docs (Obsidian vault): start at documents/Home.md
 ```
 

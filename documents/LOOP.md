@@ -43,7 +43,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 - [x] **R1 skeleton**: tag the OpenTK engine `v0.1.0`, remove its runtime, numbered layout, Core + Mathematics +
   Platform + World (WorldObject group, Box, Sphere, Plane) + Camera (basic) + Lighting (Sun) + Engine (builder,
   host, scenes with their own world); OrbitDemo renders through our API; check.sh runs Godot under xvfb.
-- [ ] **R2 Godot tests**: `tests/Evil.Engine.GodotTests` runs `[Test]` methods inside Godot and exits with a code;
+- [x] **R2 Godot tests**: `tests/Evil.Engine.GodotTests` runs `[Test]` methods inside Godot and exits with a code;
   WorldObject and scene worlds covered; check.sh runs both suites.
 - [ ] **R3 World deep**: 3D math in Mathematics (Transform3D, Ray, Bounds, Quaternion helpers, LookAt), WorldObject
   `ToWorld/ToLocal`, more shapes (Cylinder, Capsule, Torus?), materials (colour, roughness, metal, texture),
@@ -71,3 +71,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 - 2026-11-08 17:15 R1: numbered libraries 00-05, 07, 08 over Godot; `Main : GameMain` drives scenes that own a world
   and a camera; OrbitDemo (3 nested groups, sun, shadows) renders through our API; check.sh green (27 pure tests,
   Godot frame). Open: no ambient light yet (dark sides, R5). ![[r1-orbit.png]]
+- 2026-11-08 17:40 R2: `tests/Evil.Engine.GodotTests` (Godot project, headless) runs 26 tests inside Godot:
+  WorldObject groups (3 levels, parent scale, LookAt), shapes, camera, sun, scene worlds (hide, overlay, pop frees,
+  switch), builder; exit code 1 on a planted failure; shared runner in `tests/Shared`; check.sh runs both suites
+  (27 + 26 green). ![[orbit.png]]

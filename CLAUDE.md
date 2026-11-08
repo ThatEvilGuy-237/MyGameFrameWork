@@ -7,9 +7,9 @@ why things are the way they are is in `documents/Decisions.md`.
 
 ## Rules
 
-- `scripts/check.sh` is the gate: build with warnings as errors, the pure test runner, then the OrbitDemo in
-  Godot under xvfb with a captured frame in `documents/screenshots/`. A round is done when it is green and the
-  screenshot looks right (open it, do not trust the exit code alone).
+- `scripts/check.sh` is the gate: build with warnings as errors, the pure tests, the Godot tests (inside Godot,
+  headless, `tests/Evil.Engine.GodotTests`), then the OrbitDemo in Godot under xvfb with a captured frame in `documents/screenshots/`. A round is done when it is green and the
+  screenshot looks right (open it, do not trust the exit code alone). Every wrapper gets Godot tests.
 - Godot binary: `/mnt/hdd/tools/godot-4.7.2` (came in through `evil-repo-check intake`, SHA-512 checked).
   Run projects with `scripts/godot.sh <project> -- <args>` (compatibility renderer, 2 GB cap, xvfb).
 - Numbered libraries in `src/NN_Area/Evil.Engine.Area`; a library only references lower numbers. Core and
