@@ -9,6 +9,9 @@ shots="$(cd "$shots" && pwd)"
 echo "== code style (explicit types, constructor then statements)"
 python3 -I scripts/style-check.py | tail -n 1
 
+echo "== clean code (object oriented, no duplicates, may only get better)"
+python3 -I scripts/clean-code-check.py
+
 echo "== build (warnings are errors)"
 dotnet build EvilEngine.slnx -nologo -v q
 

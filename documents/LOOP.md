@@ -86,19 +86,36 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   geometry (ray hits against marching, triangulation against area and point sampling), cross-checks of the 3D maths
   against Godot's own Basis, Quaternion, Transform3D and AABB inside the Godot suite, and input validators: maths
   entry points reject NaN, infinity and impossible values with a message that says what to do.
-- [ ] **R16 One type per file, folders by concern**: ObjectTweens.cs (8 types), Background.cs (4) and
-  GameOptions.cs (2) split; libraries with many files get subfolders (World: shapes, content); namespaces stay.
-- [ ] **R17 An API that guides**: fixes for R13's findings: consistent verbs and parameter order, shortcuts where
-  every game repeats the same lines, error messages that say what to do next. From R13: an engine line when the
-  game starts, `Ancestor` that can include the object itself, a `Grid` type (cells, cell to world, neighbours,
-  paths) proven with property tests. Each change with a test.
-- [ ] **R18 Readable internals**: the longest methods (GodotKeys.Build 105 lines, MotionPlayer.Update 49,
-  GameMain._Process 47, InputFeed, GameBuilder.Build) cut into named steps.
-- [ ] **R19 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
+Owner, 23:20, what clean code means here: "more like C#, less like JavaScript style coding, aka object oriented,
+and preferably no duplicate code; a file needs meaning, not just code here or there, and folders need meaning".
+Measured before R16 in `src/`: 45 lambdas, 49 LINQ calls, 12 tuple types, 14 static classes, 4 files with several
+types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys' table, the shapes and the tests.
+
+- [x] **R16 Clean-code rules and checks**: the owner's rules in CLAUDE.md and an Architecture note; a duplicate
+  detector (`scripts/duplicate-check.py`, exact and same-shape-with-other-names) and JS-style rules in the style
+  check (lambda logic, LINQ chains, tuples as data, `switch` on strings, `Func`/`Action` parameters, several types in
+  one file). check.sh runs them as a ratchet: a committed baseline per file, a count may only go down, the rounds
+  below bring it to zero.
+- [ ] **R17 Folders and files with meaning**: one type per file in every library, folders by meaning inside each
+  (World: Objects, Shapes, Materials, Models; Input: Keyboard and Mouse, Picking; Screen: Window, Canvas, Capture;
+  Motion: Tweens), namespaces unchanged so games do not break.
+- [ ] **R18 No duplicate code in the engine**: one button-state class for Keyboard and Mouse, one loader per
+  content kind behind one base class in ContentLibrary, the Godot key table derived instead of typed out, the shapes'
+  checks shared, MusicTrack's repeats folded. Each with its tests still green.
+- [ ] **R19 Object-oriented engine**: lambdas, LINQ chains and tuples in `src/` replaced by named methods and named
+  types, long methods (GodotKeys.Build, MotionPlayer.Update, GameMain._Process, InputFeed, GameBuilder.Build) cut
+  into named steps; static classes only where they are pure maths like `System.Math`.
+- [ ] **R20 Object-oriented sample and tests**: the demo's actions become classes (`MoveAction`, `AttackAction`,
+  `WaitAction` : `PawnAction`) instead of a `switch` on strings; property tests become classes with named case
+  records that the runner finds by itself; shared test setup (camera, stage) in one place; test folders by meaning.
+- [ ] **R21 An API that guides**: R13's findings: an engine line when the game starts, `Ancestor` that can include
+  the object itself, a `Grid` type (cells, cell to world, neighbours, paths) proven with property tests, error
+  messages that say what to do. Each change with a test.
+- [ ] **R22 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
   Game files plus the code style checks (`.editorconfig`, `EnforceCodeStyleInBuild`); make-a-game-check builds from it.
-- [ ] **R20 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
+- [ ] **R23 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
   left.
-- [ ] **R21 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
+- [ ] **R24 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
   feed.
 
 ## Log
@@ -207,3 +224,11 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   fat arms is convex: the engine was right). Stress: 41 rules x 20,000 cases x 5 seeds = 4.1 million inputs and
   the Godot checks at 3,000 x 2 seeds, all green. Tests 38 -> 82 pure, 96 -> 104 Godot; check.sh green, driven run
   unchanged. ![[orbit-driven.png]]
+- 2026-11-09 00:06 R16: the owner's clean-code rules in CLAUDE.md and [[Clean Code]]; `scripts/clean-code-check.py` counts per
+  file anonymous functions, LINQ, tuples as data, switches on strings or numbers, Func/Action, extra types per file
+  and duplicated code (exact 5 lines, or 8 lines of the same shape with other names; enum lists skipped). It tests
+  itself on 25 planted cases first (two of its own false alarms found that way: `MathF.Max` as LINQ, a record's
+  parameters as a tuple) and runs in check.sh as a ratchet: baseline 291, a planted lambda fails the check. Found:
+  the style check only read files git already tracked, so R15's new tests slipped a target-typed `new (...)` in;
+  both checks now read new files too, and the test's int switch over a tuple array became a `TransformStep`
+  record hierarchy (Move, Turn, Scale). 285 left, 125 in `src/`. check.sh green.

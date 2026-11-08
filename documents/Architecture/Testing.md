@@ -77,7 +77,8 @@ our own properties was wrong (a 3-point star with fat arms is convex).
 
 | Step | Fails when |
 |---|---|
-| code style | `scripts/style-check.py` finds `var`, an initializer block or a target-typed `new()`, in code or in a doc's C# example |
+| code style | `scripts/style-check.py` finds `var`, an initializer block or a target-typed `new()`, in code (new files too) or in a doc's C# example |
+| clean code | `scripts/clean-code-check.py` finds a file worse than its baseline: more lambdas, LINQ, tuples, value switches, delegates, types per file or duplicates (see [[Clean Code]]); it also fails if its own self-test fails |
 | build | any warning, including IDE0008 (`var`) |
 | pure suite | a test fails |
 | Godot suite | a test fails, or Godot reports a leaked object at exit |
