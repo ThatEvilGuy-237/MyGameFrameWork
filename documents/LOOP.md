@@ -264,3 +264,9 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   wrong error). The checker learned `ToList`/`Concat`, stopped reading `Type? Name =>` as a lambda, and got a
   long-method rule (over 30 lines; 4 left in the sample and tests). 82 + 107 tests, check.sh and the driven run
   green. ![[orbit-driven.png]]
+- 2026-11-09 00:33 R20 part a (the sample): zero clean-code findings in the demo (13 -> 0). The Move/Attack/Wait `switch`
+  on strings became `PawnAction` classes run by an `ActionRunner`; the hit that lands after the hop is a
+  `SoundCue`; the command-line switch became one class per flag; LINQ and lambdas became loops; the 36-line key
+  handler became game keys and window keys; files sit in World/, Actions/, Hud/, Camera/, Audio/, Options/ with
+  their Godot `.uid` files. The driven run clicked Move and Attack through the new classes (arrived, hit sound,
+  done). Run the Sample's reading guide follows the folders. R20 stays open for the tests (parts b to d).

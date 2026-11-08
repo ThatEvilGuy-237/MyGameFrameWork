@@ -25,21 +25,19 @@ Open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play.
 
 ## Read the code
 
-The demo is split by job, one class per file, so it reads top-down. Start at `OrbitScene.cs`: `Enter` builds the
+The demo is split by job, one class per file, in folders by meaning. Start at `OrbitScene.cs`: `Enter` builds the
 parts, `Update` runs them in order, `Draw` paints the overlay.
 
 | File | Does |
 |---|---|
 | `Main.cs` | the game's one Godot line: window, content folder, first scene |
 | `OrbitScene.cs` | the scene: builds the parts, handles keys, decides what a click means |
-| `Scenery.cs` | sun, tiled floor, the two Blender towers, torch pillars with lamps |
-| `SpinningShapes.cs` | grouped transforms: a planet in the blue box's group, a ring and a moon in the planet's |
-| `Pawns.cs` | the two pawns: hover glow, selection ring and the spotlight that follows it |
-| `ActionBar.cs` | the Move / Attack / Wait buttons: layout, hover, drawing |
-| `PawnActions.cs` | what the buttons do, with motion queued per object and sounds timed to the hit |
-| `CameraControls.cs` | the orbit camera: drift, Q/E, wheel zoom, right-drag |
-| `Hud.cs` | the panel and the compass on the 2D overlay |
-| `DemoSounds.cs`, `SampleOptions.cs` | sounds loaded once; the command-line switches the checks use |
+| `World/` | `Scenery` (sun, tiled floor, Blender towers, torch pillars), `SpinningShapes` (a planet in the blue box's group, a ring and a moon in the planet's), `Pawns` (hover glow, the selection ring and the spotlight that follows it) |
+| `Actions/` | `PawnAction` and its three kinds, `MoveAction`, `AttackAction`, `WaitAction`; `ActionRunner` runs one at a time and says when it is done. A new action is a new class, not a new `case` |
+| `Hud/` | `ActionBar` (one button per action: layout, hover, drawing) and `Hud` (the panel and the compass) |
+| `Camera/` | `CameraControls`: the orbit camera's drift, Q/E, wheel zoom, right-drag |
+| `Audio/` | `DemoSounds` (loaded once) and `SoundCues`: a sound that plays later, like the hit landing after the hop |
+| `Options/` | the command-line switches the checks use, one class per flag (`--capture`, `--frame`, `--drive`, `--record-audio`) |
 
 ## On the server
 

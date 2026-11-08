@@ -6,7 +6,8 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     private SpinningShapes _shapes = null!;
     private Pawns _pawns = null!;
     private ActionBar _actionBar = null!;
-    private PawnActions _actions = null!;
+    private ActionRunner _actions = null!;
+    private SoundCues _cues = null!;
     private Hud _hud = null!;
     private bool _spinning = true;
 
@@ -17,8 +18,11 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         Scenery.Build(World, Game.Content);
         _shapes = new SpinningShapes(World);
         _pawns = new Pawns(World);
-        _actionBar = new ActionBar();
-        _actions = new PawnActions(Game, _pawns, DemoSounds.Load(Game.Content));
+        DemoSounds sounds = DemoSounds.Load(Game.Content);
+        _cues = new SoundCues(Game.Audio);
+        PawnAction[] actions = [new MoveAction(Game.Motion), new AttackAction(Game, _pawns, sounds, _cues), new WaitAction(Game.Motion)];
+        _actionBar = new ActionBar(actions);
+        _actions = new ActionRunner(Game.Audio, sounds.Click);
         _hud = new Hud(Game.Content.Font("fonts/Lato-Bold.ttf"));
         StartMusic();
     }
@@ -26,7 +30,9 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     protected override void Update(GameTime time)
     {
         float seconds = time.DeltaSeconds;
-        HandleKeys();
+        HandleGameKeys();
+        HandleWindowKeys();
+        _cues.Update(Game.Time.TotalSeconds);
         _actions.Update();
         if (_spinning)
         {
@@ -66,7 +72,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         }
     }
 
-    private void HandleKeys()
+    private void HandleGameKeys()
     {
         Keyboard keys = Game.Keyboard;
         if (keys.WasPressed(Key.Escape))
@@ -83,7 +89,11 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         {
             ToggleMusic();
         }
+    }
 
+    private void HandleWindowKeys()
+    {
+        Keyboard keys = Game.Keyboard;
         if (keys.WasPressed(Key.F10))
         {
             Game.Display.Resize(1024, 640);
@@ -100,7 +110,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         }
     }
 
-    private void ClickAction(string action)
+    private void ClickAction(PawnAction action)
     {
         if (Game.Mouse.WasPressed(MouseButton.Left) && !_actions.IsBusy)
         {
@@ -114,7 +124,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         _pawns.Hover(pointed, Game.Mouse.Position);
         if (Game.Mouse.WasPressed(MouseButton.Left) && _pawns.Hovered is not null)
         {
-            _pawns.Select(_pawns.Hovered);
+            _pawns.Choose(_pawns.Hovered);
         }
     }
 
@@ -125,7 +135,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
             return "Click a pawn to select it";
         }
 
-        string lastAction = _actions.Last is null ? string.Empty : $"   Last action: {_actions.Last}";
+        string lastAction = _actions.Last is null ? string.Empty : $"   Last action: {_actions.Last.Label}";
         return $"Selected: {_pawns.Selected.Tag}{lastAction}";
     }
 
