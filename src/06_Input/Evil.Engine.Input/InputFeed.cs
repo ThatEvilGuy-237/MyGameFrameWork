@@ -4,25 +4,37 @@ using GodotButton = Godot.MouseButton;
 
 namespace Evil.Engine.Input;
 
-internal static class InputFeed
+internal sealed class InputFeed(Keyboard keyboard, Mouse mouse)
 {
-    public static void Feed(InputEvent input, Keyboard keyboard, Mouse mouse)
+    public void Feed(InputEvent input)
     {
         switch (input)
         {
             case InputEventKey key:
-                FeedKey(key, keyboard);
+                FeedKey(key);
                 break;
             case InputEventMouseMotion motion:
                 mouse.Move(motion.Position.ToEvil());
                 break;
             case InputEventMouseButton button:
-                FeedButton(button, mouse);
+                FeedButton(button);
                 break;
         }
     }
 
-    private static void FeedKey(InputEventKey key, Keyboard keyboard)
+    public void EndFrame()
+    {
+        keyboard.EndFrame();
+        mouse.EndFrame();
+    }
+
+    public void ReleaseAll()
+    {
+        keyboard.ReleaseAll();
+        mouse.ReleaseAll();
+    }
+
+    private void FeedKey(InputEventKey key)
     {
         Godot.Key code = key.PhysicalKeycode != Godot.Key.None ? key.PhysicalKeycode : key.Keycode;
         if (!GodotKeys.TryMap(code, out Key mapped))
@@ -40,41 +52,46 @@ internal static class InputFeed
         }
     }
 
-    private static void FeedButton(InputEventMouseButton button, Mouse mouse)
+    private void FeedButton(InputEventMouseButton button)
     {
         mouse.Move(button.Position.ToEvil());
-        float steps = button.Factor > 0f ? button.Factor : 1f;
-        switch (button.ButtonIndex)
-        {
-            case GodotButton.WheelUp when button.Pressed:
-                mouse.Wheel(steps);
-                return;
-            case GodotButton.WheelDown when button.Pressed:
-                mouse.Wheel(-steps);
-                return;
-        }
-
-        MouseButton? mapped = button.ButtonIndex switch
-        {
-            GodotButton.Left => MouseButton.Left,
-            GodotButton.Right => MouseButton.Right,
-            GodotButton.Middle => MouseButton.Middle,
-            GodotButton.Xbutton1 => MouseButton.Back,
-            GodotButton.Xbutton2 => MouseButton.Forward,
-            _ => null,
-        };
-        if (mapped is not { } pressed)
+        if (FeedWheel(button) || ButtonOf(button.ButtonIndex) is not { } mapped)
         {
             return;
         }
 
         if (button.Pressed)
         {
-            mouse.Press(pressed);
+            mouse.Press(mapped);
         }
         else
         {
-            mouse.Release(pressed);
+            mouse.Release(mapped);
         }
     }
+
+    private bool FeedWheel(InputEventMouseButton button)
+    {
+        bool up = button.ButtonIndex == GodotButton.WheelUp;
+        bool down = button.ButtonIndex == GodotButton.WheelDown;
+        if (!button.Pressed || (!up && !down))
+        {
+            return false;
+        }
+
+        float steps = button.Factor > 0f ? button.Factor : 1f;
+        mouse.Wheel(up ? steps : -steps);
+        return true;
+    }
+
+    private static MouseButton? ButtonOf(GodotButton button) => button switch
+    {
+        GodotButton.Left => MouseButton.Left,
+        GodotButton.Right => MouseButton.Right,
+        GodotButton.Middle => MouseButton.Middle,
+        GodotButton.Xbutton1 => MouseButton.Back,
+        GodotButton.Xbutton2 => MouseButton.Forward,
+        _ => null,
+    };
+
 }

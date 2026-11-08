@@ -7,8 +7,8 @@ namespace Evil.Engine.Motion;
 
 public sealed class MotionPlayer
 {
-    private readonly Dictionary<object, Queue<Tween>> _queues = new Dictionary<object, Queue<Tween>>(ReferenceEqualityComparer.Instance);
-    private readonly List<Tween> _free = [];
+    private readonly Dictionary<object, TweenQueue> _queues = new Dictionary<object, TweenQueue>(ReferenceEqualityComparer.Instance);
+    private readonly LooseTweens _loose = new LooseTweens();
     private float _speed = 1f;
 
     internal MotionPlayer()
@@ -21,11 +21,20 @@ public sealed class MotionPlayer
         set => _speed = Math.Max(0f, value);
     }
 
-    public bool IsBusy() =>
-        _queues.Values.Any(queue => queue.Any(tween => !tween.IsDone)) || _free.Any(tween => !tween.IsDone);
+    public bool IsBusy()
+    {
+        foreach (TweenQueue queue in _queues.Values)
+        {
+            if (queue.IsBusy)
+            {
+                return true;
+            }
+        }
 
-    public bool IsBusy(WorldObject target) =>
-        _queues.TryGetValue(target, out Queue<Tween>? queue) && queue.Any(tween => !tween.IsDone);
+        return _loose.IsBusy;
+    }
+
+    public bool IsBusy(WorldObject target) => _queues.TryGetValue(target, out TweenQueue? queue) && queue.IsBusy;
 
     public Tween MoveTo(WorldObject target, Vector3 position, float seconds, Easing easing = Easing.InOutCubic) =>
         Enqueue(target, new MoveTween(Live(target), position, 0f, seconds, easing));
@@ -78,97 +87,44 @@ public sealed class MotionPlayer
     public ValueTween Value(float from, float to, float seconds, Easing easing = Easing.InOutCubic)
     {
         ValueTween tween = new ValueTween(from, to, seconds, easing);
-        _free.Add(tween);
+        _loose.Add(tween);
         return tween;
     }
 
     public void Stop(WorldObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        if (_queues.Remove(target, out Queue<Tween>? queue))
+        if (_queues.Remove(target, out TweenQueue? queue))
         {
-            foreach (Tween tween in queue)
-            {
-                tween.Cancel();
-            }
+            queue.Cancel();
         }
     }
 
     public void Complete(WorldObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        if (_queues.Remove(target, out Queue<Tween>? queue))
+        if (_queues.Remove(target, out TweenQueue? queue))
         {
-            foreach (Tween tween in queue)
-            {
-                if (!tween.TargetIsGone)
-                {
-                    tween.FinishNow();
-                }
-            }
+            queue.FinishNow();
         }
     }
 
     public void StopAll()
     {
-        foreach (Tween? tween in _queues.Values.SelectMany(queue => queue).Concat(_free))
+        foreach (TweenQueue queue in _queues.Values)
         {
-            tween.Cancel();
+            queue.Cancel();
         }
 
         _queues.Clear();
-        _free.Clear();
+        _loose.Cancel();
     }
 
     internal void Update(float seconds)
     {
         float step = seconds * _speed;
-        foreach (object? key in _queues.Keys.ToList())
-        {
-            Queue<Tween> queue = _queues[key];
-            float left = step;
-            while (queue.TryPeek(out Tween? tween))
-            {
-                if (tween.IsDone || tween.TargetIsGone)
-                {
-                    tween.Cancel();
-                    queue.Dequeue();
-                    continue;
-                }
-
-                if (left <= 0f && tween.Duration > 0f)
-                {
-                    break;
-                }
-
-                left = tween.Advance(left);
-                if (!tween.IsDone)
-                {
-                    break;
-                }
-
-                queue.Dequeue();
-            }
-
-            if (queue.Count == 0)
-            {
-                _queues.Remove(key);
-            }
-        }
-
-        for (int i = _free.Count - 1; i >= 0; i--)
-        {
-            Tween tween = _free[i];
-            if (!tween.IsDone && step > 0f)
-            {
-                tween.Advance(step);
-            }
-
-            if (tween.IsDone)
-            {
-                _free.RemoveAt(i);
-            }
-        }
+        AdvanceQueues(step);
+        _loose.Advance(step);
     }
 
     private static WorldObject Live(WorldObject target)
@@ -181,13 +137,31 @@ public sealed class MotionPlayer
     private T Enqueue<T>(object key, T tween)
         where T : Tween
     {
-        if (!_queues.TryGetValue(key, out Queue<Tween>? queue))
+        if (!_queues.TryGetValue(key, out TweenQueue? queue))
         {
-            queue = new Queue<Tween>();
+            queue = new TweenQueue();
             _queues[key] = queue;
         }
 
-        queue.Enqueue(tween);
+        queue.Add(tween);
         return tween;
+    }
+
+    private void AdvanceQueues(float step)
+    {
+        List<object> finished = new List<object>();
+        foreach (KeyValuePair<object, TweenQueue> entry in _queues)
+        {
+            entry.Value.Advance(step);
+            if (entry.Value.IsEmpty)
+            {
+                finished.Add(entry.Key);
+            }
+        }
+
+        foreach (object key in finished)
+        {
+            _queues.Remove(key);
+        }
     }
 }

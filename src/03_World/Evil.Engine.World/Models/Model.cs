@@ -13,7 +13,18 @@ public sealed class Model : WorldObject
 
     public IReadOnlyList<ModelPart> Parts => [.. Descendants<ModelPart>()];
 
-    public ModelPart? Part(string name) => Parts.FirstOrDefault(part => part.Name == name);
+    public ModelPart? Part(string name)
+    {
+        foreach (ModelPart part in Descendants<ModelPart>())
+        {
+            if (part.Name == name)
+            {
+                return part;
+            }
+        }
+
+        return null;
+    }
 
     public void Paint(Material? material)
     {

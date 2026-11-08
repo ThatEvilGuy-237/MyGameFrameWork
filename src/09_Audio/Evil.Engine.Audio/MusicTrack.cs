@@ -11,9 +11,12 @@ internal sealed class MusicTrack
     private bool _stopAtEnd;
     private bool _fading;
 
-    public MusicTrack(AudioStreamPlayer player, float level)
+    public MusicTrack(Sound sound, string bus, float level)
     {
-        Player = player;
+        Player = new AudioStreamPlayer();
+        Player.Stream = sound.Native;
+        Player.Bus = bus;
+        Player.Finished += PlayAgain;
         Level = level;
         ApplyLevel();
     }
@@ -70,6 +73,8 @@ internal sealed class MusicTrack
             Player.QueueFree();
         }
     }
+
+    private void PlayAgain() => Player.Play();
 
     private void ApplyLevel()
     {
