@@ -51,6 +51,31 @@ public static void ChildrenFollowTheParentsTurn()
 The steps print what they measured: test counts, the audio level, and where the screenshots went. Open the screenshot: a green run with a
 wrong picture is not done.
 
+## Driving a game on the server
+
+`scripts/godot.sh <project>` makes its own virtual screen with `xvfb-run`, unless `DISPLAY` is already set: then it
+uses that one. So start the screen yourself and run everything inside it:
+
+```bash
+xvfb-run -a -s "-screen 0 1600x900x24" bash my-drive.sh
+```
+
+and in `my-drive.sh`, start the game in the background, find its window by title, focus it, then send input and
+take pictures of the window alone (the virtual screen is bigger than the window):
+
+```bash
+bash /mnt/hdd/projects/MyGameFrameWork/scripts/godot.sh . > game.log 2>&1 &
+window="$(xdotool search --name "My Game" | head -n 1)"
+xdotool windowfocus "$window"
+xdotool mousemove --window "$window" 640 360 click 1
+import -window "$window" -depth 8 shot.png
+xdotool key Escape
+```
+
+Wait for the window in a loop before using it: Godot takes a few seconds to open it. `godot.sh` stops any run after
+300 seconds and caps it at 2 GB of memory. `scripts/make-a-game-check.sh` and `scripts/drive-orbit.sh` are full
+examples.
+
 ## After a pack
 
 `scripts/make-a-game-check.sh [feed]` makes a new game from the code blocks in [[Make a Game]] and nothing else,

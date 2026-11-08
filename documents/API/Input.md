@@ -52,6 +52,20 @@ pixel and returns the nearest `Hit(Target, Point, Distance)`, or `null`.
 | `Pickable = false` and hidden objects are skipped | rings, markers and effects do not steal clicks |
 | `Ancestor<T>()` and `Tag` on any world object | a click on a pawn's hat finds the pawn and its game data |
 
+### The tile under the mouse
+
+For a board on the ground, ask the camera where the mouse ray meets the floor and round it to a tile; no tile
+objects need to be picked:
+
+```csharp
+Vector3? ground = Camera.PointOnGround(Game.Mouse.Position);
+if (Game.Mouse.WasPressed(MouseButton.Left) && ground is Vector3 point)
+{
+    int column = (int)MathF.Floor(point.X / TileSize);
+    int row = (int)MathF.Floor(point.Z / TileSize);
+}
+```
+
 ## Proven with real input
 
 `scripts/check.sh` runs `scripts/drive-orbit.sh` in a virtual screen: it presses Space, sweeps the real mouse

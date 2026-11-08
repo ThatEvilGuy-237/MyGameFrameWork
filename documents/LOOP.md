@@ -70,27 +70,35 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 ## Second loop: structure, readability, usability
 
 Owner, 2026-11-08 after R11: "loop on improving the code structure and readability, also usability for people to
-code with". Every 1 minute (session cron), one round at a time, same gate (`scripts/check.sh`, screenshots, land the
+code with", and "do some math validators and tests to be sure you're right". Every 1 minute (session cron), one round at a time, same gate (`scripts/check.sh`, screenshots, land the
 work). Readability is through names, small methods and files, never comments (house rule). Public API changes are
 allowed (0.3.0) but each one gets a test and a line in Decisions.
 
-- [ ] **R13 Fresh eyes**: one agent that never saw the code writes a small turn-based game (tiled board, two teams,
+- [x] **R13 Fresh eyes**: one agent that never saw the code writes a small turn-based game (tiled board, two teams,
   click a unit, click a tile to walk there, Space ends the turn, a HUD line) with only `documents/` and the packed
   `Evil.Engine` 0.2.0. Every place it got stuck, guessed or wished for something goes into
   `documents/Usability.md` as a numbered finding with severity; the rounds below fix them, worst first.
 - [x] **R14 The sample reads like a guide**: OrbitScene (426 lines, `Update` 91 and `Enter` 85) split by concern
   (board, pawns, action bar, camera controls, sound) so a reader follows it top-down; no method over ~30 lines.
-- [ ] **R15 One type per file, folders by concern**: ObjectTweens.cs (8 types), Background.cs (4) and
+- [ ] **R15 Math proven**: owner, 22:43: "also do some math validators and tests to be sure you're right". A seeded
+  random property checker in `tests/Shared` (no new packages; a failure prints the seed and the input), properties
+  for every type in Core and Mathematics (round trips, inverses, invariants), brute-force validators for the
+  geometry (ray hits against marching, triangulation against area and point sampling), cross-checks of the 3D maths
+  against Godot's own Basis, Quaternion, Transform3D and AABB inside the Godot suite, and input validators: maths
+  entry points reject NaN, infinity and impossible values with a message that says what to do.
+- [ ] **R16 One type per file, folders by concern**: ObjectTweens.cs (8 types), Background.cs (4) and
   GameOptions.cs (2) split; libraries with many files get subfolders (World: shapes, content); namespaces stay.
-- [ ] **R16 An API that guides**: fixes for R13's findings: consistent verbs and parameter order, shortcuts where
-  every game repeats the same lines, error messages that say what to do next. Each change with a test.
-- [ ] **R17 Readable internals**: the longest methods (GodotKeys.Build 105 lines, MotionPlayer.Update 49,
+- [ ] **R17 An API that guides**: fixes for R13's findings: consistent verbs and parameter order, shortcuts where
+  every game repeats the same lines, error messages that say what to do next. From R13: an engine line when the
+  game starts, `Ancestor` that can include the object itself, a `Grid` type (cells, cell to world, neighbours,
+  paths) proven with property tests. Each change with a test.
+- [ ] **R18 Readable internals**: the longest methods (GodotKeys.Build 105 lines, MotionPlayer.Update 49,
   GameMain._Process 47, InputFeed, GameBuilder.Build) cut into named steps.
-- [ ] **R18 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
-  Game files; make-a-game-check builds from it.
-- [ ] **R19 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
+- [ ] **R19 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
+  Game files plus the code style checks (`.editorconfig`, `EnforceCodeStyleInBuild`); make-a-game-check builds from it.
+- [ ] **R20 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
   left.
-- [ ] **R20 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
+- [ ] **R21 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
   feed.
 
 ## Log
@@ -178,3 +186,11 @@ allowed (0.3.0) but each one gets a test and a line in Decisions.
   `orbit-<time>.png` next to the game on a desktop (tested: 1280x720 saved, exit 0), git ignores them. Run the
   Sample has a file-by-file reading guide. Behaviour unchanged: every driven-run line seen, 38 + 96 tests green,
   audio 24.5 s at 0.043. ![[orbit-driven.png]]
+- 2026-11-08 23:47 R13: a Sonnet agent that never saw the code built an 8x8 turn-based board game (two teams, select,
+  animated path walk, Space ends the turn, HUD, Escape) from only the docs and the packed 0.2.0: it works, every
+  bullet met, 5 builds, no blocker, nothing read from the source. 13 findings in [[Usability]] (3 major, 9 minor):
+  fixed now the docs-only ones (screenshot calls in Screen, driving a game on the server in Testing, the usings as
+  a code block with `System.Collections.Generic`, the script path, deriving from WorldObject, Torus, MoveAlong's
+  path, Unshaded for exact colours, the tile-under-the-mouse recipe, an honest style note); the API and tooling
+  ones went into R17 and R19. Found while checking: `Ancestor<T>()` skips the object itself. Make a Game check
+  green on the edited note. ![[r13-fresh-eyes.png]]

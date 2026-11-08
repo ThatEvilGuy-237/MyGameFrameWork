@@ -35,6 +35,27 @@ planet.Add(moon);
 
 Directions follow Godot: `+Y` is up, `-Z` is forward, a positive turn around `Y` turns left.
 
+### Your own objects
+
+Derive from `WorldObject` (or a shape) to give a thing its game data, and build its parts in the constructor:
+
+```csharp
+internal sealed class Unit : WorldObject
+{
+    public Unit(string name, Color team)
+        : base(name)
+    {
+        Capsule body = Add(new Capsule(0.35f, 1.4f, team));
+        body.Position = new Vector3(0f, 0.7f, 0f);
+    }
+
+    public int Moves { get; set; } = 3;
+}
+```
+
+A click on the body then finds the unit with `hit.Target.Ancestor<Unit>()` (see [[Input]]). `Ancestor` starts at
+the parent, so it finds the group around the clicked shape, not the shape itself.
+
 ## Shapes
 
 | Shape | Made with |
@@ -45,7 +66,7 @@ Directions follow Godot: `+Y` is up, `-Z` is forward, a positive turn around `Y`
 | `Cylinder` | `new Cylinder(radius, height, color)` |
 | `Cone` | `new Cone(radius, height, color)` |
 | `Capsule` | `new Capsule(radius, height, color)`; the height includes both round ends |
-| `Torus` | `new Torus(innerRadius, outerRadius, color)` |
+| `Torus` | `new Torus(innerRadius, outerRadius, color)`: a ring lying flat (around `Y`), the hole is `innerRadius` wide, the ring reaches `outerRadius` |
 
 Shapes and model parts are both `MeshObject`s: they share `CastsShadow`, `Pickable` and `LocalBounds`, and both
 can be picked (see [[Input]]). Every shape also has `Color` and `Material`. Sizes are checked before anything is created, so a bad
@@ -60,7 +81,7 @@ A `Material` can be shared: give ten pillars the same `stone` and recolour them 
 | `Color` | base colour; an alpha below 1 makes it see-through |
 | `Roughness`, `Metallic` | 0 to 1 |
 | `Glow`, `GlowStrength` | light the object gives off itself |
-| `Unshaded` | ignore lights (flat colour) |
+| `Unshaded` | ignore lights (flat colour): the screen shows exactly the colour you gave, good for board tiles and markers |
 | `Material.Matte`, `Shiny`, `Metal`, `Glowing` | ready-made starting points |
 
 | `Texture`, `TextureScale` | an image on the surface (see [[Content]]); scale above 1 tiles it |

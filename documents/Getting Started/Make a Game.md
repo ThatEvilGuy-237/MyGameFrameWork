@@ -113,13 +113,39 @@ Godot 4.7.2 .NET.
    }
    ```
 
-   Put the usings in one `GlobalUsings.cs`: `System.Numerics`, `Evil.Engine.Audio`, `Evil.Engine.Cameras`,
-   `Evil.Engine.Core`, `Evil.Engine.Hosting`, `Evil.Engine.Input`, `Evil.Engine.Lighting`, `Evil.Engine.Mathematics`,
-   `Evil.Engine.Motion`, `Evil.Engine.Scenes`, `Evil.Engine.Screen`, `Evil.Engine.World`.
+   and `GlobalUsings.cs`, so no file needs its own usings:
+
+   ```csharp
+   global using System.Collections.Generic;
+   global using System.Linq;
+   global using System.Numerics;
+   global using Evil.Engine.Audio;
+   global using Evil.Engine.Cameras;
+   global using Evil.Engine.Core;
+   global using Evil.Engine.Hosting;
+   global using Evil.Engine.Input;
+   global using Evil.Engine.Lighting;
+   global using Evil.Engine.Mathematics;
+   global using Evil.Engine.Motion;
+   global using Evil.Engine.Scenes;
+   global using Evil.Engine.Screen;
+   global using Evil.Engine.World;
+   ```
+
+   `.Content("res://content")` names the folder for models, textures, fonts and sounds. It does not have to exist
+   until the game loads something from it.
 
 4. **Run it.** On a desktop, open the folder in Godot 4.7.2 (.NET) and press play. Godot imports the content and builds
-   the C#. On the server: `dotnet build`, then `bash scripts/godot.sh --headless <folder> --import` once, then
-   `bash scripts/godot.sh <folder>`.
+   the C#. On the server, with the engine repo's script (a game folder has no `scripts/`):
+
+   ```bash
+   dotnet build
+   bash /mnt/hdd/projects/MyGameFrameWork/scripts/godot.sh --headless . --import
+   bash /mnt/hdd/projects/MyGameFrameWork/scripts/godot.sh .
+   ```
+
+   The import is needed once, and again after new content. To take screenshots or click with `xdotool`, see
+   "Driving a game on the server" in [[Testing]].
 
 **Done when** a window shows a turning blue box on a green floor with "My Game" in the corner, and Escape closes it.
 
@@ -128,5 +154,9 @@ Godot 4.7.2 .NET.
 `scripts/make-a-game-check.sh` builds and runs exactly these steps after every pack (see [[Testing]]).
 
 > [!important] The project's code style
+> In this repo the build (IDE0008, `EnforceCodeStyleInBuild`) and `scripts/style-check.py` enforce it. A new game
+> made from these steps is not checked yet: copy the repo's `.editorconfig` next to `MyGame.csproj` and add
+> `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>`. The game template (LOOP R19) will do both.
+>
 > Real types instead of `var`, and objects built with their constructor and then plain property statements (see the
 > repo's `CLAUDE.md`). The examples in these notes follow it, and `scripts/style-check.py` checks them.
