@@ -8,6 +8,15 @@ bash scripts/godot.sh samples/OrbitDemo -- --capture "$out" --drive > "$log" 2>&
 game=$!
 trap 'kill "$game" 2>/dev/null || true' EXIT
 
+wait_for() {
+  for _ in $(seq 1 150); do
+    grep -q "$1" "$log" && return 0
+    sleep 0.2
+  done
+  echo "the demo never said '$1'" >&2
+  return 1
+}
+
 window=""
 for _ in $(seq 1 150); do
   window="$(xdotool search --name "Evil Engine orbit demo" 2>/dev/null | head -n 1 || true)"
@@ -44,12 +53,21 @@ xdotool key F11
 sleep 1
 xdotool key F10
 sleep 2
-attack="$(grep -oE "Attack [0-9]+,[0-9]+" "$log" | tail -n 1 | sed -E 's/Attack ([0-9]+),([0-9]+)/\1 \2/')"
-[ -n "$attack" ] || { echo "the demo never showed its action buttons" >&2; exit 1; }
-xdotool mousemove --window "$window" $attack
+button() {
+  grep -oE "$1 [0-9]+,[0-9]+" "$log" | tail -n 1 | sed -E "s/$1 ([0-9]+),([0-9]+)/\\1 \\2/"
+}
+move="$(button Move)"
+[ -n "$move" ] || { echo "the demo never showed its action buttons" >&2; exit 1; }
+xdotool mousemove --window "$window" $move
 sleep 0.4
 xdotool click 1
-sleep 0.8
+wait_for "arrived: pawn" || exit 1
+sleep 0.5
+xdotool mousemove --window "$window" $(button Attack)
+sleep 0.4
+xdotool click 1
+wait_for "done: attack" || exit 1
+sleep 0.3
 xdotool key F12
 wait "$game"
 trap - EXIT

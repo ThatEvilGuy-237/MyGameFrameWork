@@ -8,7 +8,8 @@
     <Project Path="src/05_Lighting/Evil.Engine.Lighting/Evil.Engine.Lighting.csproj" />
     <Project Path="src/06_Input/Evil.Engine.Input/Evil.Engine.Input.csproj" />
     <Project Path="src/07_Screen/Evil.Engine.Screen/Evil.Engine.Screen.csproj" />
-    <Project Path="src/08_Engine/Evil.Engine/Evil.Engine.csproj" />
+    <Project Path="src/08_Motion/Evil.Engine.Motion/Evil.Engine.Motion.csproj" />
+    <Project Path="src/09_Engine/Evil.Engine/Evil.Engine.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/OrbitDemo/OrbitDemo.csproj" />

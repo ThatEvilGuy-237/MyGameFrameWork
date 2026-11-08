@@ -19,6 +19,8 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     private Capsule? _selected;
     private bool _spinning = true;
     private Font? _titleFont;
+    private Tween? _busy;
+    private string? _whenDone;
 
     protected override void Enter()
     {
@@ -134,14 +136,22 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
         SteerCamera(keys, mouse, step);
         LogScreen();
+        FollowSelection();
+        if (_busy is { IsDone: true })
+        {
+            Console.WriteLine(_whenDone);
+            _busy = null;
+        }
+
         _hoveredAction = ActionUnder(mouse.Position);
         if (_hoveredAction >= 0)
         {
             ClearHover();
-            if (mouse.WasPressed(MouseButton.Left))
+            if (mouse.WasPressed(MouseButton.Left) && _busy is null)
             {
                 _lastAction = Actions[_hoveredAction];
                 Console.WriteLine($"action: {_lastAction}");
+                Act(_lastAction, _selected!);
             }
 
             return;
@@ -191,12 +201,13 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     private void DrawActions(Canvas canvas)
     {
         var buttons = ActionRects(canvas.Size);
+        var waiting = _busy is not null;
         for (var i = 0; i < buttons.Length; i++)
         {
-            var hovered = i == _hoveredAction;
-            canvas.FillRect(buttons[i], hovered ? Color.FromHex("#3E63DD") : Color.Black.WithAlpha(0.55f));
+            var hovered = i == _hoveredAction && !waiting;
+            canvas.FillRect(buttons[i], hovered ? Color.FromHex("#3E63DD") : Color.Black.WithAlpha(waiting ? 0.25f : 0.55f));
             canvas.DrawRect(buttons[i], Color.White.WithAlpha(hovered ? 0.9f : 0.35f), 2f);
-            canvas.DrawText(Actions[i], buttons[i], 18f, Color.White, TextAlign.Center);
+            canvas.DrawText(Actions[i], buttons[i], 18f, Color.White.WithAlpha(waiting ? 0.4f : 1f), TextAlign.Center);
         }
     }
 
@@ -295,11 +306,51 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     private void Select(Capsule pawn)
     {
         _selected = pawn;
-        var feet = pawn.WorldPosition with { Y = 0.05f };
-        _ring!.Position = feet;
-        _ring.Visible = true;
-        _spot!.Position = feet + new Vector3(0f, 9f, 0f);
+        _ring!.Visible = true;
+        FollowSelection();
         Console.WriteLine($"selected: {pawn.Tag}");
+    }
+
+    private void FollowSelection()
+    {
+        if (_selected is null)
+        {
+            return;
+        }
+
+        var feet = _selected.WorldPosition with { Y = 0.05f };
+        _ring!.Position = feet;
+        _spot!.Position = feet + new Vector3(0f, 9f, 0f);
+    }
+
+    private void Act(string action, Capsule pawn)
+    {
+        var motion = Game.Motion;
+        var start = pawn.Position;
+        switch (action)
+        {
+            case "Move":
+                var side = start.X < 0f ? 1f : -1f;
+                _busy = motion.MoveAlong(pawn, [start + new Vector3(0f, 0f, -2f), start + new Vector3(2f * side, 0f, -2f)], 0.6f);
+                _whenDone = $"arrived: {pawn.Tag} at {start.X + 2f * side:0},{start.Z - 2f:0}";
+                break;
+            case "Attack":
+                var enemy = _pawns.First(other => !ReferenceEquals(other, pawn));
+                var reach = Vector3.Lerp(start, enemy.Position, 0.45f) with { Y = start.Y };
+                var push = enemy.Position + Vector3.Normalize(enemy.Position - start) * 0.6f;
+                motion.Face(pawn, enemy.Position, 0.25f);
+                motion.Hop(pawn, reach, 1.2f, 0.45f);
+                _busy = motion.Hop(pawn, start, 0.5f, 0.4f);
+                motion.Wait(enemy, 0.7f);
+                motion.Hop(enemy, push with { Y = enemy.Position.Y }, 0.35f, 0.2f);
+                motion.MoveTo(enemy, enemy.Position, 0.35f);
+                _whenDone = "done: attack";
+                break;
+            default:
+                _busy = motion.Spin(pawn, 360f, 0.8f);
+                _whenDone = "done: wait";
+                break;
+        }
     }
 
     private Capsule? PawnOf(WorldObject? target)

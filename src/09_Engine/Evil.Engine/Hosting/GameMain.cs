@@ -53,6 +53,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         _game.Time = new GameTime((float)delta, _totalSeconds, _frame);
         _game.Scenes.Update(_game.Time);
         _game.Scenes.ApplyChanges();
+        _game.Motion.Update((float)delta);
         _keyboard.EndFrame();
         _mouse.EndFrame();
         _overlay?.QueueRedraw();
