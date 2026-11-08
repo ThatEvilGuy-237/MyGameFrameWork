@@ -45,7 +45,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   host, scenes with their own world); OrbitDemo renders through our API; check.sh runs Godot under xvfb.
 - [x] **R2 Godot tests**: `tests/Evil.Engine.GodotTests` runs `[Test]` methods inside Godot and exits with a code;
   WorldObject and scene worlds covered; check.sh runs both suites.
-- [ ] **R3 World deep**: 3D math in Mathematics (Transform3D, Ray, Bounds, Quaternion helpers, LookAt), WorldObject
+- [x] **R3 World deep**: 3D math in Mathematics (Transform3D, Ray, Bounds, Quaternion helpers, LookAt), WorldObject
   `ToWorld/ToLocal`, more shapes (Cylinder, Capsule, Torus?), materials (colour, roughness, metal, texture),
   `Destroy`, names and finding.
 - [ ] **R4 Camera**: perspective and orthographic, field of view, near/far, `LookAt`, `OrbitCamera` (turn, tilt,
@@ -56,7 +56,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   of WorldObjects through the camera ray.
 - [ ] **R7 Screen**: window settings applied (title, size, fullscreen, VSync), `CaptureFrame`, `CaptureAndExit`,
   2D overlay with our `Group()` canvas and text (Godot fonts), screen size changes.
-- [ ] **R8 Models**: load `.glb` / `.gltf` from Content at runtime, a Blender-made test model through the Blender
+- [ ] **R8 Models**: textures on materials (moved here from R3, one place for file loading), load `.glb` / `.gltf` from Content at runtime, a Blender-made test model through the Blender
   MCP, model parts as WorldObjects.
 - [ ] **R9 Motion**: tweens for moves and turns (move to a tile over time, ease curves), pure timing in Core,
   applied each frame; waiting for a move to finish (turn-based).
@@ -75,3 +75,9 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   WorldObject groups (3 levels, parent scale, LookAt), shapes, camera, sun, scene worlds (hide, overlay, pop frees,
   switch), builder; exit code 1 on a planted failure; shared runner in `tests/Shared`; check.sh runs both suites
   (27 + 26 green). ![[orbit.png]]
+
+- 2026-11-08 18:05 R3: 3D math without Godot (Pose, Rotations, Bounds3, Ray3) cross-checked against Godot;
+  WorldObject Orientation, Pose, WorldPose, Forward/Right/Up, ToWorld/ToLocal, Destroy, Find, Descendants,
+  LookAt in a turned parent; Material (shareable, Matte/Shiny/Metal/Glowing); Cylinder, Cone, Capsule, Torus.
+  Found and fixed: a throwing Capsule/Torus leaked its Godot node; check.sh now fails on Godot leaks. 33 pure +
+  37 Godot tests green. Textures moved to R8. ![[r3-world.png]]

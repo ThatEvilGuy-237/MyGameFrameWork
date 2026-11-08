@@ -21,6 +21,12 @@ if ! bash scripts/godot.sh --headless tests/Evil.Engine.GodotTests > "$godot_tes
   exit 1
 fi
 grep -E "FAIL|Godot tests passed" "$godot_tests"
+if grep -q "leaked at exit" "$godot_tests"; then
+  grep -E "leaked at exit|Pages in use" "$godot_tests" >&2
+  rm -f "$godot_tests"
+  echo "Godot reported leaked objects: a test or the engine does not free what it made" >&2
+  exit 1
+fi
 rm -f "$godot_tests"
 
 echo "== OrbitDemo in Godot, frame 90"

@@ -47,3 +47,24 @@ attached to something else is.
 
 `Triangulator.Triangulate(points)` does the cutting: concave shapes and points in a straight line work. A
 self-crossing outline still gives whole triangles, though the result is a best guess.
+
+## 3D (since 0.2)
+
+The same library, still without Godot, so game rules can work out positions and facing on their own. Directions
+follow Godot (`+Y` up, `-Z` forward, Euler turns in Y-X-Z order). The Godot tests check every one of these
+against Godot's own maths.
+
+| Type | What |
+|---|---|
+| `Pose(Position, Rotation, Scale)` | where something is and which way it faces; `ToWorld(local pose)` chains poses like groups; `Forward`, `Right`, `Up`, `TurnedY`, `Moved`, `ToMatrix` |
+| `Rotations` | `FromEulerDegrees`, `AroundAxis`, `LookAlong(direction)`, `Rotate(vector, rotation)` |
+| `Bounds3(Min, Max)` | an axis-aligned box: `Contains`, `Intersects`, `Encapsulate`, `Union`, `FromCenter`, `FromPoints` |
+| `Ray3(origin, direction)` | `Intersect(bounds)`, `IntersectPlane(point, normal)`, `IntersectSphere(center, radius)`; distances, `null` on a miss |
+
+```csharp
+var sun = Pose.Identity.TurnedY(90f);
+var planet = sun.ToWorld(Pose.At(10f, 0f, 0f));
+var moon = planet.ToWorld(Pose.At(5f, 0f, 0f));
+```
+
+Here `moon.Position` is `(0, 0, -15)`: the moon follows the sun's turn, just like nested world objects.
