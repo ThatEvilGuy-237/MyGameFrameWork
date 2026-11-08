@@ -19,7 +19,7 @@ number.
 | `src/04_Cameras` | `Evil.Engine.Cameras` | `Camera`, `OrbitCamera`, screen rays | inside |
 | `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun`, `Lamp`, `Spotlight`, `Atmosphere` | inside |
 | `src/06_Input` | `Evil.Engine.Input` | `Keyboard`, `Mouse`, `Picker` | inside |
-| `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, frame capture, overlay later | inside |
+| `src/07_Screen` | `Evil.Engine.Screen` | `WindowSettings`, `Display`, frame capture, `Canvas` overlay with text | inside |
 | `src/08_Engine` | `Evil.Engine` | `GameBuilder`, `GameMain`, `GameContext`, `Scene`, `SceneStack` | inside |
 
 "Inside" means Godot types never show in the public API: a game sees Evil Engine types and `System.Numerics`
@@ -32,6 +32,7 @@ flowchart BT
   math[01 Mathematics] --> world[03 World]
   platform --> world
   platform --> screen[07 Screen]
+  math --> screen
   world --> cameras[04 Cameras]
   cameras --> lighting[05 Lighting]
   cameras --> input[06 Input]

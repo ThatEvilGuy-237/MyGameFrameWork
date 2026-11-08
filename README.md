@@ -52,7 +52,7 @@ src/02_Platform      Evil.Engine.Platform       the Godot glue, internal to the 
 src/03_World         Evil.Engine.World          WorldObject groups, Box, Sphere, Floor
 src/04_Cameras       Evil.Engine.Cameras        Camera
 src/05_Lighting      Evil.Engine.Lighting       Sun
-src/07_Screen        Evil.Engine.Screen         window settings, frame capture
+src/07_Screen        Evil.Engine.Screen         display, frame capture, 2D overlay canvas with text
 src/08_Engine        Evil.Engine                GameBuilder, GameMain, scenes
 samples/OrbitDemo                               a Godot project using only our API
 tests/Evil.Engine.Tests                         pure tests (Core, Mathematics)
@@ -70,4 +70,5 @@ bash scripts/godot.sh samples/OrbitDemo     # the demo on a machine without a sc
 ```
 
 On a desktop, open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play. Space pauses, Q and E turn the
-camera, the wheel zooms, right-drag orbits, hover and click a pawn to select it, F12 saves a screenshot.
+camera, the wheel zooms, right-drag orbits, hover and click a pawn to select it, then pick an action in the
+bar; F10 shrinks the window, F11 toggles full screen, F12 saves a screenshot.

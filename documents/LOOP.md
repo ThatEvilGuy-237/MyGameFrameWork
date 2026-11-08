@@ -54,7 +54,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   light presets.
 - [x] **R6 Input**: event-based keyboard and mouse (taps never lost, same API as the 2D engine), mouse picking
   of WorldObjects through the camera ray.
-- [ ] **R7 Screen**: window settings applied (title, size, fullscreen, VSync), `CaptureFrame`, `CaptureAndExit`,
+- [x] **R7 Screen**: window settings applied (title, size, fullscreen, VSync), `CaptureFrame`, `CaptureAndExit`,
   2D overlay with our `Group()` canvas and text (Godot fonts), screen size changes.
 - [ ] **R8 Models**: textures on materials (moved here from R3, one place for file loading), load `.glb` / `.gltf` from Content at runtime, a Blender-made test model through the Blender
   MCP, model parts as WorldObjects.
@@ -97,3 +97,11 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   `WorldObject.Tag` and `Ancestor<T>()`. Demo is interactive (Space, Q/E, wheel, right-drag, hover glow, click
   select, F12). check.sh now drives it with real X11 input: the mouse sweep found both pawns, the click selected
   pawn-red, three wheel steps zoomed 13 to 8. 36 pure + 63 Godot tests green. ![[r6-input.png]]
+- 2026-11-08 20:00 R7: 2D overlay: `Canvas` (groups, rects, lines, circles, triangles, polygons, text at a point,
+  centred in a box, wrapping paragraphs, measuring) drawn over the 3D world through Godot's CanvasItem, scenes
+  get `Draw(Canvas)`; `Game.Display` (title, full screen, VSync, resize). Found: resizing through `DisplayServer`
+  shrank the X window but Godot never reported it (ScreenSize stuck at 1280x720 four seconds later); now the root
+  `Window` node is driven and the game sees 1024x640 next frame. Demo HUD: info panel, compass (rotated group with
+  text), Move/Attack/Wait bar with UI clicks before 3D picks. Driven check now also resizes and clicks Attack.
+  Full screen cannot be shown under xvfb (no window manager). llvmpipe runs the lit demo at about 8 fps.
+  36 pure + 71 Godot tests green. ![[r7-screen.png]]
