@@ -2,11 +2,17 @@
   "spec": 2,
   "id": "evil-engine",
   "name": "Evil Engine",
-  "description": "Our own 2D game engine SDK in C# on OpenGL 3.3 (Evil.Engine + Evil.Engine.Mathematics), grown from MyGameFrameWork; the base for the turn-based game.",
+  "description": "Our own game engine SDK in C#: numbered class libraries over Godot 4.7.2 for a full 3D game (camera, lights, world objects, screen); 0.1.0 was the OpenTK 2D engine.",
   "kind": "library",
   "lifecycle": "building",
   "owner": "Thatevilguy",
-  "tags": ["dotnet", "game-engine", "opengl", "sdk", "games"],
+  "tags": [
+    "dotnet",
+    "game-engine",
+    "godot",
+    "sdk",
+    "games"
+  ],
   "envs": {
     "prod": {
       "branch": "main",
@@ -14,21 +20,22 @@
       "notes": "Packages go to the folder feed /mnt/hdd/projects/MyGameFrameWork-data/feed; games pin the exact version."
     },
     "dev": {
-      "start": "dotnet run --project samples/Evil.Engine.Sample",
-      "notes": "Opens a desktop window, no port. On the server run scripts/check.sh instead (xvfb)."
+      "start": "bash scripts/godot.sh samples/OrbitDemo",
+      "notes": "Runs the demo in Godot 4.7.2 under xvfb on the server (no port); on a desktop open samples/OrbitDemo in Godot and press play."
     },
     "check": {
       "start": "./scripts/check.sh",
-      "notes": "Build with warnings as errors, the test runner, a still frame and a frame driven with real keys and mouse (xvfb, xdotool); screenshots in documents/screenshots."
+      "notes": "Build with warnings as errors, the pure test runner, the OrbitDemo in Godot under xvfb with a captured frame in documents/screenshots."
     }
   },
   "flow": {
     "branch": "main",
     "promote": "scripts/check.sh green, bump the version in Directory.Build.props, commit, ./scripts/pack.sh, push; games move to the exact version.",
     "rules": [
-      "Lock-step versions: both packages carry the same version.",
-      "Packages only from the checked list, exact versions in Directory.Packages.props.",
-      "The engine reads no config and no environment variable: games pass values to GameBuilder."
+      "Lock-step versions: every package carries the same version.",
+      "Packages only from the checked list; Godot pinned at 4.7.2.",
+      "The engine reads no config and no environment variable: games pass values to GameBuilder.",
+      "Godot types never appear in the public API."
     ]
   }
 }

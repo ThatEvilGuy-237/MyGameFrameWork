@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <GodotDisabledSourceGenerators>ScriptPathAttribute;GodotPluginsInitializer</GodotDisabledSourceGenerators>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="GodotDisabledSourceGenerators" />
+    <PackageReference Include="GodotSharp" />
+    <PackageReference Include="Godot.SourceGenerators" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

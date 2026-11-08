@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "Godot.SourceGenerators": {
+        "type": "Direct",
+        "requested": "[4.7.2, )",
+        "resolved": "4.7.2",
+        "contentHash": "PeYESFlRxlmeClrPhlMINhVvt2HiKnx2Ux/FYA10rimDevHljji3/jmRZOMo9XDNQsZzPH4uQmDyPgQgzTFvAg=="
+      },
+      "GodotSharp": {
+        "type": "Direct",
+        "requested": "[4.7.2, )",
+        "resolved": "4.7.2",
+        "contentHash": "EPvfayB7b7MrBNdASvy86jRS5AbM9dprkVivcRD80g+ngn2M8KAIrBQH4NhyQL+pwxni0xVnuqhD9AFpZeNQpw=="
+      },
+      "GodotSharpEditor": {
+        "type": "Direct",
+        "requested": "[4.7.2, )",
+        "resolved": "4.7.2",
+        "contentHash": "Fuf2rNvajla9N8Z+ksxsSIt326wsjpB2F2uZCtxkdfWIsApabCHy5fsE2EKxOlQ4NaINGdgMIv62D0n583qe1A==",
+        "dependencies": {
+          "GodotSharp": "4.7.2"
+        }
+      },
+      "evil.engine": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.Cameras": "[0.2.0, )",
+          "Evil.Engine.Core": "[0.2.0, )",
+          "Evil.Engine.Lighting": "[0.2.0, )",
+          "Evil.Engine.Mathematics": "[0.2.0, )",
+          "Evil.Engine.Platform": "[0.2.0, )",
+          "Evil.Engine.Screen": "[0.2.0, )",
+          "Evil.Engine.World": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
+      "evil.engine.cameras": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.World": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
+      "evil.engine.core": {
+        "type": "Project"
+      },
+      "evil.engine.lighting": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.World": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
+      "evil.engine.mathematics": {
+        "type": "Project"
+      },
+      "evil.engine.platform": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.Core": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
+      "evil.engine.screen": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.Platform": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      },
+      "evil.engine.world": {
+        "type": "Project",
+        "dependencies": {
+          "Evil.Engine.Mathematics": "[0.2.0, )",
+          "Evil.Engine.Platform": "[0.2.0, )",
+          "GodotSharp": "[4.7.2, )"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Evil Engine math: rectangles, angles, 2D and 3D transforms, the grouped transform stack and polygons. No dependencies, so game rules and tests use it without Godot.</Description>
+  </PropertyGroup>
+
+</Project>

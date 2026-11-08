@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 feed="${EVIL_FEED:-/mnt/hdd/projects/MyGameFrameWork-data/feed}"
 version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props)"
-packages=(Evil.Engine.Mathematics Evil.Engine)
+packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Screen Evil.Engine)
 mkdir -p "$feed"
 for id in "${packages[@]}"; do
   if [ -e "$feed/$id.$version.nupkg" ]; then
@@ -19,7 +19,7 @@ fi
 out="$(mktemp -d)"
 trap 'rm -rf "$out"' EXIT
 for id in "${packages[@]}"; do
-  dotnet pack "src/$id/$id.csproj" -c Release -o "$out" -nologo -v q -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$commit" >/dev/null
+  dotnet pack src/*/"$id"/"$id".csproj -c Release -o "$out" -nologo -v q -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$commit" >/dev/null
 done
 for id in "${packages[@]}"; do
   install -m 644 "$out/$id.$version.nupkg" "$feed/"

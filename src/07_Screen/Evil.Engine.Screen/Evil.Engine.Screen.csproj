@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Godot.props" />
+
+  <PropertyGroup>
+    <Description>Evil Engine screen: the window, frame capture and the 2D overlay drawn over the 3D world.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\02_Platform\Evil.Engine.Platform\Evil.Engine.Platform.csproj" />
+  </ItemGroup>
+
+</Project>
