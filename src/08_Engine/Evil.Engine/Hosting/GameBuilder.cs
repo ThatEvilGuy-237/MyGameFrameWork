@@ -8,6 +8,7 @@ public sealed class GameBuilder
 {
     private readonly WindowSettings _window;
     private Color _clearColor = new(0.2f, 0.3f, 0.3f);
+    private string _contentRoot = "res://";
     private Scene? _startScene;
     private FrameSnapshot? _snapshot;
 
@@ -25,6 +26,12 @@ public sealed class GameBuilder
     public GameBuilder ClearColor(Color color)
     {
         _clearColor = color;
+        return this;
+    }
+
+    public GameBuilder Content(string root)
+    {
+        _contentRoot = root;
         return this;
     }
 
@@ -52,6 +59,12 @@ public sealed class GameBuilder
             throw new InvalidOperationException($"GameBuilder.Create: the window size must be positive, got {_window.Width}x{_window.Height}.");
         }
 
+        if (string.IsNullOrWhiteSpace(_contentRoot)
+            || (!ContentLibrary.IsGodotPath(_contentRoot) && !Directory.Exists(_contentRoot)))
+        {
+            throw new InvalidOperationException($"GameBuilder.Content: '{_contentRoot}' is neither a res:// path nor a folder that exists.");
+        }
+
         if (_startScene is null)
         {
             throw new InvalidOperationException("GameBuilder.Start was not called: the game needs a first scene.");
@@ -63,6 +76,7 @@ public sealed class GameBuilder
         }
 
         var snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
-        return new GameHost(new GameOptions(_window, _clearColor, _startScene, snapshot));
+        var contentRoot = ContentLibrary.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
+        return new GameHost(new GameOptions(_window, _clearColor, contentRoot, _startScene, snapshot));
     }
 }

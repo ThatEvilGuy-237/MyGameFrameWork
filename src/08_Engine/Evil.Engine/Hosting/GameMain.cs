@@ -35,7 +35,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         layer.AddChild(_overlay);
         _canvas = new Canvas(_overlay.Target);
         _mouse.Place(GetViewport().GetMousePosition().ToEvil());
-        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root)) { ScreenSize = ScreenSize() };
+        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot)) { ScreenSize = ScreenSize() };
         RenderingServer.FramePostDraw += OnFrameDrawn;
         _game.Scenes.Push(_options.StartScene);
         _game.Scenes.ApplyChanges();

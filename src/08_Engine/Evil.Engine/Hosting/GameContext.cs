@@ -13,15 +13,16 @@ public sealed class GameContext
     private readonly Queue<string> _captures = new();
 
     internal GameContext(WorldObject worlds)
-        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")))
+        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")), new ContentLibrary("res://"))
     {
     }
 
-    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display)
+    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display, ContentLibrary content)
     {
         Keyboard = keyboard;
         Mouse = mouse;
         Display = display;
+        Content = content;
         Scenes = new SceneStack(this, worlds);
     }
 
@@ -32,6 +33,8 @@ public sealed class GameContext
     public Mouse Mouse { get; }
 
     public Display Display { get; }
+
+    public ContentLibrary Content { get; }
 
     public Vector2 ScreenSize { get; internal set; }
 

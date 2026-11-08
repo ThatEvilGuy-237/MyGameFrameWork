@@ -21,6 +21,8 @@ public sealed class Canvas
 
     public Matrix3x2 Transform => _transforms.Current;
 
+    public Font? Font { get; set; }
+
     public void Push() => _transforms.Push();
 
     public void Pop() => _transforms.Pop();
@@ -84,39 +86,45 @@ public sealed class Canvas
     {
         var target = Ready();
         var pixels = Pixels(size);
-        target.Text(text, topLeft + new Vector2(0f, target.Ascent(pixels)), pixels, color, TextAlign.Left, -1f);
+        target.Text(text, topLeft + new Vector2(0f, target.Ascent(pixels, Font)), pixels, color, TextAlign.Left, -1f, Font);
     }
 
     public void DrawText(string text, RectF box, float size, Color color, TextAlign align)
     {
         var target = Ready();
         var pixels = Pixels(size);
-        var height = target.Measure(text, pixels).Y;
+        var height = target.Measure(text, pixels, Font).Y;
         var top = box.Y + (box.Height - height) / 2f;
-        target.Text(text, new Vector2(box.X, top + target.Ascent(pixels)), pixels, color, align, box.Width);
+        target.Text(text, new Vector2(box.X, top + target.Ascent(pixels, Font)), pixels, color, align, box.Width, Font);
     }
 
     public void DrawParagraph(string text, RectF box, float size, Color color)
     {
         var target = Ready();
         var pixels = Pixels(size);
-        target.Paragraph(text, new Vector2(box.X, box.Y + target.Ascent(pixels)), pixels, color, box.Width);
+        target.Paragraph(text, new Vector2(box.X, box.Y + target.Ascent(pixels, Font)), pixels, color, box.Width, Font);
     }
 
-    public Vector2 MeasureText(string text, float size) => _target.Measure(text, Pixels(size));
+    public Vector2 MeasureText(string text, float size, Font? font = null) => _target.Measure(text, Pixels(size), font);
 
-    public Vector2 MeasureParagraph(string text, float size, float width) => _target.MeasureParagraph(text, Pixels(size), width);
+    public Vector2 MeasureParagraph(string text, float size, float width, Font? font = null) =>
+        _target.MeasureParagraph(text, Pixels(size), width, font);
 
     internal void Begin(Vector2 size)
     {
         Size = size;
+        Font = null;
         _transforms.Reset();
         _sent = Matrix3x2.Identity;
         _target.SetTransform(_sent);
         _drawing = true;
     }
 
-    internal void ResetTransform() => _transforms.Reset();
+    internal void ResetTransform()
+    {
+        _transforms.Reset();
+        Font = null;
+    }
 
     internal void End()
     {

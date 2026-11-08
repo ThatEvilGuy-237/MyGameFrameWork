@@ -48,7 +48,8 @@ scene starts from a clean transform.
 
 Sizes are in pixels and coordinates are screen pixels with `(0, 0)` at the top-left, the same as
 `Game.ScreenSize` and `Game.Mouse.Position`. Drawing outside `Draw` throws. A forgotten `Pop()` stops the game
-with the scene's name. Text uses Godot's built-in font; your own fonts come with file loading in round 8.
+with the scene's name. Text uses Godot's built-in font unless you set `canvas.Font` to a font from `Game.Content.Font(path)` (see
+[[Content]]); it resets to the built-in font for every scene and every frame. `MeasureText` takes an optional font.
 
 > [!tip] Clicks on the overlay first
 > Test the mouse against your button rectangles before picking in 3D, so a click on "Attack" never also selects

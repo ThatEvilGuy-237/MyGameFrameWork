@@ -12,7 +12,7 @@ public static class Picker
         ArgumentNullException.ThrowIfNull(root);
         var ray = camera.ScreenToRay(screenPoint);
         Hit? nearest = null;
-        foreach (var shape in root.Descendants<ShapeObject>())
+        foreach (var shape in root.Descendants<MeshObject>())
         {
             if (!shape.Pickable || !shape.IsShown)
             {

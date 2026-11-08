@@ -7,6 +7,7 @@ namespace Evil.Engine.Hosting;
 internal sealed record GameOptions(
     WindowSettings Window,
     Color ClearColor,
+    string ContentRoot,
     Scene StartScene,
     FrameSnapshot? Snapshot);
 

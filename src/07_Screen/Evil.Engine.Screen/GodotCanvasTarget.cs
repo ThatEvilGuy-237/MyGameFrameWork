@@ -9,7 +9,7 @@ namespace Evil.Engine.Screen;
 
 internal sealed class GodotCanvasTarget(CanvasItem item) : ICanvasTarget
 {
-    private static Font Font => ThemeDB.FallbackFont;
+    private static Godot.Font Pick(Font? font) => font?.Native ?? ThemeDB.FallbackFont;
 
     public void SetTransform(Matrix3x2 matrix) =>
         item.DrawSetTransformMatrix(new Godot.Transform2D(
@@ -37,19 +37,19 @@ internal sealed class GodotCanvasTarget(CanvasItem item) : ICanvasTarget
         item.DrawColoredPolygon(converted, color.ToGodot());
     }
 
-    public void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width) =>
-        item.DrawString(Font, baseline.ToGodot(), text, ToGodot(align), width, size, color.ToGodot());
+    public void Text(string text, Vector2 baseline, int size, Color color, TextAlign align, float width, Font? font) =>
+        item.DrawString(Pick(font), baseline.ToGodot(), text, ToGodot(align), width, size, color.ToGodot());
 
-    public void Paragraph(string text, Vector2 baseline, int size, Color color, float width) =>
-        item.DrawMultilineString(Font, baseline.ToGodot(), text, HorizontalAlignment.Left, width, size, -1, color.ToGodot());
+    public void Paragraph(string text, Vector2 baseline, int size, Color color, float width, Font? font) =>
+        item.DrawMultilineString(Pick(font), baseline.ToGodot(), text, HorizontalAlignment.Left, width, size, -1, color.ToGodot());
 
-    public Vector2 Measure(string text, int size) =>
-        Font.GetStringSize(text, HorizontalAlignment.Left, -1f, size).ToEvil();
+    public Vector2 Measure(string text, int size, Font? font) =>
+        Pick(font).GetStringSize(text, HorizontalAlignment.Left, -1f, size).ToEvil();
 
-    public Vector2 MeasureParagraph(string text, int size, float width) =>
-        Font.GetMultilineStringSize(text, HorizontalAlignment.Left, width, size).ToEvil();
+    public Vector2 MeasureParagraph(string text, int size, float width, Font? font) =>
+        Pick(font).GetMultilineStringSize(text, HorizontalAlignment.Left, width, size).ToEvil();
 
-    public float Ascent(int size) => Font.GetAscent(size);
+    public float Ascent(int size, Font? font) => Pick(font).GetAscent(size);
 
     private static HorizontalAlignment ToGodot(TextAlign align) => align switch
     {

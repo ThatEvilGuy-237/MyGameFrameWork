@@ -18,6 +18,7 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
     private Capsule? _hovered;
     private Capsule? _selected;
     private bool _spinning = true;
+    private Font? _titleFont;
 
     protected override void Enter()
     {
@@ -33,7 +34,18 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
 
         Atmosphere = Atmosphere.Dusk();
         World.Add(Sun.Golden());
-        World.Add(new Floor(new Vector2(24f, 24f), Color.FromHex("#3C5A5A")));
+        var floor = World.Add(new Floor(new Vector2(24f, 24f), Color.White));
+        floor.Material.Texture = Game.Content.Texture("textures/tiles.png");
+        floor.Material.TextureScale = new Vector2(12f, 12f);
+
+        var watchtower = World.Add(Game.Content.Model("models/tower.glb"));
+        watchtower.Position = new Vector3(-5.5f, 0f, 3.2f);
+        var outpost = World.Add(Game.Content.Model("models/tower.glb"));
+        outpost.Position = new Vector3(5.5f, 0f, 3.2f);
+        outpost.RotateY(180f);
+        outpost.Part("Flag")!.Material = Material.Matte(Color.FromHex("#E5484D"));
+
+        _titleFont = Game.Content.Font("fonts/Lato-Bold.ttf");
 
         _red = World.Add(new Box(new Vector3(1.4f, 1.4f, 1.4f), Color.FromHex("#E5484D")));
         _red.Position = new Vector3(-5f, 0.7f, -2f);
@@ -157,7 +169,9 @@ internal sealed class OrbitScene(SampleOptions options) : Scene
         var panel = new RectF(16f, 16f, 380f, 112f);
         canvas.FillRect(panel, Color.Black.WithAlpha(0.45f));
         canvas.DrawRect(panel, Color.White.WithAlpha(0.25f));
-        canvas.DrawText("Evil Engine orbit demo", new Vector2(30f, 26f), 22f, Color.White);
+        canvas.Font = _titleFont;
+        canvas.DrawText("Evil Engine orbit demo", new Vector2(30f, 24f), 24f, Color.White);
+        canvas.Font = null;
         var status = _selected is null ? "Click a pawn to select it" : $"Selected: {_selected.Tag}" + (_lastAction is null ? string.Empty : $"   Last action: {_lastAction}");
         canvas.DrawText(status, new Vector2(30f, 60f), 16f, Color.FromHex("#FFC53D"));
         canvas.DrawText("Space pause   Q/E turn   wheel zoom   F10 small   F11 full screen", new Vector2(30f, 92f), 13f, Color.White.WithAlpha(0.7f));
