@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="OpenTK.Graphics" Version="4.9.4" />
+    <PackageVersion Include="OpenTK.Windowing.Desktop" Version="4.9.4" />
+    <PackageVersion Include="StbImageSharp" Version="2.30.16" />
+  </ItemGroup>
+</Project>

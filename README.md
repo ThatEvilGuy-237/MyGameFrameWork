@@ -1,51 +1,73 @@
-# MyGameFramework
+# Evil Engine
 
-This is a small project I made to prepare for my internship at AZTEQ.  
-It helped me understand how rendering works, and I learned a lot along the way.  
-I might expand on it in the future as a personal framework or testing ground.
+Our own 2D game engine for C# on OpenGL 3.3.
 
----
+It started as **MyGameFrameWork**, a small project to learn how rendering works before the internship at AZTEQ,
+inspired by [MonoGame](https://monogame.net/). One thing about MonoGame I did not like: every draw puts the
+origin back at `(0, 0)`. The idea here is the opposite: things drawn in a **group** stay together and follow
+their parent's move, turn and scale. That idea is still the heart of the engine; the rest grew around it.
 
-## Interesting Files
+![The sample](documents/screenshots/sample.png)
 
-Some notable parts of the project:
+## A game in a few lines
 
-- [`Rect.cs`](https://github.com/ThatEvilGuy-237/MyGameFrameWork/blob/main/MyGameFrameWork/Framework/Utils/Structs/Rect.cs)  
-  Custom rectangle struct for handling drawable objects.
+```csharp
+GameBuilder.Create(new WindowSettings("Hello", 800, 600))
+    .Content(Path.Combine(AppContext.BaseDirectory, "Content"))
+    .Start(new HelloScene())
+    .Build()
+    .Run();
 
-- [`EvilUtils.cs`](https://github.com/ThatEvilGuy-237/MyGameFrameWork/blob/main/MyGameFrameWork/Framework/Utils/EvilUtils.cs)  
-  Manages the render window, drawing logic, and transformation calculations.
+internal sealed class HelloScene : Scene
+{
+    private float _angle;
 
-- [`SRTVectorsStack.cs`](https://github.com/ThatEvilGuy-237/MyGameFrameWork/blob/main/MyGameFrameWork/Framework/Utils/SRTVectorsStack.cs)  
-  Handles stacking of Scale, Rotate, and Translate (SRT) steps to simplify complex movement chains.
+    protected override void Update(GameTime time) => _angle += 90f * time.DeltaSeconds;
 
----
-
-## Project Idea & Concept
-
-This project was inspired by the [MonoGame](https://monogame.net/) framework.  
-One thing I didn’t like about MonoGame is how every draw call resets the origin back to `(0, 0)`.  
-In this project, I wanted to try something different: drawing objects that stay grouped and follow shared movement without having to manually update each one’s position.
-
-### Example Code
-
-```C#
-EvilUtils.SetColor(0.0f, 1.0f, 0.0f, 100.0f);
-EvilUtils.SetTexture("!#need image path", new Rect(200, 200,370 -200,370-200 ));
-EvilUtils.NewPush();                         // Start group A
-EvilUtils.PushTranslate(5, 5);               // Move group A
-EvilUtils.PushRotate(0, 0, (r * 2));         // Rotate group A
-
-EvilUtils.DrawRectanlge(-50f, -50f, 100f, 200f); // Object in group A
-
-EvilUtils.NewPush();                         // Start nested group B
-EvilUtils.PushRotate(0, 0, -(r * 2));        // Rotate group B in opposite direction
-
-EvilUtils.DrawRectanlge(-50f, -50f, 100f, 200f); // Objects in group B
-EvilUtils.DrawRectanlge(-50f, -50f, 100f, 200f);
-EvilUtils.DrawRectanlge(-50f, -50f, 100f, 200f);
-
-EvilUtils.PopOrgin();                        // End group B
-EvilUtils.PopOrgin();                        // End group A
+    protected override void Draw(Canvas canvas)
+    {
+        using var group = canvas.Group();
+        canvas.Translate(canvas.Size / 2f);
+        canvas.Rotate(_angle);
+        canvas.FillRect(new RectF(-50f, -50f, 100f, 100f), Color.Red);
+    }
+}
 ```
 
+## What is inside
+
+| Package | Namespaces | What |
+|---|---|---|
+| `Evil.Engine.Mathematics` | `Evil.Engine.Mathematics` | rectangles, angles, `Transform2D`, the grouped `TransformStack`, polygons with triangulation and hit tests; no dependencies |
+| `Evil.Engine` | `Hosting` | `GameBuilder` (values only), `GameHost`, `GameContext`, `GameTime`, capture-and-exit |
+| | `Scenes` | `Scene` with enter, update, draw, pause, resume, exit; a stack with overlays |
+| | `Graphics` | `Canvas`: groups, rectangles, lines, circles, polygons, sprites, in one batched draw call; `Color` |
+| | `Textures` | `TextureLibrary`, `Texture2D`, `TextureRegion` and sprite sheet grids |
+| | `Input` | `Keyboard`, `Mouse`, `Key`, `MouseButton`; taps shorter than a frame are kept |
+| | `Capture` | `PngEncoder`; `Game.CaptureFrame(path)` saves the frame on screen |
+
+## Layout
+
+```
+src/Evil.Engine.Mathematics   the math, no dependencies
+src/Evil.Engine               the engine
+samples/Evil.Engine.Sample    the old demo on the new engine, plus sprites, picking and a pause overlay
+tests/Evil.Engine.Tests       the test runner (dotnet tests/.../Evil.Engine.Tests.dll)
+scripts/check.sh              build, tests, a screenshot and a run driven with real keys and mouse
+scripts/pack.sh               packs both packages into the folder feed
+documents/                    the docs (Obsidian vault): start at documents/Home.md
+```
+
+## Run
+
+```bash
+dotnet run --project samples/Evil.Engine.Sample
+./scripts/check.sh
+```
+
+Space stops the spin, Up and Down change the speed, P pauses, F12 saves a screenshot, Escape quits.
+
+## Docs
+
+Start at [documents/Home.md](documents/Home.md). [From MyGameFrameWork](documents/From%20MyGameFrameWork.md)
+maps every old call to the new one and lists what got fixed. The original code is commit `8b1fb3f`.

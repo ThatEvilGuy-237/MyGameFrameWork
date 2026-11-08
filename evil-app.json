@@ -1,0 +1,34 @@
+{
+  "spec": 2,
+  "id": "evil-engine",
+  "name": "Evil Engine",
+  "description": "Our own 2D game engine SDK in C# on OpenGL 3.3 (Evil.Engine + Evil.Engine.Mathematics), grown from MyGameFrameWork; the base for the turn-based game.",
+  "kind": "library",
+  "lifecycle": "building",
+  "owner": "Thatevilguy",
+  "tags": ["dotnet", "game-engine", "opengl", "sdk", "games"],
+  "envs": {
+    "prod": {
+      "branch": "main",
+      "deploy": "./scripts/pack.sh",
+      "notes": "Packages go to the folder feed /mnt/hdd/projects/MyGameFrameWork-data/feed; games pin the exact version."
+    },
+    "dev": {
+      "start": "dotnet run --project samples/Evil.Engine.Sample",
+      "notes": "Opens a desktop window, no port. On the server run scripts/check.sh instead (xvfb)."
+    },
+    "check": {
+      "start": "./scripts/check.sh",
+      "notes": "Build with warnings as errors, the test runner, a still frame and a frame driven with real keys and mouse (xvfb, xdotool); screenshots in documents/screenshots."
+    }
+  },
+  "flow": {
+    "branch": "main",
+    "promote": "scripts/check.sh green, bump the version in Directory.Build.props, commit, ./scripts/pack.sh, push; games move to the exact version.",
+    "rules": [
+      "Lock-step versions: both packages carry the same version.",
+      "Packages only from the checked list, exact versions in Directory.Packages.props.",
+      "The engine reads no config and no environment variable: games pass values to GameBuilder."
+    ]
+  }
+}
