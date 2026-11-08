@@ -37,3 +37,19 @@ Why the engine is built the way it is. Change a decision here first, then the co
 | 22 | One Godot line in a game: **`Main : GameMain`** | Godot needs a script on the main scene; everything else goes through the builder | games writing Godot nodes |
 | 23 | Server checks use the **compatibility renderer** under xvfb | llvmpipe has OpenGL, not Vulkan; the PC renders with Forward+ | no screenshots on the server |
 | 24 | Game projects pin Godot packages **through `Godot.NET.Sdk/4.7.2`** (central versions off there) | the SDK adds its packages itself (NU1009 otherwise) | duplicating versions |
+| 25 | **Tests run inside Godot** (`tests/Evil.Engine.GodotTests`, headless) next to plain .NET tests | wrappers are only proven against real nodes; a planted failure gives exit code 1 | testing wrappers with fakes only |
+| 26 | **Any Godot leak at exit fails the check** (tests and demo runs) | it caught a throwing Capsule, Torus and Spotlight leaving nodes behind, and music held by the audio thread at quit | ignoring exit warnings |
+| 27 | **3D math lives in Mathematics and is cross-checked against Godot** | game rules use poses, rays and orbits without Godot; the tests prove they match what Godot draws | trusting two maths to agree |
+| 28 | Settings that limit each other are **one settings record** (`OrbitLimits`) | `{ Pitch = 0, MinPitch = 0 }` gave 5 degrees because order mattered | separate min/max properties |
+| 29 | **Atmosphere per scene, shown through its camera** (not `Environment`) | switching scenes switches the sky; the name does not clash with `System.Environment` | one global WorldEnvironment |
+| 30 | Input from **Godot events**, cleared per frame; keys by **physical place** | taps inside a frame are kept; WASD works on any layout | polling Godot's Input singleton |
+| 31 | **Picking in each object's own space** (exact turned boxes, real spheres), no physics | precise enough for tiles and units, nothing to set up | collision shapes on every object |
+| 32 | `Display` drives **Godot's root Window** | a resize through DisplayServer never reached the game's screen size | DisplayServer calls |
+| 33 | Content: **Godot-imported resources when imported, the file otherwise** | exported games work, mods and loose files work, one call | only res:// or only runtime loading |
+| 34 | **Motion queued per object**, leftover time carried, starts read when a tween begins | turn-based sequences (face, hop, hop back) read like a script and match at any frame rate | one global list of tweens |
+| 35 | Composition root is **`99_Engine`** | new libraries slot in below it without renumbering again | renumbering for every new library |
+| 36 | **Audio proven by recording the final mix** in the driven run | the server has no speakers; silence fails the check | trusting that a player says it is playing |
+| 37 | **Quit = stop audio, then quit three frames later**; window close goes the same way | stopping a sound only takes effect on the audio thread's next mix | quitting at once |
+| 38 | **Code style: real types, constructor then statements**; no `var`, no initializer blocks, no target-typed `new()` | the owner reads the type on every line; enforced by the build (IDE0008) and `scripts/style-check.py`, docs included | `var` and JSON-looking object blocks |
+| 39 | **`AmbientStrength` from the sky is the sky's share** (0 to 1); `Daylight()` takes a tenth | Godot ignores ambient energy for sky light, and the whole bright sky turned a green floor turquoise | a strength that silently did nothing |
+| 40 | **The `Evil.Engine` package copies its libraries next to the game** (`build/Evil.Engine.props`) | Godot loads the game from its build folder and found no Evil DLLs there; found by building the Make a Game example from the packed feed | one more line in every game's project file |

@@ -84,6 +84,27 @@ internal static class LightingTests
     }
 
     [Test]
+    public static void AmbientStrengthWorksForColourAndSky()
+    {
+        Atmosphere air = new Atmosphere();
+        air.AmbientStrength = 0.3f;
+        Check.Near(0.3f, air.Native.AmbientLightEnergy, "a colour's strength is its energy");
+
+        air.Background = Background.Gradient(Color.Blue, Color.White, Color.Gray);
+        air.AmbientFromSky = true;
+        Check.Near(0.3f, air.Native.AmbientLightSkyContribution, "from the sky it is the sky's share");
+        Check.Near(0f, air.Native.AmbientLightEnergy, "and no colour mixed in");
+        Check.Near(0.3f, air.AmbientStrength, "reads back");
+        air.AmbientStrength = 2f;
+        Check.Near(1f, air.Native.AmbientLightSkyContribution, "the whole sky at most");
+
+        air.AmbientFromSky = false;
+        Check.Near(2f, air.Native.AmbientLightEnergy, "back to the colour, stronger than 1 allowed");
+        air.AmbientStrength = -1f;
+        Check.Near(0f, air.AmbientStrength, "no negative light");
+    }
+
+    [Test]
     public static void FogGlowToneAndExposure()
     {
         Atmosphere air = new Atmosphere();
@@ -106,6 +127,8 @@ internal static class LightingTests
     public static void AtmospherePresetsAreReady()
     {
         Check.True(Atmosphere.Daylight().Background is GradientBackground, "daylight has a sky");
+        Check.Near(0.1f, Atmosphere.Daylight().Native.AmbientLightSkyContribution, "daylight keeps colours: a tenth of the sky");
+        Check.Near(1f, Atmosphere.Dusk().Native.AmbientLightSkyContribution, "dusk takes the whole sky");
         Check.True(Atmosphere.Dusk().Fog is not null, "dusk is hazy");
         Check.True(Atmosphere.Night().Background is SolidBackground, "night is dark");
         Check.True(Atmosphere.Studio().AmbientStrength > 0f, "studio is lit");

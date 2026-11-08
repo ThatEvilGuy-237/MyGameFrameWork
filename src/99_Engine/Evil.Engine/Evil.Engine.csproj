@@ -19,4 +19,8 @@
     <ProjectReference Include="..\..\09_Audio\Evil.Engine.Audio\Evil.Engine.Audio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="build\Evil.Engine.props" Pack="true" PackagePath="build" />
+  </ItemGroup>
+
 </Project>

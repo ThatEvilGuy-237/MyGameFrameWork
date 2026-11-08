@@ -12,7 +12,7 @@ the same canvas as the 0.1.0 engine, with your [[Grouped Transforms]] `Group()`,
 ```csharp
 protected override void Draw(Canvas canvas)
 {
-    var panel = new RectF(16f, 16f, 380f, 112f);
+    RectF panel = new RectF(16f, 16f, 480f, 112f);
     canvas.FillRect(panel, Color.Black.WithAlpha(0.45f));
     canvas.DrawText("Selected: pawn-red", new Vector2(30f, 60f), 16f, Color.FromHex("#FFC53D"));
 

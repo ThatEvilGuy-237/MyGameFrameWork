@@ -63,7 +63,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
 - [x] **R9 Motion**: tweens for moves and turns (move to a tile over time, ease curves), pure timing in Core,
   applied each frame; waiting for a move to finish (turn-based).
 - [x] **R10 Audio**: sounds and music wrappers (one-shot, loop, volume groups).
-- [ ] **R11 Docs and pack**: documents/ rewritten for the Godot SDK, Decisions updated, `0.2.0` packed.
+- [x] **R11 Docs and pack**: documents/ rewritten for the Godot SDK, Decisions updated, `0.2.0` packed.
 - [ ] **R12 On the PC**: build and run OrbitDemo on the owner's Windows PC through the Windows lab (**ask the
   owner first**, standing rule).
 
@@ -135,3 +135,12 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   check.sh fails on silence. Found: music and its playback leaked at quit in 4 of 6 runs (audio thread race); the
   engine now stops all audio and quits 3 frames later (6 of 6 clean), window close goes the same way, and
   check.sh fails if any demo run leaks. 38 pure + 95 Godot tests green. ![[r10-audio.png]]
+- 2026-11-08 22:13 R11: documents/ rewritten for 0.2.0: Home, README, Getting Started ([[Make a Game]], [[Run the Sample]]),
+  Architecture (start and quit order, the check table), every API note's examples in the code style (style-check now
+  reads C# blocks in Markdown too), [[From MyGameFrameWork]] as three versions with the original calls mapped, Decisions
+  25-40. `pack.sh` packs all 11 libraries. A new game made only from the Make a Game note, restored from the packed
+  feed, found two bugs: Godot could not load a packaged game (no Evil DLLs next to it; the `Evil.Engine` package now
+  ships `build/Evil.Engine.props` to copy them) and `Daylight()` turned the green floor turquoise (hue 149° to 175°;
+  Godot ignores ambient energy for sky light, so `AmbientStrength` from the sky is now the sky's share and Daylight
+  takes 0.1, floor 159°). That run is now `scripts/make-a-game-check.sh`. 38 pure + 96 Godot tests green, driven run
+  green, Dusk sample unchanged. ![[make-a-game.png]]

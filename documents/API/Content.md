@@ -11,7 +11,7 @@ aliases: [Models, Textures, Fonts, Loading]
 ```csharp
 GameBuilder.Create(window).Content("res://content").Start(new MapScene()).Build();
 
-var tower = World.Add(Game.Content.Model("models/tower.glb"));
+Model tower = World.Add(Game.Content.Model("models/tower.glb"));
 tower.Part("Flag")!.Material = Material.Matte(Color.FromHex("#E5484D"));
 
 floor.Material.Texture = Game.Content.Texture("textures/tiles.png");

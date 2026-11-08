@@ -30,12 +30,10 @@ A tactics view: the camera circles a target point, tilted down, at a distance. I
 camera itself.
 
 ```csharp
-_view = new OrbitCamera(Camera, new OrbitLimits(MinDistance: 6f, MaxDistance: 30f))
-{
-    Target = new Vector3(0f, 0f, 2f),
-    Distance = 13f,
-    Pitch = 32f,
-};
+_view = new OrbitCamera(Camera, new OrbitLimits(MinDistance: 6f, MaxDistance: 30f));
+_view.Target = new Vector3(0f, 0f, 2f);
+_view.Distance = 13f;
+_view.Pitch = 32f;
 _view.Snap();
 
 protected override void Update(GameTime time)

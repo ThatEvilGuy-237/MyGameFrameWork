@@ -64,9 +64,9 @@ against Godot's own maths.
 | `Ray3(origin, direction)` | `Intersect(bounds)`, `IntersectPlane(point, normal)`, `IntersectSphere(center, radius)`; distances, `null` on a miss |
 
 ```csharp
-var sun = Pose.Identity.TurnedY(90f);
-var planet = sun.ToWorld(Pose.At(10f, 0f, 0f));
-var moon = planet.ToWorld(Pose.At(5f, 0f, 0f));
+Pose sun = Pose.Identity.TurnedY(90f);
+Pose planet = sun.ToWorld(Pose.At(10f, 0f, 0f));
+Pose moon = planet.ToWorld(Pose.At(5f, 0f, 0f));
 ```
 
 Here `moon.Position` is `(0, 0, -15)`: the moon follows the sun's turn, just like nested world objects.

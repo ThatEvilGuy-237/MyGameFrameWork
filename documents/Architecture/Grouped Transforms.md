@@ -7,7 +7,25 @@ aliases: [Transform stack, Groups, SRT]
 
 The heart of the engine and the idea MyGameFrameWork started from: MonoGame puts the origin back at `(0, 0)` on
 every draw, so moving a group of things means moving each one. Here a **group** keeps its parent's move, turn
-and scale, and everything drawn inside follows.
+and scale, and everything inside follows. In 0.2.0 the idea lives in two places.
+
+## In the 3D world: WorldObject
+
+```csharp
+Box blue = World.Add(new Box(Vector3.One, Color.FromHex("#3E63DD")));
+Sphere yellow = blue.Add(new Sphere(0.55f, Color.FromHex("#FFC53D")));
+yellow.Position = new Vector3(3f, 0f, 0f);
+Sphere moon = yellow.Add(new Sphere(0.22f, Color.White));
+moon.Position = new Vector3(1.4f, 0f, 0f);
+
+blue.RotateY(-50f * time.DeltaSeconds);
+yellow.RotateY(160f * time.DeltaSeconds);
+```
+
+The yellow sphere orbits the turning blue box, and the moon orbits the sphere. Godot keeps the tree. `Pose` in
+[[Mathematics]] does the same sums without Godot, and the Godot tests check that both agree.
+
+## On the 2D overlay: Canvas.Group()
 
 ```csharp
 using (canvas.Group())
@@ -63,4 +81,4 @@ offset. That held for two levels (the original demo), and broke beyond that:
 > `canvas.ToLocal(mouse)` runs the current group backwards. The sample tests the mouse against the star's own
 > outline (`Polygon.Contains`) while the star turns and orbits.
 
-The same stack exists without a window as `TransformStack` in [[Mathematics]].
+The overlay's stack exists without Godot as `TransformStack` in [[Mathematics]]. The overlay itself is in [[Screen]].

@@ -15,7 +15,7 @@ number.
 | `src/00_Core` | `Evil.Engine.Core` | `GameTime`, `Color`, `Easing` | no |
 | `src/01_Mathematics` | `Evil.Engine.Mathematics` | 2D and 3D math: poses, rotations, rays, bounds, orbit, smoothing, polygons | no |
 | `src/02_Platform` | `Evil.Engine.Platform` | the one place that converts our types to Godot's and back | inside |
-| `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), seven shapes, `Material` | inside |
+| `src/03_World` | `Evil.Engine.World` | `WorldObject` (3D group), seven shapes, `Material`, `Texture`, `Model` | inside |
 | `src/04_Cameras` | `Evil.Engine.Cameras` | `Camera`, `OrbitCamera`, screen rays | inside |
 | `src/05_Lighting` | `Evil.Engine.Lighting` | `Sun`, `Lamp`, `Spotlight`, `Atmosphere` | inside |
 | `src/06_Input` | `Evil.Engine.Input` | `Keyboard`, `Mouse`, `Picker` | inside |
@@ -56,9 +56,15 @@ flowchart BT
 1. Godot opens the game's `main.tscn`. Its root node runs `Main.cs`, the game's one Godot-facing line:
    `public partial class Main : GameMain`.
 2. `GameMain._Ready` calls the game's `CreateGame()`, which builds the game with values ([[Decisions]] 13).
-3. It sets the window, the background colour, a `Worlds` node, and pushes the first scene.
-4. Every frame `_Process` updates the top scene and applies scene changes. After Godot has drawn the frame
-   (`RenderingServer.FramePostDraw`), requested captures are saved and the game quits if it was asked to.
+3. It sets the window, the background colour, a `Worlds` node, an `Audio` node, the 2D overlay layer, and pushes
+   the first scene.
+4. Godot's input events go to `Keyboard` and `Mouse` as they arrive ([[Input]]).
+5. Every frame `_Process` updates the top scene, applies scene changes, clears the frame's key presses, moves the
+   tweens ([[Motion]]) and the music fades ([[Audio]]), and asks the overlay to redraw. Godot then draws the 3D
+   world and calls each visible scene's `Draw(Canvas)` ([[Screen]]).
+6. After Godot has drawn the frame (`RenderingServer.FramePostDraw`), requested captures are saved.
+7. Quitting (`Game.Exit()`, the last scene popped, a capture-and-exit, or the window's close button) stops all audio
+   first and quits three frames later, then frees the content it loaded, so nothing is left behind at exit.
 
 ## Scenes own a world
 

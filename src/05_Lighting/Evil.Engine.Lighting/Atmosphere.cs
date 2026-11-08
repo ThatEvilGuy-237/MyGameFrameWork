@@ -10,6 +10,7 @@ public sealed class Atmosphere
     private Background _background = Background.ClearColor;
     private Fog? _fog;
     private bool _ambientFromSky;
+    private float _ambientStrength;
 
     public Atmosphere()
     {
@@ -53,8 +54,12 @@ public sealed class Atmosphere
 
     public float AmbientStrength
     {
-        get => Native.AmbientLightEnergy;
-        set => Native.AmbientLightEnergy = Math.Max(0f, value);
+        get => _ambientStrength;
+        set
+        {
+            _ambientStrength = Math.Max(0f, value);
+            RefreshAmbient();
+        }
     }
 
     public bool AmbientFromSky
@@ -124,7 +129,7 @@ public sealed class Atmosphere
         Atmosphere air = new Atmosphere();
         air.Background = Background.Gradient(Color.FromHex("#3E7CC9"), Color.FromHex("#A9C9E8"), Color.FromHex("#5A5A55"));
         air.AmbientFromSky = true;
-        air.AmbientStrength = 0.8f;
+        air.AmbientStrength = 0.1f;
         return air;
     }
 
@@ -133,7 +138,7 @@ public sealed class Atmosphere
         Atmosphere air = new Atmosphere();
         air.Background = Background.Gradient(Color.FromHex("#2B2F5A"), Color.FromHex("#E89A6A"), Color.FromHex("#3A3030"));
         air.AmbientFromSky = true;
-        air.AmbientStrength = 0.4f;
+        air.AmbientStrength = 1f;
         air.Glow = 0.4f;
         air.Fog = new Fog(Color.FromHex("#C9A088"), 0.004f);
         return air;
@@ -163,8 +168,18 @@ public sealed class Atmosphere
         return sky;
     }
 
-    private void RefreshAmbient() =>
-        Native.AmbientLightSource = _ambientFromSky && _background is GradientBackground
-            ? Godot.Environment.AmbientSource.Sky
-            : Godot.Environment.AmbientSource.Color;
+    private void RefreshAmbient()
+    {
+        if (_ambientFromSky && _background is GradientBackground)
+        {
+            Native.AmbientLightSource = Godot.Environment.AmbientSource.Sky;
+            Native.AmbientLightSkyContribution = Math.Min(1f, _ambientStrength);
+            Native.AmbientLightEnergy = 0f;
+            return;
+        }
+
+        Native.AmbientLightSource = Godot.Environment.AmbientSource.Color;
+        Native.AmbientLightSkyContribution = 1f;
+        Native.AmbientLightEnergy = _ambientStrength;
+    }
 }
