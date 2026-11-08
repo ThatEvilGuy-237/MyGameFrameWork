@@ -14,31 +14,31 @@
   "tuple": 2,
   "types per file": 1
  },
- "samples/OrbitDemo::ActionBar.cs": {
-  "lambda": 2,
-  "linq": 1
- },
+ "samples/OrbitDemo::ActionBar.cs": {},
+ "samples/OrbitDemo::ActionRunner.cs": {},
+ "samples/OrbitDemo::ActionStarted.cs": {},
+ "samples/OrbitDemo::ArgumentQueue.cs": {},
+ "samples/OrbitDemo::AttackAction.cs": {},
  "samples/OrbitDemo::CameraControls.cs": {},
+ "samples/OrbitDemo::CaptureFlag.cs": {},
+ "samples/OrbitDemo::CommandLineFlag.cs": {},
  "samples/OrbitDemo::DemoSounds.cs": {},
+ "samples/OrbitDemo::DriveFlag.cs": {},
+ "samples/OrbitDemo::FrameFlag.cs": {},
  "samples/OrbitDemo::GlobalUsings.cs": {},
  "samples/OrbitDemo::Hud.cs": {},
  "samples/OrbitDemo::Main.cs": {},
- "samples/OrbitDemo::OrbitScene.cs": {
-  "linq": 1,
-  "long method": 1
- },
- "samples/OrbitDemo::PawnActions.cs": {
-  "value switch": 2
- },
- "samples/OrbitDemo::Pawns.cs": {
-  "lambda": 1,
-  "linq": 1
- },
- "samples/OrbitDemo::SampleOptions.cs": {
-  "value switch": 4
- },
+ "samples/OrbitDemo::MoveAction.cs": {},
+ "samples/OrbitDemo::OrbitScene.cs": {},
+ "samples/OrbitDemo::PawnAction.cs": {},
+ "samples/OrbitDemo::Pawns.cs": {},
+ "samples/OrbitDemo::RecordAudioFlag.cs": {},
+ "samples/OrbitDemo::SampleOptions.cs": {},
  "samples/OrbitDemo::Scenery.cs": {},
+ "samples/OrbitDemo::SoundCue.cs": {},
+ "samples/OrbitDemo::SoundCues.cs": {},
  "samples/OrbitDemo::SpinningShapes.cs": {},
+ "samples/OrbitDemo::WaitAction.cs": {},
  "src/00_Core/Evil.Engine.Core::Color.cs": {},
  "src/00_Core/Evil.Engine.Core::Ease.cs": {},
  "src/00_Core/Evil.Engine.Core::Easing.cs": {},

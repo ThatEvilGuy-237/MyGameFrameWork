@@ -18,7 +18,18 @@ internal sealed class Pawns
 
     public Capsule? Selected { get; private set; }
 
-    public Capsule EnemyOf(Capsule pawn) => _all.First(other => !ReferenceEquals(other, pawn));
+    public Capsule EnemyOf(Capsule pawn)
+    {
+        foreach (Capsule other in _all)
+        {
+            if (!ReferenceEquals(other, pawn))
+            {
+                return other;
+            }
+        }
+
+        throw new InvalidOperationException("A fight needs two pawns.");
+    }
 
     public Capsule? Find(WorldObject? picked)
     {
@@ -60,7 +71,7 @@ internal sealed class Pawns
         }
     }
 
-    public void Select(Capsule pawn)
+    public void Choose(Capsule pawn)
     {
         Selected = pawn;
         _ring.Visible = true;
