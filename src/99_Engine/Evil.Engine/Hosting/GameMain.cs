@@ -12,6 +12,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
 {
     private readonly Keyboard _keyboard = new Keyboard();
     private readonly Mouse _mouse = new Mouse();
+    private readonly InputFeed _input;
     private GameOptions? _options;
     private OverlayNode? _overlay;
     private Canvas? _canvas;
@@ -21,6 +22,8 @@ public abstract partial class GameMain : Node, IOverlayPainter
     private bool _quitAfterCapture;
     private bool _quitting;
     private int _framesUntilQuit;
+
+    protected GameMain() => _input = new InputFeed(_keyboard, _mouse);
 
     protected IReadOnlyList<string> Arguments => OS.GetCmdlineUserArgs();
 
@@ -56,12 +59,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
     {
         if (_quitting)
         {
-            _framesUntilQuit--;
-            if (_framesUntilQuit <= 0)
-            {
-                GetTree().Quit();
-            }
-
+            CountDownToQuit();
             return;
         }
 
@@ -70,29 +68,53 @@ public abstract partial class GameMain : Node, IOverlayPainter
             return;
         }
 
-        _totalSeconds += delta;
-        _game.ScreenSize = ScreenSize();
-        _game.Time = new GameTime((float)delta, _totalSeconds, _frame);
-        _game.Scenes.Update(_game.Time);
-        _game.Scenes.ApplyChanges();
-        _game.Motion.Update((float)delta);
-        _game.Audio.Update((float)delta);
-        _keyboard.EndFrame();
-        _mouse.EndFrame();
-        _overlay?.QueueRedraw();
-        if (_options.Snapshot is { } snapshot && snapshot.Frame == _frame)
+        RunFrame(_game, delta);
+        TakeSnapshotWhenDue(_game, _options);
+        _frame++;
+        QuitWhenDone(_game);
+    }
+
+    private void CountDownToQuit()
+    {
+        _framesUntilQuit--;
+        if (_framesUntilQuit <= 0)
         {
-            _game.CaptureFrame(snapshot.Path);
+            GetTree().Quit();
+        }
+    }
+
+    private void RunFrame(GameContext game, double delta)
+    {
+        float seconds = (float)delta;
+        _totalSeconds += delta;
+        game.ScreenSize = ScreenSize();
+        game.Time = new GameTime(seconds, _totalSeconds, _frame);
+        game.Scenes.Update(game.Time);
+        game.Scenes.ApplyChanges();
+        game.Motion.Update(seconds);
+        game.Audio.Update(seconds);
+        _input.EndFrame();
+        _overlay?.QueueRedraw();
+    }
+
+    private void TakeSnapshotWhenDue(GameContext game, GameOptions options)
+    {
+        if (options.Snapshot is { } snapshot && snapshot.Frame == _frame)
+        {
+            game.CaptureFrame(snapshot.Path);
             _quitAfterCapture = true;
         }
+    }
 
-        _frame++;
-        if (!_game.IsExiting && _game.Scenes.Count > 0)
+    private void QuitWhenDone(GameContext game)
+    {
+        bool playing = !game.IsExiting && game.Scenes.Count > 0;
+        if (playing)
         {
             return;
         }
 
-        if (_game.HasPendingCaptures && _game.Scenes.Count > 0)
+        if (game.HasPendingCaptures && game.Scenes.Count > 0)
         {
             _quitAfterCapture = true;
             return;
@@ -101,7 +123,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         Quit();
     }
 
-    public override void _Input(InputEvent @event) => InputFeed.Feed(@event, _keyboard, _mouse);
+    public override void _Input(InputEvent @event) => _input.Feed(@event);
 
     public override void _Notification(int what)
     {
@@ -113,8 +135,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
 
         if (what == NotificationApplicationFocusOut)
         {
-            _keyboard.ReleaseAll();
-            _mouse.ReleaseAll();
+            _input.ReleaseAll();
         }
     }
 

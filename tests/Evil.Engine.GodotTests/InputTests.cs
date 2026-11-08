@@ -36,8 +36,9 @@ internal static class InputTests
     {
         Keyboard keyboard = new Keyboard();
         Mouse mouse = new Mouse();
-        InputFeed.Feed(KeyEvent(GodotKey.A, pressed: true), keyboard, mouse);
-        InputFeed.Feed(KeyEvent(GodotKey.A, pressed: false), keyboard, mouse);
+        InputFeed feed = new InputFeed(keyboard, mouse);
+        feed.Feed(KeyEvent(GodotKey.A, pressed: true));
+        feed.Feed(KeyEvent(GodotKey.A, pressed: false));
         Check.True(keyboard.WasPressed(Key.A) && keyboard.WasReleased(Key.A), "pressed and released this frame");
         Check.True(!keyboard.IsDown(Key.A), "not held");
         keyboard.EndFrame();
@@ -49,9 +50,10 @@ internal static class InputTests
     {
         Keyboard keyboard = new Keyboard();
         Mouse mouse = new Mouse();
-        InputFeed.Feed(KeyEvent(GodotKey.Space, pressed: true), keyboard, mouse);
+        InputFeed feed = new InputFeed(keyboard, mouse);
+        feed.Feed(KeyEvent(GodotKey.Space, pressed: true));
         keyboard.EndFrame();
-        InputFeed.Feed(KeyEvent(GodotKey.Space, pressed: true, echo: true), keyboard, mouse);
+        feed.Feed(KeyEvent(GodotKey.Space, pressed: true, echo: true));
         Check.True(keyboard.IsDown(Key.Space) && !keyboard.WasPressed(Key.Space), "a repeat is not a new press");
     }
 
@@ -59,12 +61,13 @@ internal static class InputTests
     public static void LayoutKeysCountWhenThereIsNoPhysicalKey()
     {
         Keyboard keyboard = new Keyboard();
+        InputFeed feed = new InputFeed(keyboard, new Mouse());
         Godot.InputEventKey escape = new Godot.InputEventKey();
         escape.Keycode = GodotKey.Escape;
         escape.Pressed = true;
-        InputFeed.Feed(escape, keyboard, new Mouse());
+        feed.Feed(escape);
         Check.True(keyboard.IsDown(Key.Escape), "escape");
-        InputFeed.Feed(KeyEvent(GodotKey.Menu, pressed: true), keyboard, new Mouse());
+        feed.Feed(KeyEvent(GodotKey.Menu, pressed: true));
         Check.True(!keyboard.IsAnyDown || keyboard.IsDown(Key.Escape), "an unknown key adds nothing");
     }
 
@@ -73,14 +76,15 @@ internal static class InputTests
     {
         Keyboard keyboard = new Keyboard();
         Mouse mouse = new Mouse();
+        InputFeed feed = new InputFeed(keyboard, mouse);
         mouse.Place(new Vector2(10f, 10f));
-        InputFeed.Feed(Motion(15f, 12f), keyboard, mouse);
-        InputFeed.Feed(Motion(20f, 20f), keyboard, mouse);
-        InputFeed.Feed(Button(GodotButton.Left, pressed: true), keyboard, mouse);
-        InputFeed.Feed(Button(GodotButton.Left, pressed: false), keyboard, mouse);
-        InputFeed.Feed(Button(GodotButton.WheelUp, pressed: true), keyboard, mouse);
-        InputFeed.Feed(Button(GodotButton.WheelDown, pressed: true, factor: 2f), keyboard, mouse);
-        InputFeed.Feed(Button(GodotButton.Xbutton1, pressed: true), keyboard, mouse);
+        feed.Feed(Motion(15f, 12f));
+        feed.Feed(Motion(20f, 20f));
+        feed.Feed(Button(GodotButton.Left, pressed: true));
+        feed.Feed(Button(GodotButton.Left, pressed: false));
+        feed.Feed(Button(GodotButton.WheelUp, pressed: true));
+        feed.Feed(Button(GodotButton.WheelDown, pressed: true, factor: 2f));
+        feed.Feed(Button(GodotButton.Xbutton1, pressed: true));
         Check.Near(new Vector2(20f, 20f), mouse.Position, "position");
         Check.Near(new Vector2(10f, 10f), mouse.Delta, "moved over the frame");
         Check.True(mouse.WasPressed(MouseButton.Left) && mouse.WasReleased(MouseButton.Left), "a quick click counts");
@@ -96,8 +100,9 @@ internal static class InputTests
     {
         Keyboard keyboard = new Keyboard();
         Mouse mouse = new Mouse();
-        InputFeed.Feed(KeyEvent(GodotKey.W, pressed: true), keyboard, mouse);
-        InputFeed.Feed(Button(GodotButton.Right, pressed: true), keyboard, mouse);
+        InputFeed feed = new InputFeed(keyboard, mouse);
+        feed.Feed(KeyEvent(GodotKey.W, pressed: true));
+        feed.Feed(Button(GodotButton.Right, pressed: true));
         keyboard.EndFrame();
         mouse.EndFrame();
         keyboard.ReleaseAll();

@@ -25,6 +25,12 @@ accessors (`get => _mesh.Radius;`), constructor chaining (`: this(...)`, `: base
 one line shape fills 6 of 8 lines, like nine `CheckMapped(...)` calls). Each of these has a self-test case, so the
 exemption cannot widen by accident.
 
+Static classes in the engine, and why each may stay: pure maths like `System.Math` (`Angle`, `Rotations`, `Smoothing`,
+`Orbit`, `Triangulator`, `Ease`, and `Picker`, a ray query over a camera and a world), the maths input checks
+(`Finite`), and thin Godot glue (`GodotConvert`, `Facing`, `GodotKeys`, `FrameCapture`, `WindowSetup`). Anything
+that carries state is an object: `InputFeed` owns the keyboard and mouse, `EarClipper` owns a polygon being cut,
+`TweenQueue` owns one object's tweens.
+
 Explicit types, constructor then statements and no comments still hold (see the repo's `CLAUDE.md`).
 Expression-bodied members (`public float Area => Width * Height;`) and switch expressions over enums are C#, not
 lambdas, and stay.
@@ -46,3 +52,4 @@ is not LINQ, renamed copies are still copies, enum lists are not copies), so a b
 | R16 end | 285 | 125 |
 | R17 end | 272 | 112 |
 | R18 end | 177 | 31 (no duplicates left in the engine) |
+| R19 end | 167 (with the new long-method rule) | **0** |

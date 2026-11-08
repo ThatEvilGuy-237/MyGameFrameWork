@@ -8,6 +8,8 @@ import sys
 BASELINE = "scripts/clean-code-baseline.json"
 EXACT_WINDOW = 5
 SHAPE_WINDOW = 8
+LONGEST_METHOD = 30
+METHOD_START = re.compile(r"^\s+(?:(?:public|private|protected|internal|static|override|virtual|abstract|sealed|async|new|partial|unsafe|extern)\s+)+[\w<>\[\],.?() ]+?\s+\w+(?:<[^>]*>)?\(")
 TABLE_SHARE = 6
 
 RULES = {
@@ -18,16 +20,17 @@ RULES = {
     "delegate": "a Func or Action passed around: use an interface or a class",
     "types per file": "more than one type in a file: one type per file, named after it",
     "duplicate": "the same code in two places: give it one home",
+    "long method": "a method over 30 lines: cut it into named steps",
 }
 
-LINQ = re.compile(r"(?<!\bMath)(?<!\bMathF)(?<!\bVector2)(?<!\bVector3)(?<!\bVector4)\.(Select|SelectMany|Where|Any|All|First|FirstOrDefault|Last|LastOrDefault|Single|OrderBy|OrderByDescending|ThenBy|Sum|Min|Max|Count|Aggregate|Cast|OfType|Zip|Skip|Take|Distinct|GroupBy|ToDictionary|ToLookup)\(")
+LINQ = re.compile(r"(?<!\bMath)(?<!\bMathF)(?<!\bVector2)(?<!\bVector3)(?<!\bVector4)\.(Select|SelectMany|Concat|ToList|Where|Any|All|First|FirstOrDefault|Last|LastOrDefault|Single|OrderBy|OrderByDescending|ThenBy|Sum|Min|Max|Count|Aggregate|Cast|OfType|Zip|Skip|Take|Distinct|GroupBy|ToDictionary|ToLookup)\(")
 TUPLE_TYPE = re.compile(r"(?<![\w>\]])\(\s*[A-Z_a-z][\w.<>?\[\]]*\s+[A-Z]\w*\s*,\s*[A-Z_a-z][\w.<>?\[\]]*\s+[A-Z]\w*")
 TUPLE_LITERAL = re.compile(r"(?<![\w>\]])\(\s*[A-Z]\w*\s*:\s*[^,()]+(\([^()]*\))?[^,()]*,\s*[A-Z]\w*\s*:")
 VALUE_CASE = re.compile(r"\bcase\s+(\"|-?\d)|^\s*(\"\"|-?\d[\w.]*)\s*(when\b.*)?=>")
 DELEGATE = re.compile(r"\b(Func|Action)\s*<|\bAction\s+\w+\s*[,)=;]|\bAction\[\]")
 TYPE_DECLARATION = re.compile(r"^\s*(?:(?:public|internal|private|protected|file|sealed|abstract|static|readonly|partial|unsafe|ref)\s+)*(?:class|record|struct|enum|interface)\b(?:\s+(?:class|struct))?\s+\w+", re.M)
 LAMBDA_START = re.compile(r"(?:\(\s*[^()]*\)|\b[A-Za-z_]\w*)\s*=>")
-BEFORE_LAMBDA = re.compile(r"(?:[(,=?:]|\breturn|&&|\|\|)\s*$")
+BEFORE_LAMBDA = re.compile(r"(?:[(,=:]|\s\?|\breturn|&&|\|\|)\s*$")
 TRIVIAL_ACCESSOR = re.compile(r"^((get|set|init)\s*(=>[^;{}]*)?;|: (this|base)\(.*\)( => .*;)?)$")
 IGNORED_LINE = re.compile(r"^(\{|\}|\);?|\}\);?|\]|\[|\]\)?;?|using .*;|global using .*;|namespace .*;|break;|return;|else|default:|\[Test\])$")
 KEYWORDS = set(
@@ -78,9 +81,31 @@ def code_rules(text):
         counts["tuple"] += len(TUPLE_TYPE.findall(line)) + len(TUPLE_LITERAL.findall(line))
         counts["value switch"] += len(VALUE_CASE.findall(line))
         counts["delegate"] += len(DELEGATE.findall(line))
+    counts["long method"] = len(long_methods(clean))
     types = len(TYPE_DECLARATION.findall(clean))
     counts["types per file"] = max(0, types - 1)
     return counts
+
+
+def long_methods(clean):
+    lines = clean.split("\n")
+    found = []
+    for start, line in enumerate(lines):
+        if not METHOD_START.match(line) or re.search(r"\b(class|record|struct|interface|enum)\b", line):
+            continue
+        open_at = start
+        while open_at < len(lines) and "{" not in lines[open_at] and "=>" not in lines[open_at] and not lines[open_at].rstrip().endswith(";"):
+            open_at += 1
+        if open_at >= len(lines) or "{" not in lines[open_at] or "=>" in lines[open_at].split("{")[0]:
+            continue
+        depth = 0
+        for end in range(open_at, len(lines)):
+            depth += lines[end].count("{") - lines[end].count("}")
+            if depth == 0:
+                if end - start + 1 > LONGEST_METHOD:
+                    found.append(start + 1)
+                break
+    return found
 
 
 def outside_enums(raw_lines):
@@ -172,9 +197,13 @@ def self_test():
         ("    Easing.InQuad => t * t,", "lambda", 0),
         ("    _ => t,", "lambda", 0),
         ("get => _value;", "lambda", 0),
+        ("internal WorldObject? Root => _world;", "lambda", 0),
+        ("public Scene? Current => _scenes.Count > 0 ? _scenes[^1] : null;", "lambda", 0),
+        ("Shape pick = useAll ? (a => a) : Pick;", "lambda", 1),
+        ("foreach (object key in _queues.Keys.ToList())", "linq", 1),
         ("Action<int> done = value => Print(value);", "lambda", 1),
         ("Action<int> done = value => Print(value);", "delegate", 1),
-        ("List<int> alive = units.Where(IsAlive).ToList();", "linq", 1),
+        ("List<int> alive = units.Where(IsAlive).ToList();", "linq", 2),
         ("(int Kind, Vector2 Value)[] steps;", "tuple", 1),
         ("random => (Easing: Pick(random), T: Next(random))", "tuple", 1),
         ("Vector3 middle = (a + b) / 2f;", "tuple", 0),
@@ -196,6 +225,11 @@ def self_test():
         ("public enum Key\n{\n    A,\n}", "types per file", 0),
         ("Check.Throws<ArgumentException>(() => new Ray3(o, d), \"=> no\");", "lambda", 1),
     ]
+    body = "".join(f"        Step{n}();\n" for n in range(26))
+    cases.append(("class L\n{\n    public void Long()\n    {\n" + body + "        Last();\n        More();\n    }\n}\n", "long method", 1))
+    cases.append(("class E\n{\n    public void Exactly()\n    {\n" + body + "        Last();\n    }\n}\n", "long method", 0))
+    cases.append(("class S\n{\n    public void Short()\n    {\n" + body + "    }\n}\n", "long method", 0))
+    cases.append(("class P\n{\n    public bool Busy\n    {\n        get\n        {\n" + body + "            return true;\n        }\n    }\n}\n", "long method", 0))
     failed = 0
     for code, rule, expected in cases:
         got = code_rules(code)[rule]

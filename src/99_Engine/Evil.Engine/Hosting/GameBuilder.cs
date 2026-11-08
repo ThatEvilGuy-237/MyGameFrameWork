@@ -49,6 +49,17 @@ public sealed class GameBuilder
 
     public GameHost Build()
     {
+        CheckWindow();
+        CheckContentRoot();
+        Scene start = _startScene ?? throw new InvalidOperationException("GameBuilder.Start was not called: the game needs a first scene.");
+        CheckSnapshot();
+        FrameSnapshot? snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
+        string contentRoot = ContentLocation.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
+        return new GameHost(new GameOptions(_window, _clearColor, contentRoot, start, snapshot));
+    }
+
+    private void CheckWindow()
+    {
         if (string.IsNullOrWhiteSpace(_window.Title))
         {
             throw new InvalidOperationException("GameBuilder.Create: the window title is empty.");
@@ -58,25 +69,24 @@ public sealed class GameBuilder
         {
             throw new InvalidOperationException($"GameBuilder.Create: the window size must be positive, got {_window.Width}x{_window.Height}.");
         }
+    }
 
-        if (string.IsNullOrWhiteSpace(_contentRoot)
-            || (!ContentLocation.IsGodotPath(_contentRoot) && !Directory.Exists(_contentRoot)))
+    private void CheckContentRoot()
+    {
+        bool missing = string.IsNullOrWhiteSpace(_contentRoot)
+            || (!ContentLocation.IsGodotPath(_contentRoot) && !Directory.Exists(_contentRoot));
+        if (missing)
         {
             throw new InvalidOperationException($"GameBuilder.Content: '{_contentRoot}' is neither a res:// path nor a folder that exists.");
         }
+    }
 
-        if (_startScene is null)
-        {
-            throw new InvalidOperationException("GameBuilder.Start was not called: the game needs a first scene.");
-        }
-
+    private void CheckSnapshot()
+    {
         if (_snapshot is not null && (string.IsNullOrWhiteSpace(_snapshot.Path) || _snapshot.Frame < 0))
         {
             throw new InvalidOperationException($"GameBuilder.CaptureAndExit needs a file path and a frame of 0 or more, got '{_snapshot.Path}' at frame {_snapshot.Frame}.");
         }
-
-        FrameSnapshot? snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
-        string contentRoot = ContentLocation.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
-        return new GameHost(new GameOptions(_window, _clearColor, contentRoot, _startScene, snapshot));
     }
+
 }

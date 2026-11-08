@@ -18,40 +18,17 @@ public readonly record struct Ray3
 
     public float? Intersect(Bounds3 box)
     {
-        float enter = 0f;
-        float leave = float.PositiveInfinity;
+        Interval inside = Interval.Ahead;
         for (int axis = 0; axis < 3; axis++)
         {
-            float origin = Origin[axis];
-            float direction = Direction[axis];
-            float min = box.Min[axis];
-            float max = box.Max[axis];
-            if (MathF.Abs(direction) < 1e-9f)
-            {
-                if (origin < min || origin > max)
-                {
-                    return null;
-                }
-
-                continue;
-            }
-
-            float near = (min - origin) / direction;
-            float far = (max - origin) / direction;
-            if (near > far)
-            {
-                (near, far) = (far, near);
-            }
-
-            enter = MathF.Max(enter, near);
-            leave = MathF.Min(leave, far);
-            if (enter > leave)
+            inside = inside.Overlap(Slab(box, axis));
+            if (inside.IsEmpty)
             {
                 return null;
             }
         }
 
-        return enter;
+        return inside.Start;
     }
 
     public float? IntersectPlane(Vector3 pointOnPlane, Vector3 normal)
@@ -94,5 +71,18 @@ public readonly record struct Ray3
 
         float near = closestAlong - halfChord;
         return near >= 0f ? near : 0f;
+    }
+
+    private Interval Slab(Bounds3 box, int axis)
+    {
+        float origin = Origin[axis];
+        float direction = Direction[axis];
+        if (MathF.Abs(direction) < 1e-9f)
+        {
+            bool between = origin >= box.Min[axis] && origin <= box.Max[axis];
+            return between ? Interval.Everywhere : Interval.Nowhere;
+        }
+
+        return Interval.Between((box.Min[axis] - origin) / direction, (box.Max[axis] - origin) / direction);
     }
 }

@@ -59,12 +59,12 @@ the folders do not change the namespace, so `using Evil.Engine.World;` still rea
 | Library | Folders |
 |---|---|
 | Core, Platform, Cameras, Audio | none: four or five files each |
-| Mathematics | `2D/` (rects, Transform2D, the transform stack, polygons, triangulation), `3D/` (Pose, Rotations, Bounds3, Ray3, Orbit); `Angle`, `Smoothing` and the `Finite` validators at the root, used by both |
+| Mathematics | `2D/` (rects, Transform2D, the transform stack, polygons, triangulation by an `EarClipper` that owns the polygon it cuts), `3D/` (Pose, Rotations, Bounds3, Ray3 with its `Interval` slabs, Orbit); `Angle`, `Smoothing` and the `Finite` validators at the root, used by both |
 | World | `Objects/` (WorldObject, MeshObject, ShapeObject), `Shapes/` (the seven shapes and `RoundShape` under Cylinder and Cone), `Materials/` (Material, Texture), `Models/` (Model, ModelPart) |
 | Lighting | `Lights/` (Light, Sun, Lamp, Spotlight), `Atmosphere/` (Atmosphere, the four backgrounds, Fog, ToneMapping) |
 | Input | `Keyboard/` (Key, Keyboard, the Godot key table derived from the names), `Mouse/` (Mouse, MouseButton), `Picking/` (Picker, Hit); at the root `ButtonStates` (what is down, pressed, released; used by both devices) and `InputFeed` |
 | Screen | `Window/` (WindowSettings, WindowSetup, Display), `Canvas/` (Canvas, Font, TextAlign, the canvas targets), `Overlay/` (the overlay node and painter), `Capture/` (FrameCapture) |
-| Motion | `Tweens/` (Tween, ValueTween and one file per object tween); `MotionPlayer` at the root |
+| Motion | `Tweens/` (Tween, ValueTween and one file per object tween); at the root `MotionPlayer`, which routes calls to a `TweenQueue` per object and the `LooseTweens` of `Value()`, both a `TweenGroup` |
 | Engine | `Hosting/` (builder, host, context, GameMain, options), `Content/` (ContentLibrary, ContentLocation, the `ContentLoader` base; `Loaders/` one per kind: textures, fonts, sounds, scenes, models; `SoundFormats/` wav and ogg), `Scenes/` (Scene, SceneStack, scene changes) |
 
 ## How a game starts

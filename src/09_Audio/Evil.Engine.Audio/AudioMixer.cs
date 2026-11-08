@@ -87,14 +87,10 @@ public sealed class AudioMixer
             old.FadeTo(0f, fadeSeconds, stopAtEnd: true);
         }
 
-        AudioStreamPlayer player = new AudioStreamPlayer();
-        player.Stream = sound.Native;
-        player.Bus = BusName(AudioGroup.Music);
-        player.Finished += () => player.Play();
-        _root.AddChild(player);
-        MusicTrack track = new MusicTrack(player, fadeSeconds > 0f ? 0f : 1f);
+        MusicTrack track = new MusicTrack(sound, BusName(AudioGroup.Music), fadeSeconds > 0f ? 0f : 1f);
+        _root.AddChild(track.Player);
         track.FadeTo(1f, fadeSeconds, stopAtEnd: false);
-        player.Play();
+        track.Player.Play();
         _tracks.Add(track);
         Music = sound;
     }

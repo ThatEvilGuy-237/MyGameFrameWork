@@ -10,7 +10,7 @@
  },
  ".::TestRunner.cs": {
   "lambda": 5,
-  "linq": 5,
+  "linq": 6,
   "tuple": 2,
   "types per file": 1
  },
@@ -24,7 +24,8 @@
  "samples/OrbitDemo::Hud.cs": {},
  "samples/OrbitDemo::Main.cs": {},
  "samples/OrbitDemo::OrbitScene.cs": {
-  "linq": 1
+  "linq": 1,
+  "long method": 1
  },
  "samples/OrbitDemo::PawnActions.cs": {
   "value switch": 2
@@ -44,7 +45,10 @@
  "src/00_Core/Evil.Engine.Core::GameTime.cs": {},
  "src/01_Mathematics/Evil.Engine.Mathematics::Angle.cs": {},
  "src/01_Mathematics/Evil.Engine.Mathematics::Bounds3.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Corner.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::EarClipper.cs": {},
  "src/01_Mathematics/Evil.Engine.Mathematics::Finite.cs": {},
+ "src/01_Mathematics/Evil.Engine.Mathematics::Interval.cs": {},
  "src/01_Mathematics/Evil.Engine.Mathematics::Orbit.cs": {},
  "src/01_Mathematics/Evil.Engine.Mathematics::Polygon.cs": {},
  "src/01_Mathematics/Evil.Engine.Mathematics::Pose.cs": {},
@@ -66,10 +70,7 @@
  "src/03_World/Evil.Engine.World::Floor.cs": {},
  "src/03_World/Evil.Engine.World::Material.cs": {},
  "src/03_World/Evil.Engine.World::MeshObject.cs": {},
- "src/03_World/Evil.Engine.World::Model.cs": {
-  "lambda": 1,
-  "linq": 1
- },
+ "src/03_World/Evil.Engine.World::Model.cs": {},
  "src/03_World/Evil.Engine.World::ModelPart.cs": {},
  "src/03_World/Evil.Engine.World::RoundShape.cs": {},
  "src/03_World/Evil.Engine.World::ShapeObject.cs": {},
@@ -114,22 +115,20 @@
  "src/07_Screen/Evil.Engine.Screen::WindowSetup.cs": {},
  "src/08_Motion/Evil.Engine.Motion::ColorTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::FaceTween.cs": {},
- "src/08_Motion/Evil.Engine.Motion::MotionPlayer.cs": {
-  "lambda": 5,
-  "linq": 5
- },
+ "src/08_Motion/Evil.Engine.Motion::LooseTweens.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::MotionPlayer.cs": {},
  "src/08_Motion/Evil.Engine.Motion::MoveTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::ObjectTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::ScaleTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::SpinTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::TurnTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::Tween.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::TweenGroup.cs": {},
+ "src/08_Motion/Evil.Engine.Motion::TweenQueue.cs": {},
  "src/08_Motion/Evil.Engine.Motion::ValueTween.cs": {},
  "src/08_Motion/Evil.Engine.Motion::WaitTween.cs": {},
  "src/09_Audio/Evil.Engine.Audio::AudioGroup.cs": {},
- "src/09_Audio/Evil.Engine.Audio::AudioMixer.cs": {
-  "lambda": 1
- },
+ "src/09_Audio/Evil.Engine.Audio::AudioMixer.cs": {},
  "src/09_Audio/Evil.Engine.Audio::MusicTrack.cs": {},
  "src/09_Audio/Evil.Engine.Audio::Sound.cs": {},
  "src/09_Audio/Evil.Engine.Audio::SoundPlayback.cs": {},
@@ -145,21 +144,18 @@
  "src/99_Engine/Evil.Engine::GameOptions.cs": {},
  "src/99_Engine/Evil.Engine::ModelLoader.cs": {},
  "src/99_Engine/Evil.Engine::OggFormat.cs": {},
- "src/99_Engine/Evil.Engine::Scene.cs": {
-  "lambda": 3
- },
+ "src/99_Engine/Evil.Engine::Scene.cs": {},
  "src/99_Engine/Evil.Engine::SceneChange.cs": {},
  "src/99_Engine/Evil.Engine::SceneChangeKind.cs": {},
  "src/99_Engine/Evil.Engine::SceneLoader.cs": {},
- "src/99_Engine/Evil.Engine::SceneStack.cs": {
-  "lambda": 1
- },
+ "src/99_Engine/Evil.Engine::SceneStack.cs": {},
  "src/99_Engine/Evil.Engine::SoundFormat.cs": {},
  "src/99_Engine/Evil.Engine::SoundLoader.cs": {},
  "src/99_Engine/Evil.Engine::TextureLoader.cs": {},
  "src/99_Engine/Evil.Engine::WavFormat.cs": {},
  "tests/Evil.Engine.GodotTests::AudioTests.cs": {
-  "lambda": 4
+  "lambda": 4,
+  "long method": 1
  },
  "tests/Evil.Engine.GodotTests::ButtonAction.cs": {},
  "tests/Evil.Engine.GodotTests::ButtonHistory.cs": {},
@@ -182,7 +178,7 @@
  "tests/Evil.Engine.GodotTests::GlobalUsings.cs": {},
  "tests/Evil.Engine.GodotTests::InputTests.cs": {
   "duplicate": 2,
-  "linq": 2
+  "linq": 3
  },
  "tests/Evil.Engine.GodotTests::LightingTests.cs": {
   "lambda": 3,
@@ -234,7 +230,7 @@
  },
  "tests/Evil.Engine.Tests::EaseTests.cs": {
   "lambda": 3,
-  "linq": 5
+  "linq": 6
  },
  "tests/Evil.Engine.Tests::GlobalUsings.cs": {},
  "tests/Evil.Engine.Tests::Math3DTests.cs": {
@@ -243,7 +239,8 @@
  "tests/Evil.Engine.Tests::MathTests.cs": {},
  "tests/Evil.Engine.Tests::MathValidatorTests.cs": {
   "delegate": 1,
-  "lambda": 9
+  "lambda": 9,
+  "long method": 1
  },
  "tests/Evil.Engine.Tests::MoveStep.cs": {},
  "tests/Evil.Engine.Tests::PolygonProperties.cs": {
@@ -259,6 +256,7 @@
  "tests/Evil.Engine.Tests::RayAndBoundsProperties.cs": {
   "lambda": 3,
   "linq": 4,
+  "long method": 1,
   "tuple": 4
  },
  "tests/Evil.Engine.Tests::RectAndTransformProperties.cs": {

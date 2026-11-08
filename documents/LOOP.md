@@ -102,7 +102,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
 - [x] **R18 No duplicate code in the engine**: one button-state class for Keyboard and Mouse, one loader per
   content kind behind one base class in ContentLibrary, the Godot key table derived instead of typed out, the shapes'
   checks shared, MusicTrack's repeats folded. Each with its tests still green.
-- [ ] **R19 Object-oriented engine**: lambdas, LINQ chains and tuples in `src/` replaced by named methods and named
+- [x] **R19 Object-oriented engine**: lambdas, LINQ chains and tuples in `src/` replaced by named methods and named
   types, long methods (GodotKeys.Build, MotionPlayer.Update, GameMain._Process, InputFeed, GameBuilder.Build) cut
   into named steps; static classes only where they are pure maths like `System.Math`.
 - [ ] **R20 Object-oriented sample and tests**: the demo's actions become classes (`MoveAction`, `AttackAction`,
@@ -252,3 +252,15 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   spec (5,000 cases green; a planted ReleaseAll bug fails it on case 1). The checker now also catches string arms
   in switch expressions and skips declarations and tables in its same-shape mode, each with self-test cases.
   Clean code 272 -> 177, `src/` 112 -> 31. 82 + 107 tests, check.sh and driven run green. ![[orbit.png]]
+- 2026-11-09 00:29 R19: the engine has no clean-code findings left (`src/` 31 -> 0). MotionPlayer routes to a `TweenQueue`
+  per object and `LooseTweens` (both a `TweenGroup`, after the ratchet caught the two sharing code) instead of
+  lambdas over dictionaries; Model.Part loops; MusicTrack owns its player and replays through a named method;
+  the triangulator is an `EarClipper` object with a `Corner` record instead of static functions passing three
+  lists; Ray3's box test narrows an `Interval` per axis instead of a tuple swap; InputFeed is an object that owns
+  the keyboard and mouse; the game loop, the mouse feed and GameBuilder.Build are named steps. Proof the
+  refactors changed nothing: the old triangulator and ray-box code ran next to the new on 50,000 random inputs
+  each with identical output (then removed), 3 new seeds x 20,000 property cases green, and two behaviour drifts
+  I made were caught in review and undone (the clock summed floats; a null content root would have thrown the
+  wrong error). The checker learned `ToList`/`Concat`, stopped reading `Type? Name =>` as a lambda, and got a
+  long-method rule (over 30 lines; 4 left in the sample and tests). 82 + 107 tests, check.sh and the driven run
+  green. ![[orbit-driven.png]]
