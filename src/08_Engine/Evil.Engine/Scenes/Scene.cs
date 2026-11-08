@@ -1,6 +1,7 @@
 using Evil.Engine.Cameras;
 using Evil.Engine.Core;
 using Evil.Engine.Hosting;
+using Evil.Engine.Input;
 using Evil.Engine.Lighting;
 using Evil.Engine.World;
 
@@ -36,6 +37,9 @@ public abstract class Scene
     internal WorldObject? Root => _world;
 
     internal Camera? View => _camera;
+
+    protected Hit? Pick(System.Numerics.Vector2 screenPoint) =>
+        Picker.Pick(Camera, World, screenPoint);
 
     protected virtual void Enter()
     {

@@ -52,7 +52,7 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   zoom, pan, smooth) for a tactics view; screen point to world ray.
 - [x] **R5 Lighting**: Sun with shadows, Lamp (point), Spotlight, Environment (sky colour, ambient, fog, glow),
   light presets.
-- [ ] **R6 Input**: event-based keyboard and mouse (taps never lost, same API as the 2D engine), mouse picking
+- [x] **R6 Input**: event-based keyboard and mouse (taps never lost, same API as the 2D engine), mouse picking
   of WorldObjects through the camera ray.
 - [ ] **R7 Screen**: window settings applied (title, size, fullscreen, VSync), `CaptureFrame`, `CaptureAndExit`,
   2D overlay with our `Group()` canvas and text (Godot fonts), screen size changes.
@@ -91,3 +91,9 @@ tests/Evil.Engine.GodotTests                tests that run inside Godot against 
   Dusk, Night) per scene through its camera, default ambient so dark sides are gone. The leak check caught a real
   one: `new SpotLight3D { SpotAngle = Checked(angle) }` builds the light before the check runs. Dusk preset toned
   down after the first shot washed colours out. 36 pure + 53 Godot tests green. ![[r5-lighting.png]]
+- 2026-11-08 19:30 R6: library 06_Input: Keyboard and Mouse fed from Godot events (taps inside a frame kept,
+  repeats ignored, let go on focus loss), our `Key` list mapped to Godot physical keys (every key exactly once),
+  `Picker`/`Scene.Pick` with exact local-space hits (turned box, real sphere), `Pickable`, hidden skipped,
+  `WorldObject.Tag` and `Ancestor<T>()`. Demo is interactive (Space, Q/E, wheel, right-drag, hover glow, click
+  select, F12). check.sh now drives it with real X11 input: the mouse sweep found both pawns, the click selected
+  pawn-red, three wheel steps zoomed 13 to 8. 36 pure + 63 Godot tests green. ![[r6-input.png]]

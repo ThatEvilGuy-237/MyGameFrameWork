@@ -69,4 +69,5 @@ More libraries land round by round: see [documents/LOOP.md](documents/LOOP.md).
 bash scripts/godot.sh samples/OrbitDemo     # the demo on a machine without a screen
 ```
 
-On a desktop, open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play.
+On a desktop, open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play. Space pauses, Q and E turn the
+camera, the wheel zooms, right-drag orbits, hover and click a pawn to select it, F12 saves a screenshot.

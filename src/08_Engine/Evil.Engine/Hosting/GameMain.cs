@@ -1,4 +1,5 @@
 using Evil.Engine.Core;
+using Evil.Engine.Input;
 using Evil.Engine.Platform;
 using Evil.Engine.Screen;
 using Evil.Engine.World;
@@ -8,6 +9,8 @@ namespace Evil.Engine.Hosting;
 
 public abstract partial class GameMain : Node
 {
+    private readonly Keyboard _keyboard = new();
+    private readonly Mouse _mouse = new();
     private GameOptions? _options;
     private GameContext? _game;
     private double _totalSeconds;
@@ -24,7 +27,8 @@ public abstract partial class GameMain : Node
         RenderingServer.SetDefaultClearColor(_options.ClearColor.ToGodot());
         var worlds = new WorldObject("Worlds");
         AddChild(worlds.Node);
-        _game = new GameContext(worlds) { ScreenSize = ScreenSize() };
+        _mouse.Place(GetViewport().GetMousePosition().ToEvil());
+        _game = new GameContext(worlds, _keyboard, _mouse) { ScreenSize = ScreenSize() };
         RenderingServer.FramePostDraw += OnFrameDrawn;
         _game.Scenes.Push(_options.StartScene);
         _game.Scenes.ApplyChanges();
@@ -42,6 +46,8 @@ public abstract partial class GameMain : Node
         _game.Time = new GameTime((float)delta, _totalSeconds, _frame);
         _game.Scenes.Update(_game.Time);
         _game.Scenes.ApplyChanges();
+        _keyboard.EndFrame();
+        _mouse.EndFrame();
         if (_options.Snapshot is { } snapshot && snapshot.Frame == _frame)
         {
             _game.CaptureFrame(snapshot.Path);
@@ -61,6 +67,17 @@ public abstract partial class GameMain : Node
         }
 
         Quit();
+    }
+
+    public override void _Input(InputEvent @event) => InputFeed.Feed(@event, _keyboard, _mouse);
+
+    public override void _Notification(int what)
+    {
+        if (what == NotificationApplicationFocusOut)
+        {
+            _keyboard.ReleaseAll();
+            _mouse.ReleaseAll();
+        }
     }
 
     public override void _ExitTree()

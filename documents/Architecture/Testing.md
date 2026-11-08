@@ -36,6 +36,7 @@ public static void ChildrenFollowTheParentsTurn()
 
 ## The gate
 
-`scripts/check.sh`: build with warnings as errors, the pure suite, the Godot suite, then the OrbitDemo rendered
-under xvfb with frame 90 saved to `documents/screenshots/orbit.png`. Open the screenshot: a green run with a
+`scripts/check.sh`: build with warnings as errors, the pure suite, the Godot suite (fails on any Godot leak at
+exit), the OrbitDemo rendered under xvfb with frame 90 saved to `documents/screenshots/orbit.png`, then the demo
+driven with real keys and mouse (`scripts/drive-orbit.sh`, see [[Input]]) saved to `orbit-driven.png`. Open the screenshot: a green run with a
 wrong picture is not done.
