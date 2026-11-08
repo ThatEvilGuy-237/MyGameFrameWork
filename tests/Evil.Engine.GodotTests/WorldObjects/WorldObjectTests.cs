@@ -38,7 +38,7 @@ internal static class WorldObjectTests
         Check.True(child.Parent is null, "no parent");
         Check.True(child.Node.GetParent() is null, "the Godot node is out too");
         void RemoveAStranger() => parent.Remove(child);
-        Check.Throws<InvalidOperationException>(RemoveAStranger, "is not inside 'parent'");
+        Check.Throws<InvalidOperationException>(RemoveAStranger, "is not inside 'parent'. Remove takes direct children only: call Remove on");
         parent.Node.Free();
         child.Node.Free();
     }

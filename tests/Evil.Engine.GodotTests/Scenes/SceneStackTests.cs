@@ -90,7 +90,7 @@ internal static class SceneStackTests
         ProbeScene map = new ProbeScene("map", []);
         scenes.Push(map);
         scenes.Push(map);
-        Check.Throws<InvalidOperationException>(scenes.ApplyChanges, "already on the scene stack");
+        Check.Throws<InvalidOperationException>(scenes.ApplyChanges, "already on the scene stack. A scene object can be there once: make a new one to show it again.");
     }
 
     [Test]
@@ -106,5 +106,14 @@ internal static class SceneStackTests
         scenes.ExitAll();
         Check.Equal("battle.exit map.exit", string.Join(' ', log), "hooks");
         Check.Equal(0, scenes.Count, "empty");
+    }
+
+    [Test]
+    public static void PoppingAnEmptyStackSaysWhatToDo()
+    {
+        using Stage stage = Stage.Open();
+        SceneStack scenes = new SceneStack(null, stage.Root);
+        scenes.Pop();
+        Check.Throws<InvalidOperationException>(scenes.ApplyChanges, "Push a scene first, or call Game.Exit() to end the game.");
     }
 }

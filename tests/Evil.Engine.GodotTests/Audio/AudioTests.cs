@@ -77,7 +77,7 @@ internal static class AudioTests
         Check.True(!playing.IsPlaying, "and goes with it");
         WorldObject loose = new WorldObject("loose");
         void PlayFromALooseObject() => mixer.PlayAt(hit, loose);
-        Check.Throws<InvalidOperationException>(PlayFromALooseObject, "in a scene's world");
+        Check.Throws<InvalidOperationException>(PlayFromALooseObject, "in a scene's world: World.Add it first, or use Play");
         loose.Destroy();
     }
 

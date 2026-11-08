@@ -16,7 +16,7 @@ public sealed class TransformStack
     {
         if (_saved.Count == 0)
         {
-            throw new InvalidOperationException("Pop() without a matching Push().");
+            throw new InvalidOperationException("Pop() without a matching Push(). Every Pop needs a Push before it; using (Group()) pairs them for you.");
         }
 
         Current = _saved.Pop();

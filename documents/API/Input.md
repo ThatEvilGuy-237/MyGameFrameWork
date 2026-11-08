@@ -15,7 +15,7 @@ protected override void Update(GameTime time)
     if (Game.Mouse.Scroll != 0f) { _view.Zoom(MathF.Pow(0.85f, Game.Mouse.Scroll)); }
 
     Hit? hit = Pick(Game.Mouse.Position);
-    if (Game.Mouse.WasPressed(MouseButton.Left) && hit?.Target.Ancestor<Unit>() is { } unit)
+    if (Game.Mouse.WasPressed(MouseButton.Left) && hit?.Target.SelfOrAncestor<Unit>() is { } unit)
     {
         Select(unit);
     }
@@ -50,19 +50,25 @@ pixel and returns the nearest `Hit(Target, Point, Distance)`, or `null`.
 | shapes are tested in their own space | a turned box is hit exactly, not by a loose box around it |
 | spheres use the real sphere | the corners of their bounding box do not count |
 | `Pickable = false` and hidden objects are skipped | rings, markers and effects do not steal clicks |
-| `Ancestor<T>()` and `Tag` on any world object | a click on a pawn's hat finds the pawn and its game data |
+| `SelfOrAncestor<T>()` and `Tag` on any world object | a click on a pawn or its hat finds the pawn and its game data (`Ancestor<T>()` starts at the parent) |
 
 ### The tile under the mouse
 
-For a board on the ground, ask the camera where the mouse ray meets the floor and round it to a tile; no tile
-objects need to be picked:
+For a board on the ground, ask the camera where the mouse ray meets the floor and let the board's `Grid` (see
+[[Mathematics]]) say which cell that is; no tile objects need to be picked:
 
 ```csharp
 Vector3? ground = Camera.PointOnGround(Game.Mouse.Position);
-if (Game.Mouse.WasPressed(MouseButton.Left) && ground is Vector3 point)
+if (Game.Mouse.WasPressed(MouseButton.Left) && ground is Vector3 point && _board.CellAt(point) is Cell cell)
 {
-    int column = (int)MathF.Floor(point.X / TileSize);
-    int row = (int)MathF.Floor(point.Z / TileSize);
+    IReadOnlyList<Cell> path = _board.Path(_selected, cell, _occupied);
+    List<Vector3> steps = new List<Vector3>();
+    foreach (Cell step in path)
+    {
+        steps.Add(_board.CenterOf(step));
+    }
+
+    Game.Motion.MoveAlong(_unit, steps, 0.25f);
 }
 ```
 

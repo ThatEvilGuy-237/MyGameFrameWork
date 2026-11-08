@@ -136,14 +136,14 @@ public class WorldObject
     }
 
     private Node3D Live => IsDestroyed
-        ? throw new ObjectDisposedException(_name, $"'{_name}' was destroyed.")
+        ? throw Destroyed()
         : Node;
 
     public T Add<T>(T child)
         where T : WorldObject
     {
         ArgumentNullException.ThrowIfNull(child);
-        ObjectDisposedException.ThrowIf(child.IsDestroyed, child);
+        child.RequireAlive();
         if (child.Parent is not null)
         {
             throw new InvalidOperationException($"'{child.Name}' already belongs to '{child.Parent.Name}'; remove it there first.");
@@ -168,7 +168,7 @@ public class WorldObject
         ArgumentNullException.ThrowIfNull(child);
         if (!_children.Contains(child))
         {
-            throw new InvalidOperationException($"'{child.Name}' is not inside '{Name}'.");
+            throw new InvalidOperationException($"'{child.Name}' is not inside '{Name}'. Remove takes direct children only: call Remove on '{child.Parent?.Name ?? "nothing"}', its parent.");
         }
 
         Detach(child);
@@ -205,6 +205,17 @@ public class WorldObject
 
         return null;
     }
+
+    internal void RequireAlive()
+    {
+        if (IsDestroyed)
+        {
+            throw Destroyed();
+        }
+    }
+
+    public T? SelfOrAncestor<T>()
+        where T : WorldObject => this as T ?? Ancestor<T>();
 
     public T? Ancestor<T>()
         where T : WorldObject
@@ -313,4 +324,7 @@ public class WorldObject
             child.MarkDestroyed();
         }
     }
+
+    private ObjectDisposedException Destroyed() =>
+        new ObjectDisposedException(_name, $"'{_name}' was destroyed: Destroy() took it out of the world for good. Make a new one, or check IsDestroyed before using it.");
 }

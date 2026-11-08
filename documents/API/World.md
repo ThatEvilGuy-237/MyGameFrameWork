@@ -53,8 +53,8 @@ internal sealed class Unit : WorldObject
 }
 ```
 
-A click on the body then finds the unit with `hit.Target.Ancestor<Unit>()` (see [[Input]]). `Ancestor` starts at
-the parent, so it finds the group around the clicked shape, not the shape itself.
+A click on the body or on the unit itself finds the unit with `hit.Target.SelfOrAncestor<Unit>()` (see [[Input]]);
+`Ancestor<Unit>()` starts at the parent, so it skips the object that was clicked.
 
 ## Shapes
 
@@ -99,5 +99,5 @@ groups, under the names they had in Blender.
 | `Parts`, `Part(name)` | every mesh in the model, or one by name |
 | `part.Material` | paint one part; `null` goes back to the model's own material |
 | `Paint(material)` | paint every part at once |
-| `Find(name)`, `Descendants<T>()`, `Ancestor<T>()` | the same tree tools as any world object |
+| `Find(name)`, `Descendants<T>()`, `SelfOrAncestor<T>()`, `Ancestor<T>()` | the same tree tools as any world object |
 | `Source` | where it was loaded from |

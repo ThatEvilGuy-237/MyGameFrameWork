@@ -108,7 +108,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
 - [x] **R20 Object-oriented sample and tests**: the demo's actions become classes (`MoveAction`, `AttackAction`,
   `WaitAction` : `PawnAction`) instead of a `switch` on strings; property tests become classes with named case
   records that the runner finds by itself; shared test setup (camera, stage) in one place; test folders by meaning.
-- [ ] **R21 An API that guides**: R13's findings: an engine line when the game starts, `Ancestor` that can include
+- [x] **R21 An API that guides**: R13's findings: an engine line when the game starts, `Ancestor` that can include
   the object itself, a `Grid` type (cells, cell to world, neighbours, paths) proven with property tests, error
   messages that say what to do. Each change with a test.
 - [ ] **R22 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
@@ -116,7 +116,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
 - [ ] **R23 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
   left.
 - [ ] **R24 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
-  feed.
+  feed and checking the new start line.
 
 ## Log
 
@@ -289,3 +289,14 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   tests lost their tuple setups; the static `Property.ForAll` is gone; the Godot suite sits in folders by library.
   The checkers now skip files deleted but not yet unstaged (they crashed on one). One named allowance: the
   `Action` that `Check.Throws` takes. 83 + 109 tests green, check.sh and the driven run green. R20 done.
+- 2026-11-09 00:56 R21: the API guides. A `Grid` in Mathematics (cells on the ground, `CellAt`, `CenterOf`, 4- or
+  8-way `Neighbours`, shortest `Path` around blocked cells in the shape `MoveAlong` wants, `Reachable` for move
+  range), proven by 5 properties (20,000 cases x 2 seeds), a brute-force distance table built by repeated
+  relaxation, and Godot's `AStarGrid2D` agreeing on step counts over 3,000 boards; planted bugs (ignoring walls,
+  no diagonals) fail them on case 1 to 3. `SelfOrAncestor<T>()` finds the clicked object or its group (the demo's
+  hand loop is gone). The engine prints one start line (`Evil Engine 0.2.0: "Evil Engine orbit demo" 1280x720, first
+  scene OrbitScene, content res://content`) and check.sh fails without it. Ten error messages now say what to do
+  next (Destroy and IsDestroyed, using canvas.Group(), World.Add, Push a scene or Game.Exit, ...) and the tests check
+  that advice. Usability findings 3 and 10 and the Ancestor note fixed. The ratchet caught my own new findings
+  (a renamed `RandomGrids.Create` that read as LINQ `Any`, a 35-line oracle method) and one false alarm it now
+  understands (`where T : X =>`). 91 + 112 tests, check.sh and the driven run green.

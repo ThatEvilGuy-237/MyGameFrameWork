@@ -1,3 +1,4 @@
+using System.Reflection;
 using Evil.Engine.Audio;
 using Evil.Engine.Core;
 using Evil.Engine.Input;
@@ -53,6 +54,15 @@ public abstract partial class GameMain : Node, IOverlayPainter
         RenderingServer.FramePostDraw += OnFrameDrawn;
         _game.Scenes.Push(_options.StartScene);
         _game.Scenes.ApplyChanges();
+        AnnounceStart(_options);
+    }
+
+    private static void AnnounceStart(GameOptions options)
+    {
+        string? version = typeof(GameMain).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        string engine = version is null ? "Evil Engine" : $"Evil Engine {version.Split('+')[0]}";
+        WindowSettings window = options.Window;
+        Console.WriteLine($"{engine}: \"{window.Title}\" {window.Width}x{window.Height}, first scene {options.StartScene.GetType().Name}, content {options.ContentRoot}");
     }
 
     public override void _Process(double delta)

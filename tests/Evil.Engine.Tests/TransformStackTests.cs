@@ -70,7 +70,7 @@ internal static class TransformStackTests
     public static void PopAtTheRootThrows()
     {
         TransformStack stack = new TransformStack();
-        Check.Throws<InvalidOperationException>(stack.Pop, "Pop() without a matching Push()");
+        Check.Throws<InvalidOperationException>(stack.Pop, "Pop() without a matching Push(). Every Pop needs a Push before it; using (Group()) pairs them for you.");
     }
 
     [Test]

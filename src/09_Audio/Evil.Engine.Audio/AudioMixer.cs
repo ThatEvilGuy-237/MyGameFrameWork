@@ -58,10 +58,10 @@ public sealed class AudioMixer
     {
         ArgumentNullException.ThrowIfNull(sound);
         ArgumentNullException.ThrowIfNull(source);
-        ObjectDisposedException.ThrowIf(source.IsDestroyed, source);
+        source.RequireAlive();
         if (!source.Node.IsInsideTree())
         {
-            throw new InvalidOperationException($"AudioMixer.PlayAt needs '{source.Name}' in a scene's world.");
+            throw new InvalidOperationException($"AudioMixer.PlayAt needs '{source.Name}' in a scene's world: World.Add it first, or use Play for a sound that comes from nowhere in particular.");
         }
 
         AudioStreamPlayer3D player = new AudioStreamPlayer3D();

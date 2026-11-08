@@ -144,7 +144,9 @@ Godot 4.7.2 .NET.
    bash /mnt/hdd/projects/MyGameFrameWork/scripts/godot.sh .
    ```
 
-   The import is needed once, and again after new content. To take screenshots or click with `xdotool`, see
+   The first line the game prints says it started, for example
+   `Evil Engine 0.3.0: "My Game" 1280x720, first scene MapScene, content res://content`. No line means the engine
+   never got to its first scene. The import is needed once, and again after new content. To take screenshots or click with `xdotool`, see
    "Driving a game on the server" in [[Testing]].
 
 **Done when** a window shows a turning blue box on a green floor with "My Game" in the corner, and Escape closes it.
