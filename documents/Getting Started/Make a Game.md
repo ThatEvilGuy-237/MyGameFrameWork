@@ -117,7 +117,7 @@ internal sealed class MapScene : Scene
   </PropertyGroup>
   <Import Project="CodeStyle.targets" />
   <ItemGroup>
-    <PackageReference Include="Evil.Engine" Version="0.2.0" />
+    <PackageReference Include="Evil.Engine" Version="0.3.0" />
   </ItemGroup>
 </Project>
 ```

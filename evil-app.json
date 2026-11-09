@@ -2,7 +2,7 @@
   "spec": 2,
   "id": "evil-engine",
   "name": "Evil Engine",
-  "description": "Our own game engine SDK in C#: 11 numbered class libraries over Godot 4.7.2 for a full 3D game (world, models, cameras, lights, input, screen, motion, audio); 0.2.0 in the feed; 0.1.0 was the OpenTK 2D engine.",
+  "description": "Our own game engine SDK in C#: 11 numbered libraries over Godot 4.7.2 for a full 3D game, plus `dotnet new evil-game`; 0.3.0 in the feed; maths proven by property tests; zero clean-code findings.",
   "kind": "library",
   "lifecycle": "building",
   "owner": "Thatevilguy",
@@ -30,7 +30,7 @@
   },
   "flow": {
     "branch": "main",
-    "promote": "scripts/check.sh green, bump the version in Directory.Build.props, commit, merge, push, ./scripts/pack.sh from clean main, scripts/make-a-game-check.sh on the feed; games move to the exact version.",
+    "promote": "scripts/check.sh green, bump <Version> in Directory.Build.props and the template's Evil.Engine version together, commit, merge, push, ./scripts/pack.sh from clean main, scripts/make-a-game-check.sh on the feed, tag vX.Y.Z; games move to the exact version.",
     "rules": [
       "Lock-step versions: every package carries the same version.",
       "Packages only from the checked list; Godot pinned at 4.7.2.",
