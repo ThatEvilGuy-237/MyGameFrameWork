@@ -115,7 +115,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   Game files plus the code style checks (`.editorconfig`, `EnforceCodeStyleInBuild`); make-a-game-check builds from it.
 - [x] **R23 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
   left.
-- [ ] **R24 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
+- [x] **R24 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
   feed and checking the new start line.
 
 ## Log
@@ -322,3 +322,14 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   plants all three in one file and needs each at its line); `Camera.Frame(bounds, pitch, yaw)` and `Grid.Bounds`,
   proven by a Godot property test that every corner of 2,000 random boxes is in view (a planted too-close camera
   fails on case 1). 92 + 113 tests, check.sh, the driven run and make-a-game-check green. ![[r23-fresh-eyes.png]]
+- 2026-11-09 01:27 R24: **Evil Engine 0.3.0 released.** Version and template bumped together; a [[Changes]] note for game
+  authors (new: the template, `Grid`, `Camera.Frame`, `SelfOrAncestor`, `RoundShape`, the start line, the
+  [[Scenes]] note; changed: refused NaN and impossible values, the skew and zero-scale refusals, the zero-scale pick
+  and small-sphere fixes, models parsed once, errors that say what to do; unchanged: every namespace and public type);
+  Home, README, the history note and the registry updated. check.sh green at 0.3.0 (92 + 113 tests, the driven run,
+  zero clean-code findings). Packed 12 packages from main b65b868 into the feed; make-a-game-check on the real feed
+  green (dotnet new, the three planted style problems at their lines, `Evil Engine 0.3.0` start line, green floor,
+  title, Escape, no leaks). The template is installed on the server (`dotnet new evil-game` works now). Tags
+  `v0.2.0` (574e6cc) and `v0.3.0` (b65b868) pushed. ![[make-a-game.png]]
+
+The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits for the owner's OK).
