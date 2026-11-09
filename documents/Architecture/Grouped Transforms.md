@@ -7,7 +7,7 @@ aliases: [Transform stack, Groups, SRT]
 
 The heart of the engine and the idea MyGameFrameWork started from: MonoGame puts the origin back at `(0, 0)` on
 every draw, so moving a group of things means moving each one. Here a **group** keeps its parent's move, turn
-and scale, and everything inside follows. In 0.2.0 the idea lives in two places.
+and scale, and everything inside follows. Since 0.2.0 the idea lives in two places.
 
 ## In the 3D world: WorldObject
 

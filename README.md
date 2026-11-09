@@ -45,8 +45,17 @@ internal sealed class OrbitScene : Scene
 }
 ```
 
-`_blue.Add(...)` puts the yellow sphere in the blue box's group: turn the box and the sphere orbits it. A new game
-from scratch: [documents/Getting Started/Make a Game.md](documents/Getting%20Started/Make%20a%20Game.md).
+`_blue.Add(...)` puts the yellow sphere in the blue box's group: turn the box and the sphere orbits it.
+
+A new game from scratch, with the code style in its build:
+
+```bash
+dotnet new install Evil.Engine.Templates --add-source /mnt/hdd/projects/MyGameFrameWork-data/feed
+dotnet new evil-game -n Skirmish --title "Tile Skirmish"
+```
+
+See [documents/Getting Started/Make a Game.md](documents/Getting%20Started/Make%20a%20Game.md), and what is new in
+[documents/Changes.md](documents/Changes.md).
 
 ## Layout
 

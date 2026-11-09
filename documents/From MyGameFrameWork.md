@@ -9,7 +9,8 @@ aliases: [Old engine, MyGameFrameWork, Migration, History]
 |---|---|---|
 | MyGameFrameWork (July 2025) | the owner's OpenGL learning project before the AZTEQ internship: `EvilUtils` with grouped transforms | commit `8b1fb3f` |
 | 0.1.0 (November 2026) | that idea as a clean 2D SDK on OpenTK: builder, scenes, batched canvas | tag `v0.1.0` |
-| 0.2.0 (November 2026) | a 3D game engine SDK on Godot 4.7.2: numbered libraries, world, cameras, lights, input, screen, content, motion, audio | `main` |
+| 0.2.0 (November 2026) | a 3D game engine SDK on Godot 4.7.2: numbered libraries, world, cameras, lights, input, screen, content, motion, audio | tag `v0.2.0` |
+| 0.3.0 (November 2026) | the same engine made easy to code with: `dotnet new evil-game`, `Grid`, `Camera.Frame`, errors that say what to do, maths proven by property tests, clean object-oriented code ([[Changes]]) | `main` |
 
 The idea that started it all made it through both rewrites: things in a group follow their parent's move, turn and
 scale ([[Grouped Transforms]]). In 0.2.0 that is `WorldObject` in 3D and `Canvas.Group()` on the 2D overlay.
