@@ -13,9 +13,10 @@ It is a `WorldObject`, so it moves, turns and looks at things like any other obj
 | Member | What |
 |---|---|
 | `Projection` | `Perspective` (things far away look smaller) or `Orthographic` (no shrinking, a board-game look) |
-| `FieldOfView` | perspective: vertical view angle in degrees |
+| `FieldOfView` | perspective: vertical view angle in degrees, 75 to start with |
 | `OrthographicSize` | orthographic: how many world units fit top to bottom |
-| `Near`, `Far` | the closest and furthest distance that gets drawn |
+| `Near`, `Far` | the closest and furthest distance that gets drawn, 0.05 and 4000 to start with |
+| `Frame(bounds, pitch = 50, yaw = 0)` | moves and turns the camera so the whole box is in view, looking down at `pitch` degrees from `yaw`; a board frames itself with `Camera.Frame(grid.Bounds)` |
 | `ScreenToRay(screenPoint)` | the `Ray3` that goes from the camera through a pixel (see [[Mathematics]]) |
 | `PointOnGround(screenPoint, height = 0)` | where that ray hits a flat floor; `null` if it never does |
 | `WorldToScreen(point)` | which pixel a world point lands on |

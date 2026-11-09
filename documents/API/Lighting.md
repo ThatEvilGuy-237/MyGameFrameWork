@@ -51,7 +51,7 @@ away from the sun is never pitch black.
 | `AmbientFromSky` | take the ambient light from a gradient sky instead; `AmbientStrength` is then the sky's share, 0 to 1 |
 | `Fog` | `new Fog(color, density)` or `null` for none |
 | `Glow` | 0 is off; makes glowing materials bloom |
-| `ToneMapping`, `Exposure` | `Linear`, `Filmic` (default) or `Aces`; overall brightness |
+| `ToneMapping`, `Exposure` | `Filmic` (default: softer highlights, colours a little lighter), `Aces`, or `Linear` (colours as given); overall brightness |
 
 Presets: `Atmosphere.Studio()`, `Daylight()`, `Dusk()`, `Night()`.
 

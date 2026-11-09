@@ -18,6 +18,7 @@ duplicate code; a file needs meaning, not just code here or there, and folders n
 | no delegates handed around | `Func<Random, T> generate, Action<T> check` | an abstract `Property<TCase>` with `Generate` and `Verify` |
 | no duplicate code | the same 8 lines in Keyboard and Mouse | one `ButtonStates<T>` both use |
 | one type per file | `ObjectTweens.cs` with 8 classes | `MoveTween.cs`, `HopTween.cs`, ... in `Tweens/` |
+| short methods | a 48-line game loop | named steps; a method may be 30 lines at most, from its first line to its closing brace |
 | folders with meaning | 25 files side by side in `Evil.Engine.World` | `Objects/`, `Shapes/`, `Materials/`, `Models/` |
 
 What the duplicate check does not count, because it is declaration or data, not copied logic: enum lists, one-line
@@ -37,6 +38,13 @@ call it expects to fail. Every caller hands it a named method, which the lambda 
 Explicit types, constructor then statements and no comments still hold (see the repo's `CLAUDE.md`).
 Expression-bodied members (`public float Area => Width * Height;`) and switch expressions over enums are C#, not
 lambdas, and stay.
+
+## In a game
+
+A game made with `dotnet new evil-game` gets the same rules. Its build enforces three of them (no `var`, no
+`new()`, no initializer blocks: see [[Make a Game]]); the rest (classes over lambdas and LINQ, named types over
+tuples, no duplicates, one type per file, short methods, folders with meaning) are the house style its author keeps,
+because `scripts/clean-code-check.py` only runs in this repo.
 
 ## The check
 

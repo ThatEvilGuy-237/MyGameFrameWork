@@ -22,7 +22,9 @@ Godot 4.7.2 .NET. One command makes it.
    dotnet new evil-game -n Skirmish --title "Tile Skirmish"
    ```
 
-   `--feed` points at another package folder or NuGet source if the engine's packages live elsewhere.
+   `--feed` points at another package folder or NuGet source if the engine's packages live elsewhere. With a folder
+   feed, add `--no-update-check`: there is no online version to compare with. To call the first scene something else,
+   rename `MapScene.cs` and its class, and the `new MapScene()` in `Main.cs`.
 
 3. **Run it.** On a desktop, open the folder in Godot 4.7.2 (.NET) and press play. On the server, with the engine
    repo's script (a game folder has no `scripts/`):
@@ -34,9 +36,9 @@ Godot 4.7.2 .NET. One command makes it.
    bash /mnt/hdd/projects/MyGameFrameWork/scripts/godot.sh .
    ```
 
-   The first line the game prints says it started, for example
+   The first line the game prints says it started, before the first scene enters, for example
    `Evil Engine 0.3.0: "Tile Skirmish" 1280x720, first scene MapScene, content res://content`. No line means the
-   engine never got to its first scene. The import is needed once, and again after new content. To take screenshots
+   engine never started. The import is needed once, and again after new content. To take screenshots
    or click with `xdotool`, see "Driving a game on the server" in [[Testing]].
 
 **Done when** a window shows a turning blue box on a green floor with the title in the corner, and Escape closes
@@ -50,9 +52,9 @@ it.
 |---|---|
 | `Main.cs` | the game's one Godot line: window, content folder, first scene |
 | `MapScene.cs` | the first scene: a floor, a turning box, the title, Escape quits |
-| `GlobalUsings.cs` | every Evil Engine namespace, so no file needs its own usings |
+| `GlobalUsings.cs` | `System`, collections, `System.Numerics` and every Evil Engine namespace, so no file needs its own usings |
 | `<name>.csproj` | Godot's SDK, the `Evil.Engine` package, warnings as errors, the code style in the build |
-| `CodeStyle.targets` | stops the build on `new()` and on `{ Name = ... }` blocks, and says what to write instead |
+| `CodeStyle.targets` | stops the build on `new()` (EVIL001) and on `{ Name = ... }` blocks (EVIL002), with file, line and what to write instead, all in one build |
 | `.editorconfig` | stops the build on `var` |
 | `project.godot`, `main.tscn`, `nuget.config`, `.gitignore` | the Godot project, its one scene, where the packages come from, what git skips |
 
@@ -127,7 +129,8 @@ off ([[Decisions]] 24).
 > [!important] The code style is part of the game
 > A game made this way builds only in the project's code style: real types instead of `var` (the compiler's
 > IDE0008), and objects built with their constructor and then plain statements: no `new()` and no initializer
-> blocks (`CodeStyle.targets`). The error says which file and what to write instead.
+> blocks (`CodeStyle.targets`). One build lists every problem with its file and line and what to write instead.
+> The rest of the house style is in [[Clean Code]].
 
 `scripts/make-a-game-check.sh` runs exactly these steps after every pack (see [[Testing]]), and `check.sh` fails if
 this note stops showing the template's files as they are.

@@ -33,6 +33,8 @@ public sealed class Grid
 
     public GridMoves Moves { get; }
 
+    public Bounds3 Bounds => new Bounds3(Corner, Corner + new Vector3(Columns * CellSize, 0f, Rows * CellSize));
+
     public override string ToString() => $"{Columns}x{Rows} grid of {CellSize} cells at {Corner}, {Moves} moves";
 
     public static Grid Centered(int columns, int rows, float cellSize, GridMoves moves = GridMoves.Four) =>

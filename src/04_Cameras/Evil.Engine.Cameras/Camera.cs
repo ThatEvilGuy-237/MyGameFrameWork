@@ -9,6 +9,8 @@ namespace Evil.Engine.Cameras;
 
 public class Camera : WorldObject
 {
+    private const float BreathingRoom = 1.05f;
+
     public Camera()
         : base(new Camera3D())
     {
@@ -77,7 +79,39 @@ public class Camera : WorldObject
         return !Lens.IsPositionBehind(point) && Lens.IsPositionInFrustum(point);
     }
 
+    public void Frame(Bounds3 bounds, float pitchDegrees = 50f, float yawDegrees = 0f)
+    {
+        RequireInWorld(nameof(Frame));
+        float radius = MathF.Max(bounds.Size.Length() / 2f, 0.01f) * BreathingRoom;
+        Pose eye = Orbit.PoseFor(bounds.Center, yawDegrees, pitchDegrees, DistanceToFit(radius));
+        Position = Parent is null ? eye.Position : Parent.ToLocal(eye.Position);
+        LookAt(bounds.Center);
+        Far = MathF.Max(Far, Vector3.Distance(eye.Position, bounds.Center) + radius * 2f);
+        if (Projection == CameraProjection.Orthographic)
+        {
+            OrthographicSize = radius * 2f * MathF.Max(1f, 1f / ScreenAspect());
+        }
+    }
+
     internal void MakeCurrent() => Lens.Current = true;
+
+    private float DistanceToFit(float radius)
+    {
+        if (Projection == CameraProjection.Orthographic)
+        {
+            return radius + Near + 1f;
+        }
+
+        float verticalHalf = Angle.ToRadians(FieldOfView) / 2f;
+        float horizontalHalf = MathF.Atan(MathF.Tan(verticalHalf) * ScreenAspect());
+        return radius / MathF.Sin(MathF.Min(verticalHalf, horizontalHalf)) + Near;
+    }
+
+    private float ScreenAspect()
+    {
+        Godot.Vector2 screen = Lens.GetViewport().GetVisibleRect().Size;
+        return screen.X / MathF.Max(1f, screen.Y);
+    }
 
     private void RequireInWorld(string call)
     {

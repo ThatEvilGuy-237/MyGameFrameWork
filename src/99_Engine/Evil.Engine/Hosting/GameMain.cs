@@ -52,9 +52,9 @@ public abstract partial class GameMain : Node, IOverlayPainter
         _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot), new AudioMixer(audio));
         _game.ScreenSize = ScreenSize();
         RenderingServer.FramePostDraw += OnFrameDrawn;
+        AnnounceStart(_options);
         _game.Scenes.Push(_options.StartScene);
         _game.Scenes.ApplyChanges();
-        AnnounceStart(_options);
     }
 
     private static void AnnounceStart(GameOptions options)

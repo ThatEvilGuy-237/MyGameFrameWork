@@ -77,14 +77,15 @@ ends, a cone's only the bottom.
 
 ## Materials
 
-A `Material` can be shared: give ten pillars the same `stone` and recolour them all at once.
+Every shape made with a colour gets a material of its own, so changing one shape's material changes only that
+shape. A `Material` can also be shared on purpose: give ten pillars the same `stone` and recolour them all at once.
 
 | Member | What |
 |---|---|
 | `Color` | base colour; an alpha below 1 makes it see-through |
 | `Roughness`, `Metallic` | 0 to 1 |
 | `Glow`, `GlowStrength` | light the object gives off itself |
-| `Unshaded` | ignore lights (flat colour): the screen shows exactly the colour you gave, good for board tiles and markers |
+| `Unshaded` | ignore lights (flat colour), good for board tiles and markers. The atmosphere's tone mapping still shifts it; for exactly the colour you gave, also set `Atmosphere.ToneMapping = ToneMapping.Linear` |
 | `Material.Matte`, `Shiny`, `Metal`, `Glowing` | ready-made starting points |
 
 | `Texture`, `TextureScale` | an image on the surface (see [[Content]]); scale above 1 tiles it |
