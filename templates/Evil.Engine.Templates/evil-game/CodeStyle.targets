@@ -1,0 +1,17 @@
+<Project>
+
+  <PropertyGroup>
+    <EvilTargetTypedNew>(?&lt;![\w.])new\s*\(</EvilTargetTypedNew>
+    <EvilInitializerBlock>\bnew\s+[\w.&lt;&gt;\[\],? ]+(\([^;{}]*\))?\s*\{\s*(\w+|\[[^\]]*\])\s*=[^=&gt;]</EvilInitializerBlock>
+  </PropertyGroup>
+
+  <Target Name="EvilCodeStyle" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <EvilTargetTypedNewFile Include="@(Compile)" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($([System.IO.File]::ReadAllText('%(Compile.FullPath)')), '$(EvilTargetTypedNew)'))" />
+      <EvilInitializerFile Include="@(Compile)" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($([System.IO.File]::ReadAllText('%(Compile.FullPath)')), '$(EvilInitializerBlock)'))" />
+    </ItemGroup>
+    <Error Condition="'@(EvilTargetTypedNewFile)' != ''" File="%(EvilTargetTypedNewFile.Identity)" Text="Code style: write the type after new, as in new Box(...), not new()." />
+    <Error Condition="'@(EvilInitializerFile)' != ''" File="%(EvilInitializerFile.Identity)" Text="Code style: build the object with its constructor, then set each property as a statement; no { Name = ... } block." />
+  </Target>
+
+</Project>

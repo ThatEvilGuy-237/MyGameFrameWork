@@ -12,6 +12,9 @@ python3 -I scripts/style-check.py | tail -n 1
 echo "== clean code (object oriented, no duplicates, may only get better)"
 python3 -I scripts/clean-code-check.py
 
+echo "== the Make a Game note shows the game template as it is"
+python3 -I scripts/make-a-game.py
+
 echo "== build (warnings are errors)"
 dotnet build EvilEngine.slnx -nologo -v q
 

@@ -111,7 +111,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
 - [x] **R21 An API that guides**: R13's findings: an engine line when the game starts, `Ancestor` that can include
   the object itself, a `Grid` type (cells, cell to world, neighbours, paths) proven with property tests, error
   messages that say what to do. Each change with a test.
-- [ ] **R22 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
+- [x] **R22 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
   Game files plus the code style checks (`.editorconfig`, `EnforceCodeStyleInBuild`); make-a-game-check builds from it.
 - [ ] **R23 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
   left.
@@ -300,3 +300,13 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   that advice. Usability findings 3 and 10 and the Ancestor note fixed. The ratchet caught my own new findings
   (a renamed `RandomGrids.Create` that read as LINQ `Any`, a 35-line oracle method) and one false alarm it now
   understands (`where T : X =>`). 91 + 112 tests, check.sh and the driven run green.
+- 2026-11-09 01:07 R22: `dotnet new evil-game -n Skirmish --title "Tile Skirmish"` makes a game: project file, Main.cs, MapScene.cs,
+  usings, Godot project, nuget.config, `.gitignore`, and the code style in the build (`.editorconfig` refuses `var`;
+  a visible `CodeStyle.targets` refuses `new()` and initializer blocks, naming the file and what to write instead,
+  because the compiler has no rule for those two). `Evil.Engine.Templates` packs with the engine; pack.sh refuses a
+  template that asks for another engine version. make-a-game-check now builds from the template (private template
+  and package folders), plants `var`, `new()` and an initializer block and needs each to fail, needs the start
+  line, and still checks floor, title, Escape and leaks: green on a trial feed. Make a Game shows the template's
+  files and check.sh fails when they drift (a planted change was caught). Found: the template engine treats MSBuild
+  `Condition` attributes as its own and stripped one, so every new game failed its style check; the file is
+  copy-only now. pack.sh died silently on an `ls` exit code under pipefail; fixed. ![[make-a-game.png]]

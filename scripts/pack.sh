@@ -3,7 +3,12 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 feed="${EVIL_FEED:-/mnt/hdd/projects/MyGameFrameWork-data/feed}"
 version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props)"
-packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Input Evil.Engine.Screen Evil.Engine.Motion Evil.Engine.Audio Evil.Engine)
+packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Input Evil.Engine.Screen Evil.Engine.Motion Evil.Engine.Audio Evil.Engine Evil.Engine.Templates)
+template_engine="$(sed -n 's:.*Include="Evil.Engine" Version="\([^"]*\)".*:\1:p' templates/Evil.Engine.Templates/evil-game/MyGame.csproj)"
+if [ "$template_engine" != "$version" ]; then
+  echo "refused: the game template asks for Evil.Engine $template_engine but this is $version; change MyGame.csproj in the template" >&2
+  exit 1
+fi
 mkdir -p "$feed"
 for id in "${packages[@]}"; do
   if [ -e "$feed/$id.$version.nupkg" ]; then
@@ -19,7 +24,11 @@ fi
 out="$(mktemp -d)"
 trap 'rm -rf "$out"' EXIT
 for id in "${packages[@]}"; do
-  dotnet pack src/*/"$id"/"$id".csproj -c Release -o "$out" -nologo -v q -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$commit" >/dev/null
+  project="templates/$id/$id.csproj"
+  for candidate in src/*/"$id"/"$id".csproj; do
+    [ -e "$candidate" ] && project="$candidate"
+  done
+  dotnet pack "$project" -c Release -o "$out" -nologo -v q -p:ContinuousIntegrationBuild=true -p:RepositoryCommit="$commit" >/dev/null
 done
 for id in "${packages[@]}"; do
   install -m 644 "$out/$id.$version.nupkg" "$feed/"

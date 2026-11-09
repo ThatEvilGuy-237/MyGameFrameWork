@@ -1,0 +1,14 @@
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Numerics;
+global using Evil.Engine.Audio;
+global using Evil.Engine.Cameras;
+global using Evil.Engine.Core;
+global using Evil.Engine.Hosting;
+global using Evil.Engine.Input;
+global using Evil.Engine.Lighting;
+global using Evil.Engine.Mathematics;
+global using Evil.Engine.Motion;
+global using Evil.Engine.Scenes;
+global using Evil.Engine.Screen;
+global using Evil.Engine.World;
