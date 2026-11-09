@@ -134,10 +134,15 @@ examples.
 
 ## After a pack
 
-`scripts/make-a-game-check.sh [feed]` makes a new game from the code blocks in [[Make a Game]] and nothing else,
-restores `Evil.Engine` from the feed into a private package folder, builds it with warnings as errors, and runs it
-under xvfb. It fails when the build breaks, when the 11 Evil.Engine libraries are not next to the game, when Escape
-does not close it, on any Godot error or leak, when the floor is not green, or when "My Game" is missing from the
-corner. Its first run found two bugs no other check could: Godot did not find the engine's DLLs in a packaged game,
-and `Daylight()` turned the green floor turquoise ([[Decisions]] 39 and 40).
+`scripts/make-a-game-check.sh [feed]` makes a new game the way [[Make a Game]] says: it installs
+`Evil.Engine.Templates` from the feed into a private template folder, runs `dotnet new evil-game`, restores the
+packages into a private package folder and builds with warnings as errors. Then it plants `var`, `new()` and an
+initializer block in turn, and each must stop the build with the right message. It runs the game under xvfb and
+fails when the 11 Evil.Engine libraries are not next to the game, when the start line is missing, when Escape does not
+close it, on any Godot error or leak, when the floor is not green, or when the title is missing from the corner.
+Its first runs found three bugs no other check could: Godot did not find the engine's DLLs in a packaged game,
+`Daylight()` turned the green floor turquoise ([[Decisions]] 39 and 40), and the template engine stripped an MSBuild
+`Condition` from `CodeStyle.targets`, so every new game failed its own style check (it is copied untouched now).
 
+`check.sh` also checks that the [[Make a Game]] note still shows the template's `Main.cs`, `MapScene.cs` and project
+file as they are (`scripts/make-a-game.py`).

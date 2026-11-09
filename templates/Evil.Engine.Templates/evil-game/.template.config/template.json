@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Thatevilguy",
+  "classifications": ["Game", "Godot", "Evil Engine"],
+  "identity": "Evil.Engine.Game",
+  "name": "Evil Engine game",
+  "shortName": "evil-game",
+  "sourceName": "MyGame",
+  "preferNameDirectory": true,
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "copyOnly": ["CodeStyle.targets"]
+    }
+  ],
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "title": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "My Game",
+      "replaces": "My Game",
+      "description": "The window title, also drawn in the corner of the first scene."
+    },
+    "feed": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "/mnt/hdd/projects/MyGameFrameWork-data/feed",
+      "replaces": "EVIL_ENGINE_FEED",
+      "description": "Where the Evil Engine packages are: the folder feed or a NuGet source."
+    }
+  }
+}

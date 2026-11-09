@@ -65,6 +65,7 @@ src/99_Engine        Evil.Engine                GameBuilder, GameMain, content, 
 samples/OrbitDemo                               a Godot project using only our API
 tests/Evil.Engine.Tests                         pure tests (Core, Mathematics)
 tests/Evil.Engine.GodotTests                    tests that run inside Godot against real nodes
+templates/Evil.Engine.Templates               dotnet new evil-game: a new game in one command
 documents/                                      docs (Obsidian vault): start at documents/Home.md
 ```
 
@@ -76,7 +77,7 @@ A library only uses lower numbers. A game references the `Evil.Engine` package a
 ./scripts/check.sh                          # style, build, tests, the demo rendered and driven with real input
 bash scripts/godot.sh samples/OrbitDemo     # the demo on a machine without a screen
 ./scripts/pack.sh                           # pack all eleven packages into the folder feed
-./scripts/make-a-game-check.sh              # a new game from the docs, built from the feed and run
+./scripts/make-a-game-check.sh              # dotnet new evil-game from the feed: built, style-checked and run
 ```
 
 On a desktop, open `samples/OrbitDemo` in Godot 4.7.2 (.NET) and press play. Hover and click a pawn, then Move,

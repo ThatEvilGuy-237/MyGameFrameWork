@@ -2,32 +2,28 @@ import re
 import sys
 import textwrap
 
-doc, out, feed = sys.argv[1:4]
-text = open(doc, encoding="utf-8").read()
+DOC = "documents/Getting Started/Make a Game.md"
+TEMPLATE = "templates/Evil.Engine.Templates/evil-game"
+SHOWN = [("csharp", "Main.cs"), ("csharp", "MapScene.cs"), ("xml", "MyGame.csproj")]
 
 
-def blocks(lang):
-    pattern = r"^[ \t]*```" + lang + r"\n(.*?)^[ \t]*```"
+def blocks(text, language):
+    pattern = r"^[ \t]*```" + language + r"\n(.*?)^[ \t]*```"
     return [textwrap.dedent(block) for block in re.findall(pattern, text, re.S | re.M)]
 
 
-ini, xml, cs = blocks("ini"), blocks("xml"), blocks("csharp")
-if (len(ini), len(xml), len(cs)) != (2, 2, 2):
-    sys.exit(f"Make a Game should have 2 ini, 2 xml and 2 csharp blocks, found {len(ini)}, {len(xml)}, {len(cs)}")
+def main():
+    text = open(DOC, encoding="utf-8").read()
+    shown = {language: blocks(text, language) for language in ("csharp", "xml")}
+    drifted = 0
+    for language, name in SHOWN:
+        template = open(f"{TEMPLATE}/{name}", encoding="utf-8").read()
+        if template not in shown[language]:
+            drifted += 1
+            print(f"Make a Game no longer shows the template's {name} as it is; copy {TEMPLATE}/{name} into the note")
+    print(f"Make a Game shows {len(SHOWN) - drifted} of {len(SHOWN)} template files as they are")
+    return 1 if drifted else 0
 
-documented_feed = "/mnt/hdd/projects/MyGameFrameWork-data/feed"
-if xml[1].count(documented_feed) != 1:
-    sys.exit("the nuget.config in Make a Game no longer names the feed folder")
 
-files = {
-    "project.godot": ini[0],
-    "main.tscn": ini[1],
-    "MyGame.csproj": xml[0],
-    "nuget.config": xml[1].replace(documented_feed, feed),
-    "Main.cs": cs[0],
-    "GlobalUsings.cs": cs[1],
-}
-for name, content in files.items():
-    with open(f"{out}/{name}", "w", encoding="utf-8") as handle:
-        handle.write(content)
-print(f"made {out} from the note: {len(files)} files")
+if __name__ == "__main__":
+    sys.exit(main())
