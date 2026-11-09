@@ -113,7 +113,7 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   messages that say what to do. Each change with a test.
 - [x] **R22 A new game in one command**: `dotnet new evil-game` template package in the feed that writes the Make a
   Game files plus the code style checks (`.editorconfig`, `EnforceCodeStyleInBuild`); make-a-game-check builds from it.
-- [ ] **R23 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
+- [x] **R23 Fresh eyes again**: a new agent, same task as R13; compare (stuck N times before, M now) and fix what is
   left.
 - [ ] **R24 Docs and pack 0.3.0**: API notes and Decisions for every change, `0.3.0` packed, make-a-game-check on the
   feed and checking the new start line.
@@ -310,3 +310,15 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   files and check.sh fails when they drift (a planted change was caught). Found: the template engine treats MSBuild
   `Condition` attributes as its own and stripped one, so every new game failed its style check; the file is
   copy-only now. pack.sh died silently on an `ls` exit code under pipefail; fixed. ![[make-a-game.png]]
+- 2026-11-09 01:23 R23: a new Sonnet agent, the same task as R13, a trial pack of `main` (old packages cleared from the
+  NuGet cache, the earlier findings hidden). It used `dotnet new evil-game`, `Grid.Path`, `CellAt` with
+  `PointOnGround` and `SelfOrAncestor<Unit>()` "without friction"; every bullet met. R13: 13 findings, 3 major, about
+  100 lines of hand-made board code. R23: 10 findings, 0 major, the board 69 lines with paths from `Grid`. All 10
+  fixed: `System` in the template's usings (and `System.Linq` out); a new [[Scenes]] note (life of a scene,
+  `GameContext`, helper classes, logging); the truth about `Unshaded` and tone mapping; material ownership and camera
+  defaults written down; a recipe for screen positions in scripted runs; the clean-code rules for games and the
+  30-line limit; the start line printed before the first scene; `CodeStyle.targets` as a small task that lists every
+  problem with file and line in one build (EVIL001, EVIL002, next to the compiler's IDE0008: the Make a Game check
+  plants all three in one file and needs each at its line); `Camera.Frame(bounds, pitch, yaw)` and `Grid.Bounds`,
+  proven by a Godot property test that every corner of 2,000 random boxes is in view (a planted too-close camera
+  fails on case 1). 92 + 113 tests, check.sh, the driven run and make-a-game-check green. ![[r23-fresh-eyes.png]]

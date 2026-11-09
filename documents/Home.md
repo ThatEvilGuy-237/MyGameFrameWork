@@ -22,6 +22,7 @@ move, turn and scale together ([[Grouped Transforms]]).
 | Getting started | [[Make a Game]] · [[Run the Sample]] |
 | Architecture | [[Architecture Overview]] · [[Grouped Transforms]] · [[Testing]] |
 | The 3D world | [[World]] · [[Content]] · [[Cameras]] · [[Lighting]] |
+| A game | [[Scenes]] (the scene's life and `Game`) |
 | Play | [[Input]] · [[Screen]] · [[Motion]] · [[Audio]] |
 | Maths without Godot | [[Mathematics]] |
 | Why it is built this way | [[Decisions]] |

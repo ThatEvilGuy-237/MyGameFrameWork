@@ -128,6 +128,10 @@ import -window "$window" -depth 8 shot.png
 xdotool key Escape
 ```
 
+To click a particular unit or tile, let the game say where it is: print positions with `Camera.WorldToScreen`
+(for example `Console.WriteLine($"screen: unit Red 1 {(int)spot.X} {(int)spot.Y}")` in `Enter`), and let the
+script read them from the log; `Console.WriteLine` output lands in the file you sent the game's output to.
+
 Wait for the window in a loop before using it: Godot takes a few seconds to open it. `godot.sh` stops any run after
 300 seconds and caps it at 2 GB of memory. `scripts/make-a-game-check.sh` and `scripts/drive-orbit.sh` are full
 examples.

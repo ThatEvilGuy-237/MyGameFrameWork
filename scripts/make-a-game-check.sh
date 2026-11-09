@@ -40,19 +40,32 @@ build() { (cd "$game" && NUGET_PACKAGES="$work/packages" dotnet build -nologo -v
 echo "== a new game from dotnet new evil-game, Evil.Engine $version from $feed"
 dotnet new install "$feed/Evil.Engine.Templates.$version.nupkg" --debug:custom-hive "$work/hive" > "$work/install.log" 2>&1 \
   || { cat "$work/install.log"; echo "the template did not install" >&2; exit 1; }
-dotnet new evil-game -n MyGame --feed "$feed" -o "$game" --debug:custom-hive "$work/hive" > "$work/new.log" 2>&1 \
+dotnet new evil-game -n MyGame --feed "$feed" -o "$game" --debug:custom-hive "$work/hive" --no-update-check > "$work/new.log" 2>&1 \
   || { cat "$work/new.log"; echo "dotnet new evil-game failed" >&2; exit 1; }
 build || { tail -20 "$work/build.log"; echo "the new game does not build" >&2; exit 1; }
 copied="$(ls "$game/.godot/mono/temp/bin/Debug" | grep -c '^Evil\.Engine.*\.dll$')"
 [ "$copied" = 11 ] || { echo "expected the 11 Evil.Engine libraries next to the game, found $copied" >&2; exit 1; }
 
-for planted in "var total = 1;" "List<int> items = new();" "Box crate = new Box(Vector3.One, Color.White) { Name = \"crate\" };"; do
-  printf 'namespace MyGame;\n\ninternal static class Planted\n{\n    public static void Make()\n    {\n        %s\n    }\n}\n' "$planted" > "$game/Planted.cs"
-  if build; then
-    echo "the template let '$planted' build; its code style check is broken" >&2
-    exit 1
-  fi
-  grep -qE "IDE0008|Code style:" "$work/build.log" || { tail -5 "$work/build.log"; echo "'$planted' failed for another reason" >&2; exit 1; }
+cat > "$game/Planted.cs" <<'CS'
+namespace MyGame;
+
+internal static class Planted
+{
+    public static int Make()
+    {
+        List<int> items = new();
+        Box crate = new Box(Vector3.One, Color.White) { Name = "crate" };
+        var total = items.Count;
+        return total + crate.Name.Length;
+    }
+}
+CS
+if build; then
+  echo "the template let var, new() and an initializer block build; its code style check is broken" >&2
+  exit 1
+fi
+for expected in "Planted.cs(7,27): error EVIL001" "Planted.cs(8,21): error EVIL002" "Planted.cs(9,9): error IDE0008"; do
+  grep -qF "$expected" "$work/build.log" || { grep -E "error" "$work/build.log" | head -5; echo "one build did not report '$expected'" >&2; exit 1; }
 done
 rm "$game/Planted.cs"
 build || { tail -20 "$work/build.log"; exit 1; }

@@ -42,3 +42,31 @@ Fixed in R21: `SelfOrAncestor<T>()`.
 
 The three changes it said would have helped most: document capture and scripted input on the server (1, 2, 3, 12),
 ship the style checks with the package (5), and make Make a Game complete plus a board recipe (4, 6 to 10).
+
+## R23: fresh eyes again (2026-11-09)
+
+A new agent, the same task, the docs and packages after rounds 14 to 22 (a trial pack of `main`, the earlier
+findings hidden from it). It used `dotnet new evil-game`, `Grid.Path`, `Grid.CellAt` with `Camera.PointOnGround`,
+and `SelfOrAncestor<Unit>()`, and said those "worked without friction". The game meets every bullet.
+
+| | R13 | R23 |
+|---|---|---|
+| findings | 13 (3 major, 9 minor, 1 own mistake) | 10 (0 major, 10 minor) |
+| blockers | 0 | 0 |
+| builds (failed) | 5 (1) | 7 (1) |
+| board code written by hand | about 100 lines: cells, cell to world, tiles, a path search | `Board.cs` 69 lines, tiles only; paths from `Grid` |
+
+![[r23-fresh-eyes.png]]
+
+| # | Finding | Severity | Fix | Status |
+|---|---|---|---|---|
+| 1 | The template's usings had no `System`, so `Console` did not build | minor | `global using System;`; `System.Linq` taken out (the house style avoids LINQ) | fixed in R23 |
+| 2 | `Unshaded` still went through tone mapping, so tiles came out lighter | minor | [[World]] and [[Lighting]] say so and point to `ToneMapping.Linear` | fixed in R23 |
+| 3 | No page for `Scene` and `Game`: the life of a scene, `GameContext`, helper classes, `Picker` | minor | new note [[Scenes]] | fixed in R23 |
+| 4 | Which style rules a game gets was unclear; the long-method limit was not given | minor | [[Clean Code]]: "In a game" and the 30-line rule | fixed in R23 |
+| 5 | The template's style errors came one per build and without a line | minor | `CodeStyle.targets` is a small task now: every problem with file and line in one build, next to the compiler's | fixed in R23 |
+| 6 | No recipe for finding things on screen when driving a game; logging not documented | minor | [[Testing]] (print `WorldToScreen` positions, read them from the log) and [[Scenes]] (logging) | fixed in R23 |
+| 7 | "The first line the game prints" was not first: the scene's own lines came before it | minor | the engine prints it before the first scene enters | fixed in R23 |
+| 8 | Whether a new shape shares its material was a guess | minor | [[World]]: each shape gets its own unless you share one | fixed in R23 |
+| 9 | Three tries to frame the board; the default view angle was not given | minor | `Camera.Frame(bounds, pitch, yaw)` and `Grid.Bounds`, proven by a property test; defaults in [[Cameras]] | fixed in R23 |
+| 10 | `dotnet new` warned about an update check; renaming the first scene was not described | minor | [[Make a Game]]: `--no-update-check` for a folder feed, and how to rename `MapScene` | fixed in R23 |

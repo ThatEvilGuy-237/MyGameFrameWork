@@ -1,17 +1,50 @@
 <Project>
 
   <PropertyGroup>
-    <EvilTargetTypedNew>(?&lt;![\w.])new\s*\(</EvilTargetTypedNew>
-    <EvilInitializerBlock>\bnew\s+[\w.&lt;&gt;\[\],? ]+(\([^;{}]*\))?\s*\{\s*(\w+|\[[^\]]*\])\s*=[^=&gt;]</EvilInitializerBlock>
+    <MSBuildWarningsAsErrors>$(MSBuildWarningsAsErrors);EVIL001;EVIL002</MSBuildWarningsAsErrors>
   </PropertyGroup>
 
+  <UsingTask TaskName="EvilCodeStyle" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Generated ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+Regex targetTypedNew = new Regex(@"(?<![\w.])new\s*\(");
+Regex initializerBlock = new Regex(@"\bnew\s+[\w.<>\[\],? ]+(\([^;{}]*\))?\s*\{\s*(\w+|\[[^\]]*\])\s*=[^=>]");
+string generated = Path.GetFullPath(Generated);
+foreach (ITaskItem file in Files)
+{
+    string path = file.GetMetadata("FullPath");
+    if (path.StartsWith(generated, StringComparison.Ordinal))
+    {
+        continue;
+    }
+
+    string text = File.ReadAllText(path);
+    foreach (Match found in targetTypedNew.Matches(text))
+    {
+        int line = text.Substring(0, found.Index).Split('\n').Length;
+        int column = found.Index - text.LastIndexOf('\n', Math.Max(0, found.Index - 1));
+        Log.LogWarning(string.Empty, "EVIL001", string.Empty, path, line, column, 0, 0, "Code style: write the type after new, as in new Box(...), not new().");
+    }
+
+    foreach (Match found in initializerBlock.Matches(text))
+    {
+        int line = text.Substring(0, found.Index).Split('\n').Length;
+        int column = found.Index - text.LastIndexOf('\n', Math.Max(0, found.Index - 1));
+        Log.LogWarning(string.Empty, "EVIL002", string.Empty, path, line, column, 0, 0, "Code style: build the object with its constructor, then set each property as a statement; no { Name = ... } block.");
+    }
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+
   <Target Name="EvilCodeStyle" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <EvilTargetTypedNewFile Include="@(Compile)" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($([System.IO.File]::ReadAllText('%(Compile.FullPath)')), '$(EvilTargetTypedNew)'))" />
-      <EvilInitializerFile Include="@(Compile)" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($([System.IO.File]::ReadAllText('%(Compile.FullPath)')), '$(EvilInitializerBlock)'))" />
-    </ItemGroup>
-    <Error Condition="'@(EvilTargetTypedNewFile)' != ''" File="%(EvilTargetTypedNewFile.Identity)" Text="Code style: write the type after new, as in new Box(...), not new()." />
-    <Error Condition="'@(EvilInitializerFile)' != ''" File="%(EvilInitializerFile.Identity)" Text="Code style: build the object with its constructor, then set each property as a statement; no { Name = ... } block." />
+    <EvilCodeStyle Files="@(Compile)" Generated="$(IntermediateOutputPath)" />
   </Target>
 
 </Project>
