@@ -2,7 +2,7 @@
   "spec": 2,
   "id": "evil-engine",
   "name": "Evil Engine",
-  "description": "Our own game engine SDK in C#: 12 numbered libraries over Godot 4.7.2 for a full 3D game with Blender-made characters, plus `dotnet new evil-game`; 0.4.1 in the feed; maths proven by property tests; zero clean-code findings.",
+  "description": "Our own game engine SDK in C#: 12 numbered libraries over Godot 4.7.2 for a full 3D game with Blender-made characters, plus `dotnet new evil-game`; 0.4.2 in the feed; maths proven by property tests; zero clean-code findings.",
   "kind": "library",
   "lifecycle": "building",
   "owner": "Thatevilguy",

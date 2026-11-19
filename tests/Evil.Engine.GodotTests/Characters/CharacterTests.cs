@@ -130,22 +130,6 @@ internal static class CharacterTests
     }
 
     [Test]
-    public static void AWashReachesEverySurfaceAlsoWhatIsPutOnLater()
-    {
-        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
-        using Stage stage = Stage.Open();
-        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
-        NodeSearch search = new NodeSearch(puppet);
-        puppet.Wash(Color.Gray, 0.75f);
-        Check.Near(0.75f, search.Material("body").GetShaderParameter("wash").AsSingle(), "the skin");
-        puppet.Wear("hat");
-        Check.Near(0.75f, search.Material("hat").GetShaderParameter("wash").AsSingle(), "the hat put on afterwards");
-        puppet.Wash(Color.Gray, 0f);
-        Check.Near(0f, search.Material("hat").GetShaderParameter("wash").AsSingle(), "and off again");
-        content.Close();
-    }
-
-    [Test]
     public static void TwoCharactersFromOnePackageAreTheirOwn()
     {
         ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);

@@ -353,3 +353,8 @@ The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits
   drawn in the plain colours and pictures of its package, the same on all three renderers (compared side by side).
   Packages, clothing, clips, faces and `Wash` are as in 0.4.0. 123 Godot tests. The shading is at tag `v0.4.0`.
   ![[r25-characters.png]]
+- 2026-11-19 R27: **Only what Blender made (0.4.2).** The owner on the picture above: "the strong man, for example,
+  is grayed out for no reason. I just want the original models we made in Blender load in, that's all. Not any
+  extra effects." The grey was `Wash`, shown off on him. `Wash` is out of the API, the shader and the tests; nothing
+  in code changes a character's colours now. Measured on the new picture: the leotard is `#BF3438` on screen and
+  `#BE3438` in Blender's own picture, the skin `#F9E4D4` in both. 122 Godot tests. ![[r27-characters.png]]

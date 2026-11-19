@@ -41,10 +41,4 @@ internal sealed class SurfaceLook
             paint.Show(swaps);
         }
     }
-
-    public void Wash(Vector3 colour, float amount)
-    {
-        Material.SetShaderParameter("wash_color", colour.ToGodot());
-        Material.SetShaderParameter("wash", amount);
-    }
 }
