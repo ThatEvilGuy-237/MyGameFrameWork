@@ -366,3 +366,8 @@ The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits
   naming both. The export is fixed and its own check measures the same. The gate's leak check then caught that a
   refused character left its nodes behind: a refused character or clothing piece now frees what it had loaded,
   and a failed `Wear` leaves the character as it was. 124 Godot tests.
+- 2026-11-19 R29: **A picture that scales with its window (0.4.4).** The owner, with the game maximised on the PC:
+  "it broke ui position". The game's screen is laid out for 1280 by 720; in a bigger window the 3D world grew and
+  the plates, the panel and the command ring stayed where they were. `WindowSettings.ScalesWithWindow` keeps the
+  size a game was made for and scales the finished picture to the window, with bars at the sides for another
+  shape. Off by default, so the demo and its resize check are as before. 125 Godot tests.

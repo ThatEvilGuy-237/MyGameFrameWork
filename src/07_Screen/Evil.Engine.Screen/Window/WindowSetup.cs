@@ -9,6 +9,13 @@ internal static class WindowSetup
     {
         window.Title = settings.Title;
         window.Unresizable = !settings.Resizable;
+        if (settings.ScalesWithWindow)
+        {
+            window.ContentScaleSize = new Vector2I(settings.Width, settings.Height);
+            window.ContentScaleMode = GodotWindow.ContentScaleModeEnum.CanvasItems;
+            window.ContentScaleAspect = GodotWindow.ContentScaleAspectEnum.Keep;
+        }
+
         DisplayServer.WindowSetVsyncMode(settings.VSync ? DisplayServer.VSyncMode.Enabled : DisplayServer.VSyncMode.Disabled);
         if (settings.Fullscreen)
         {

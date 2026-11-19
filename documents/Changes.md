@@ -1,12 +1,22 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
+aliases: [Release notes, What changed, 0.4.4, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.4 (November 2026)
+
+**New**
+
+| What | Where |
+|---|---|
+| `WindowSettings(..., ScalesWithWindow: true)`: the game keeps the size it was laid out for, and the picture is scaled to the window (bars at the sides for a window of another shape) | [[Screen]] |
+
+Off by default: a window that does not ask for it behaves as before, and `Game.ScreenSize` follows it.
 
 ## 0.4.3 (November 2026)
 

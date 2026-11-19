@@ -68,6 +68,22 @@ The display drives Godot's root `Window` node. Changing the size through the low
 shrank the OS window, but Godot never told the game, so `Game.ScreenSize` stayed at the old size. With the root
 `Window` the game sees the new size on the next frame.
 
+### A game laid out for one size
+
+By default the overlay is in window pixels and `Game.ScreenSize` follows the window: a game that lays its screen
+out from `canvas.Size` fits any window. A game whose screen is laid out for one size asks for the picture to be
+scaled instead:
+
+```csharp
+GameBuilder.Create(new WindowSettings("Turn-Based Game", 1280, 720, ScalesWithWindow: true))
+```
+
+Then `Game.ScreenSize` stays 1280 by 720 whatever the window does. The overlay is drawn at that size and scaled
+to the window, the 3D world is drawn at the window's own sharpness, and a window of another shape gets bars at
+its sides. Mouse positions, `Camera.WorldToScreen` and `Camera.ScreenToRay` are all in the same 1280 by 720, so
+no game code changes. The turn-based game's screen was built for 1280 by 720 and fell apart in a maximised
+window until it asked for this.
+
 ## Screenshots
 
 | Call | What |

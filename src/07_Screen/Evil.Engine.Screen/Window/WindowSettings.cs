@@ -6,4 +6,5 @@ public sealed record WindowSettings(
     int Height = 720,
     bool VSync = true,
     bool Resizable = true,
-    bool Fullscreen = false);
+    bool Fullscreen = false,
+    bool ScalesWithWindow = false);
