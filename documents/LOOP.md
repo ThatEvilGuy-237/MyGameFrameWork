@@ -358,3 +358,11 @@ The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits
   extra effects." The grey was `Wash`, shown off on him. `Wash` is out of the API, the shader and the tests; nothing
   in code changes a character's colours now. Measured on the new picture: the leotard is `#BF3438` on screen and
   `#BE3438` in Blender's own picture, the skin `#F9E4D4` in both. 122 Godot tests. ![[r27-characters.png]]
+- 2026-11-19 R28: **A clip must be as long as its description says (0.4.3).** The owner, with the game on the PC:
+  "continue on the animations loading part". Adding a second clip to two packages showed that every clip of every
+  package was two keys long, 0.03 s, under descriptions of 1.4 to 8 s: the export made each strip one frame long.
+  The engine had loaded them without a word, and a pose change through the quarter-second cross-fade had passed
+  for an animation. `CharacterClips` now refuses a clip whose length in the body file is not the described one,
+  naming both. The export is fixed and its own check measures the same. The gate's leak check then caught that a
+  refused character left its nodes behind: a refused character or clothing piece now frees what it had loaded,
+  and a failed `Wear` leaves the character as it was. 124 Godot tests.

@@ -45,23 +45,14 @@ internal sealed class Wardrobe
             throw new ArgumentException($"{_told.Name} has no clothing named '{name}'. It has: {string.Join(", ", _told.Clothing.Keys)}.", nameof(name));
         }
 
+        WornPiece piece = new WornPiece(name, told, Taken(told));
         if (_worn.TryGetValue(told.Slot, out WornPiece? old))
         {
             Drop(old);
         }
 
-        LoadedScene scene = new LoadedScene(_files.Scene(told.Piece.File), _files.Source);
-        List<MeshInstance3D> meshes = new List<MeshInstance3D>();
-        foreach (PartDescription part in told.Piece.Parts)
-        {
-            MeshInstance3D mesh = scene.Mesh(part.Name);
-            _binder.Bind(mesh, scene.Skeleton);
-            _look.Paint(mesh, part);
-            meshes.Add(mesh);
-        }
-
-        scene.Root.Free();
-        _worn[told.Slot] = new WornPiece(name, told, meshes);
+        Name(piece);
+        _worn[told.Slot] = piece;
         Settle();
     }
 
@@ -80,16 +71,53 @@ internal sealed class Wardrobe
         throw new ArgumentException($"{_told.Name} is not wearing '{name}'.", nameof(name));
     }
 
+    private List<MeshInstance3D> Taken(ClothingDescription told)
+    {
+        LoadedScene scene = new LoadedScene(_files.Scene(told.Piece.File), _files.Source);
+        List<MeshInstance3D> meshes = new List<MeshInstance3D>();
+        try
+        {
+            foreach (PartDescription part in told.Piece.Parts)
+            {
+                MeshInstance3D mesh = scene.Mesh(part.Name);
+                meshes.Add(mesh);
+                _binder.Bind(mesh, scene.Skeleton);
+                _look.Paint(mesh, part);
+            }
+        }
+        catch
+        {
+            Discard(meshes);
+            scene.Root.Free();
+            throw;
+        }
+
+        scene.Root.Free();
+        return meshes;
+    }
+
+    private static void Name(WornPiece piece)
+    {
+        for (int index = 0; index < piece.Meshes.Count; index++)
+        {
+            piece.Meshes[index].Name = piece.Told.Piece.Parts[index].Name;
+        }
+    }
+
     private void Drop(WornPiece piece)
     {
-        foreach (MeshInstance3D mesh in piece.Meshes)
+        Discard(piece.Meshes);
+        _worn.Remove(piece.Told.Slot);
+    }
+
+    private void Discard(IReadOnlyList<MeshInstance3D> meshes)
+    {
+        foreach (MeshInstance3D mesh in meshes)
         {
             _look.Forget(mesh);
             mesh.GetParent().RemoveChild(mesh);
             mesh.Free();
         }
-
-        _worn.Remove(piece.Told.Slot);
     }
 
     private void Settle()

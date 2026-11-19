@@ -49,6 +49,9 @@ character of its own; two from one package share the files, not the clothing or 
 | `Clips` | the animations on its rig, see below |
 | `Source` | where it was loaded from |
 
+A piece that cannot be put on (its file lacks a part, or hangs on a bone the rig does not have) is refused with
+the name of what is wrong, and the character stays as it was.
+
 Clothing is not a paint job and not part of the body. Each piece is its own file, skinned to the same bones, and
 `Wear` hangs it on the character's own rig, so it moves with every clip. A piece also says which skin it covers
 and which shapes it needs (a hat presses the hair): the engine hides that skin and sets those shapes while the
@@ -68,6 +71,11 @@ piece is worn, and undoes both when it comes off.
 A clip moves the bones and the shapes of the face. It also names the face to show at each moment (a blink, a
 frown): the engine swaps the eye and face pictures at those moments.
 
+A clip must be as long in the body file as its description says, to a twentieth of a second. If it is not, the
+character is refused when it is loaded, with the clip's name and both lengths. The first packages of the
+turn-based game held one pose per clip (0.03 s) under a description of 8 s, and loaded without a word: a figure
+changed pose and never moved. Since 0.4.3 that cannot load.
+
 ## The package
 
 `Game.Content.Character("characters/young-man")` names a folder:
@@ -83,8 +91,8 @@ young-man/
 `character.json` is written by the export step, never by hand. It lists, per mesh, each surface's colours, its
 inside colour and its painted pictures; per piece its slot, the skin it hides and the shapes it sets;
 the outfits; the clips with their faces; the outline's colour and width. A file in a format this engine does not
-read, a part the model file does not have, a bone the rig does not have: each is refused when the character is
-loaded, with the name of what is wrong.
+read, a part the model file does not have, a bone the rig does not have, a clip that is not as long as described:
+each is refused when the character is loaded, with the name of what is wrong.
 
 The packages of the turn-based game are made by `character/game-export.sh` in the character design research
 project, from the Blender files of the saved models.

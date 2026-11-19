@@ -161,5 +161,38 @@ internal static class CharacterTests
         content.Close();
     }
 
+    [Test]
+    public static void AClipThatIsNotAsLongAsItsDescriptionSaysIsRefused()
+    {
+        PuppetPackage package = new PuppetPackage();
+        string told = Path.Combine(package.Folder, "character.json");
+        File.WriteAllText(told, File.ReadAllText(told).Replace("\"wave\": {\"seconds\": 1.0", "\"wave\": {\"seconds\": 4.0"));
+        ContentLibrary content = new ContentLibrary(package.Root);
+        void Load() => content.Character("puppet");
+        Check.Throws<InvalidDataException>(Load, "the clip 'wave' of");
+        Check.Throws<InvalidDataException>(Load, "1.00 s long in its body file, its description says 4.00 s");
+        content.Close();
+    }
+
+    [Test]
+    public static void AClothingFileWithoutItsPartIsRefusedAndTheCharacterStaysAsItWas()
+    {
+        PuppetPackage package = new PuppetPackage();
+        string told = Path.Combine(package.Folder, "character.json");
+        string text = File.ReadAllText(told);
+        int scarf = text.IndexOf("\"scarf\"", StringComparison.Ordinal);
+        File.WriteAllText(told, text[..scarf] + text[scarf..].Replace("{\"name\": \"hat\"", "{\"name\": \"collar\""));
+        ContentLibrary content = new ContentLibrary(package.Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        puppet.Wear("hat");
+        int drawn = puppet.SkinTriangles;
+        void WearBroken() => puppet.Wear("scarf");
+        Check.Throws<InvalidDataException>(WearBroken, "'collar'");
+        Check.Equal("hat", string.Join(' ', puppet.Worn), "still wears what it wore");
+        Check.Equal(drawn, puppet.SkinTriangles, "and shows the skin it showed");
+        content.Close();
+    }
+
     private static ulong Shown(NodeSearch search) => search.Material("face").GetShaderParameter("paint_a").As<Godot.Texture2D>().GetInstanceId();
 }
