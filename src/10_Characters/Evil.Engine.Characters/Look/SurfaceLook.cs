@@ -4,25 +4,17 @@ using Vector3 = System.Numerics.Vector3;
 
 namespace Evil.Engine.Characters;
 
-internal sealed class ToonSurface
+internal sealed class SurfaceLook
 {
     private static readonly string[] Slots = ["paint_a", "paint_b"];
 
-    private readonly List<ToonPaint> _paints = new List<ToonPaint>();
+    private readonly List<PaintLayer> _paints = new List<PaintLayer>();
 
-    public ToonSurface(SurfaceDescription surface, Shader shader, PictureBook pictures)
+    public SurfaceLook(SurfaceDescription surface, Shader shader, PictureBook pictures)
     {
         Material = new ShaderMaterial();
         Material.Shader = shader;
-        Material.SetShaderParameter("lit_color", surface.Lit.ToGodot());
-        Material.SetShaderParameter("shade_color", surface.Shade.ToGodot());
-        Material.SetShaderParameter("threshold", surface.Threshold);
-        if (surface.Rim is RimDescription rim)
-        {
-            Material.SetShaderParameter("rim_color", rim.Colour.ToGodot());
-            Material.SetShaderParameter("rim_facing", rim.Facing);
-        }
-
+        Material.SetShaderParameter("base_color", surface.Lit.ToGodot());
         if (surface.Inside is Vector3 inside)
         {
             Material.SetShaderParameter("inside_color", inside.ToGodot());
@@ -36,7 +28,7 @@ internal sealed class ToonSurface
 
         for (int index = 0; index < surface.Paints.Count; index++)
         {
-            _paints.Add(new ToonPaint(Material, Slots[index], surface.Paints[index], pictures));
+            _paints.Add(new PaintLayer(Material, Slots[index], surface.Paints[index], pictures));
         }
     }
 
@@ -44,7 +36,7 @@ internal sealed class ToonSurface
 
     public void Show(IReadOnlyDictionary<string, string> swaps)
     {
-        foreach (ToonPaint paint in _paints)
+        foreach (PaintLayer paint in _paints)
         {
             paint.Show(swaps);
         }

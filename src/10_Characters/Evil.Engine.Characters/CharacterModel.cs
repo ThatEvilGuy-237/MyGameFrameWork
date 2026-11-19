@@ -14,7 +14,7 @@ public sealed class CharacterModel : WorldObject
     private readonly Wardrobe _wardrobe;
     private readonly FaceTicker _faces;
 
-    internal CharacterModel(CharacterDescription told, ICharacterFiles files, ToonShaders shaders)
+    internal CharacterModel(CharacterDescription told, ICharacterFiles files, SurfaceShader shader)
         : base(new Node3D(), told.Name)
     {
         _told = told;
@@ -27,7 +27,7 @@ public sealed class CharacterModel : WorldObject
         pivot.Scale = new Vector3(told.Scale, told.Scale, told.Scale);
         Node.AddChild(pivot);
         pivot.AddChild(body.Root);
-        _look = new CharacterLook(told.Outline, shaders, new PictureBook(told.Pictures, files));
+        _look = new CharacterLook(shader, new PictureBook(told.Pictures, files));
         foreach (PartDescription part in told.Body.Parts)
         {
             _look.Paint(body.Mesh(part.Name), part);

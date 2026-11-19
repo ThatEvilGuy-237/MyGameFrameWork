@@ -1,12 +1,25 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.4.0, 0.3.0]
+aliases: [Release notes, What changed, 0.4.1, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.1 (November 2026)
+
+**Changed behaviour**
+
+| What | Before (0.4.0) | Now |
+|---|---|---|
+| how a character is drawn | two tones picked by a `KeyLight`, with an outline | the plain colours and pictures of its package, no light and shade, no outline |
+| `KeyLight` | a light for characters only | gone: nothing lights a character |
+| parts that only throw a shadow onto the character | threw it | not drawn |
+
+The owner asked for the models to be loaded first and shading later. Everything else from 0.4.0 stays: packages,
+clothing, clips, faces, `Wash`. The shading of 0.4.0 is at tag `v0.4.0`.
 
 ## 0.4.0 (November 2026)
 

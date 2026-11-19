@@ -9,22 +9,22 @@ internal sealed class CharacterLoader
     private readonly Dictionary<string, CharacterDescription> _told = new Dictionary<string, CharacterDescription>(StringComparer.Ordinal);
     private readonly SceneLoader _scenes = new SceneLoader();
     private readonly TextureLoader _textures;
-    private ToonShaders? _shaders;
+    private SurfaceShader? _shader;
 
     public CharacterLoader(TextureLoader textures) => _textures = textures;
 
     public CharacterModel Load(ContentLocation folder)
     {
-        _shaders ??= new ToonShaders();
-        return new CharacterModel(Describe(folder), new CharacterFiles(folder, _scenes, _textures), _shaders);
+        _shader ??= new SurfaceShader();
+        return new CharacterModel(Describe(folder), new CharacterFiles(folder, _scenes, _textures), _shader);
     }
 
     public void Close()
     {
         _told.Clear();
         _scenes.Close();
-        _shaders?.Dispose();
-        _shaders = null;
+        _shader?.Dispose();
+        _shader = null;
     }
 
     private CharacterDescription Describe(ContentLocation folder)

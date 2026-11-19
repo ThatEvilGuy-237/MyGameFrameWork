@@ -3,17 +3,15 @@
   <Import Project="..\..\Godot.props" />
 
   <PropertyGroup>
-    <Description>Evil Engine characters: a rigged character made in Blender, loaded with its clothing, its toon look with an outline, and the clips animated on its rig.</Description>
+    <Description>Evil Engine characters: a rigged character made in Blender, loaded with its clothing, its colours and pictures, and the clips animated on its rig.</Description>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\03_World\Evil.Engine.World\Evil.Engine.World.csproj" />
-    <ProjectReference Include="..\..\05_Lighting\Evil.Engine.Lighting\Evil.Engine.Lighting.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Toon\Shaders\toon.gdshader" LogicalName="toon.gdshader" />
-    <EmbeddedResource Include="Toon\Shaders\outline.gdshader" LogicalName="outline.gdshader" />
+    <EmbeddedResource Include="Look\Shaders\surface.gdshader" LogicalName="surface.gdshader" />
   </ItemGroup>
 
 </Project>

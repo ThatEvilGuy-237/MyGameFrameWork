@@ -1,17 +1,15 @@
 ---
 tags: [api, characters]
-aliases: [CharacterModel, Clothing, Clips, KeyLight, Toon look]
+aliases: [CharacterModel, Clothing, Clips]
 ---
 
 # Characters
 
 Library `Evil.Engine.Characters` (`src/10_Characters`). A character is designed in Blender: its body, rig, clothing,
-colours, outline and animations. The engine loads what was designed and uses it. It never shapes, colours or
+colours and animations. The engine loads what was designed and uses it. It never shapes, colours or
 animates a character itself.
 
 ```csharp
-World.Add(new KeyLight(new Vector3(0.25f, -0.55f, -0.8f)));
-
 CharacterModel detective = World.Add(Game.Content.Character("characters/young-man"));
 detective.WearOutfit("detective");
 detective.Scale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -22,6 +20,12 @@ detective.Clips.Then("guard");
 ![[r25-characters.png]]
 
 Seven looks from four packages: three stances from the clips (guarding, standing, sheltered), one washed grey.
+
+> [!note] No shading yet
+> Since 0.4.1 a character is drawn in the plain colours and pictures of its package: no light and shade on it, no
+> outline. The owner: "just load model, shading is for later". The package already carries what shading needs
+> (a shade colour per surface, the rim, the outline's colour and width), and the engine reads and checks it. The
+> shading that 0.4.0 had (two tones, an outline, a light of its own for characters) is at tag `v0.4.0`.
 
 ## CharacterModel
 
@@ -59,22 +63,6 @@ piece is worn, and undoes both when it comes off.
 A clip moves the bones and the shapes of the face. It also names the face to show at each moment (a blink, a
 frown): the engine swaps the eye and face pictures at those moments.
 
-## KeyLight
-
-Characters are drawn in two flat tones, lit and shade, with a line around them. Which side is lit comes from a
-`KeyLight`, a light that falls on characters only:
-
-| Member | What |
-|---|---|
-| `new KeyLight(direction)` | the way the light falls; it throws shadows from one character onto another, and from a hat onto a face |
-| `Direction`, `Color`, `Intensity`, `Shadows` | as on any light; colour and strength do not change the two tones, only the direction does |
-| `ShadowDistance` | how far from the camera its shadows are drawn, 30 at first |
-
-A scene's `Sun`, `Lamp` and `Spotlight` light the street, not the characters, and a `KeyLight` does not light the
-street. So a night scene can stay dark while its characters keep the look they were given. Characters still throw
-their shadows on the ground in the sun's light. Without a `KeyLight` a character shows its shade tones only. Use
-one per scene: two add up.
-
 ## The package
 
 `Game.Content.Character("characters/young-man")` names a folder:
@@ -87,8 +75,8 @@ young-man/
   pictures/*.png     what is painted on face, eyes, skin and cloth
 ```
 
-`character.json` is written by the export step, never by hand. It lists, per mesh, each surface's two tones, its
-rim, its inside colour and its painted pictures; per piece its slot, the skin it hides and the shapes it sets;
+`character.json` is written by the export step, never by hand. It lists, per mesh, each surface's colours, its
+inside colour and its painted pictures; per piece its slot, the skin it hides and the shapes it sets;
 the outfits; the clips with their faces; the outline's colour and width. A file in a format this engine does not
 read, a part the model file does not have, a bone the rig does not have: each is refused when the character is
 loaded, with the name of what is wrong.
@@ -100,17 +88,14 @@ project, from the Blender files of the saved models.
 
 | Godot has no | The engine |
 |---|---|
-| material that carries Blender's toon look | its own shader: two tones chosen by the key light, a rim, an inside colour, two painted layers with their own weights and tints |
-| outline | a second pass that draws the mesh a little larger, back faces only, never thinner than one pixel on screen and never into a shadow map |
 | clothing on another file's rig | binds each piece to the character's bones by name |
 | skin hidden under clothing | every skin triangle carries a patch number; the engine draws the skin without the patches the worn pieces cover |
-| light for characters only | `KeyLight`, on a layer of its own |
+| material for a colour with painted layers | a small shader of its own: one colour, an inside colour, two painted layers with their weights; no light in it |
 | face pictures that follow an animation | reads the clip's faces and swaps the pictures |
 
-> [!warning] Renderers
-> The look was compared on Godot's three renderers (Forward+, Mobile, Compatibility) and is the same on all
-> three while the `KeyLight` throws shadows, as it does unless you turn them off. On the Compatibility renderer a
-> `KeyLight` without shadows gives lit tones that are too dark.
+The colours come out the same on Godot's three renderers (Forward+, Mobile, Compatibility); compared side by side.
+A character still throws its shadow on the ground in the scene's `Sun`. Parts that exist only to throw a shadow
+onto the character itself are not drawn.
 
-Not built: showing an expression on demand (the packages carry them, only clips use them), physics on hair or
-cloth, weapons in the hand.
+Not built: shading and the outline, showing an expression on demand (the packages carry them, only clips use
+them), physics on hair or cloth, weapons in the hand.

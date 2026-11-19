@@ -11,13 +11,13 @@ internal sealed class PictureBook
         _files = files;
     }
 
-    public ToonPicture Of(string name)
+    public LookPicture Of(string name)
     {
         if (!_pictures.TryGetValue(name, out PictureDescription? picture))
         {
             throw new InvalidDataException($"Character: {_files.Source} names the picture '{name}' but does not list it.");
         }
 
-        return new ToonPicture(_files.Picture(picture.File), picture.Region);
+        return new LookPicture(_files.Picture(picture.File), picture.Region);
     }
 }
