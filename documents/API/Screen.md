@@ -84,6 +84,37 @@ its sides. Mouse positions, `Camera.WorldToScreen` and `Camera.ScreenToRay` are 
 no game code changes. The turn-based game's screen was built for 1280 by 720 and fell apart in a maximised
 window until it asked for this.
 
+### Room beside the picture
+
+`Game.Display.SideRoom = 320f` keeps a strip of that width free at the right of the window, for a panel of
+tools. The game's picture moves over and gets smaller to make the room: `Game.ScreenSize` is still 1280 by 720,
+every scene's camera still looks at the middle of that, clicks and `WorldToScreen` still agree, and the overlay
+may draw the panel from `canvas.Size.X` to `canvas.Size.X + SideRoom`. Set it back to 0 and the picture fills
+the window again. It needs a window that scales (`ScalesWithWindow`); a camera a game adds itself is not moved.
+
+## Graphics (`Game.Graphics`)
+
+How smooth the 3D world is drawn. A game gives its first choice to the builder and may change it while it runs:
+
+```csharp
+GameBuilder.Create(window).Graphics(new GraphicsSettings(EdgeSmoothing.X4, PictureSmoothing.Off, 1.5f))
+Game.Graphics.Edges = EdgeSmoothing.X8;
+```
+
+| Member | What |
+|---|---|
+| `Edges` | smooths the outlines of shapes with more samples per pixel: `Off`, `X2`, `X4`, `X8`. The classic cure for stair-steps |
+| `Picture` | smooths the finished picture: `Off`, `Fxaa` (cheap, softens everything a little), `Smaa` (keeps more detail) |
+| `RenderScale` | draws the world at this share of the window's size and scales it to fit: 1 as it is, 1.5 and 2 bigger and scaled down, which smooths edges and fine drawn lines alike; below 1 is faster and coarser. From 0.25 to 2 |
+
+All off and a scale of 1 unless the game says otherwise. The overlay is not touched by any of them.
+
+![[r30-smoothing.png]]
+
+Three characters about 85 pixels tall, enlarged three times, with nine settings (edges, picture, scale).
+Without smoothing the outlines step and thin stripes break up; `X4` cleans the outlines; a scale of 1.5 or 2
+also cleans what is drawn on the cloth; `Fxaa` blurs faces at this size.
+
 ## Screenshots
 
 | Call | What |

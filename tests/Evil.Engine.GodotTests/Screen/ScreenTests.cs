@@ -139,6 +139,44 @@ internal static class ScreenTests
     }
 
     [Test]
+    public static void GraphicsSetWhatTheViewDrawsWith()
+    {
+        Godot.SubViewport view = new Godot.SubViewport();
+        Graphics graphics = new Graphics(new GraphicsSettings(EdgeSmoothing.X4, PictureSmoothing.Fxaa, 1.5f), view);
+        Check.Equal(Godot.Viewport.Msaa.Msaa4X, view.Msaa3D, "edges from the settings");
+        Check.Equal(Godot.Viewport.ScreenSpaceAAEnum.Fxaa, view.ScreenSpaceAA, "picture from the settings");
+        Check.Near(1.5f, view.Scaling3DScale, "render scale from the settings");
+        graphics.Edges = EdgeSmoothing.Off;
+        graphics.Picture = PictureSmoothing.Smaa;
+        graphics.RenderScale = 2f;
+        Check.Equal(Godot.Viewport.Msaa.Disabled, view.Msaa3D, "edges off");
+        Check.Equal(Godot.Viewport.ScreenSpaceAAEnum.Smaa, view.ScreenSpaceAA, "the finer smoothing");
+        Check.Near(2f, view.Scaling3DScale, "twice the size");
+        void TooBig() => graphics.RenderScale = 3f;
+        Check.Throws<ArgumentOutOfRangeException>(TooBig, "from 0.25 to 2");
+        view.Free();
+    }
+
+    [Test]
+    public static void SideRoomWidensWhatTheWindowShows()
+    {
+        Godot.Window window = new Godot.Window();
+        WindowSettings settings = new WindowSettings("Scaled", 640, 360, ScalesWithWindow: true);
+        WindowSetup.Apply(settings, window);
+        Display display = new Display(settings, window);
+        display.SideRoom = 160f;
+        Check.Equal(new Godot.Vector2I(800, 360), window.ContentScaleSize, "the picture plus the room beside it");
+        display.SideRoom = 0f;
+        Check.Equal(new Godot.Vector2I(640, 360), window.ContentScaleSize, "and back");
+        Display plain = new Display(new WindowSettings("Plain"));
+        void RoomWithoutScaling() => plain.SideRoom = 100f;
+        Check.Throws<InvalidOperationException>(RoomWithoutScaling, "needs a window that scales");
+        void LessThanNothing() => display.SideRoom = -1f;
+        Check.Throws<ArgumentOutOfRangeException>(LessThanNothing, "0 or more");
+        window.Free();
+    }
+
+    [Test]
     public static void DisplayChecksWhatItIsGiven()
     {
         Display display = new Display(new WindowSettings("Start"));

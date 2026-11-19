@@ -15,15 +15,16 @@ public sealed class GameContext
     private readonly Queue<string> _captures = new Queue<string>();
 
     internal GameContext(WorldObject worlds)
-        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")), new ContentLibrary("res://"), new AudioMixer(worlds.Node))
+        : this(worlds, new Keyboard(), new Mouse(), new Display(new WindowSettings("Evil Engine")), new ContentLibrary("res://"), new AudioMixer(worlds.Node), new Graphics(new GraphicsSettings()))
     {
     }
 
-    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display, ContentLibrary content, AudioMixer audio)
+    internal GameContext(WorldObject worlds, Keyboard keyboard, Mouse mouse, Display display, ContentLibrary content, AudioMixer audio, Graphics graphics)
     {
         Keyboard = keyboard;
         Mouse = mouse;
         Display = display;
+        Graphics = graphics;
         Content = content;
         Audio = audio;
         Motion = new MotionPlayer();
@@ -37,6 +38,8 @@ public sealed class GameContext
     public Mouse Mouse { get; }
 
     public Display Display { get; }
+
+    public Graphics Graphics { get; }
 
     public ContentLibrary Content { get; }
 

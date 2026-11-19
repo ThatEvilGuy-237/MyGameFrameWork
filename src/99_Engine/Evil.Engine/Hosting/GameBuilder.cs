@@ -7,6 +7,7 @@ namespace Evil.Engine.Hosting;
 public sealed class GameBuilder
 {
     private readonly WindowSettings _window;
+    private GraphicsSettings _graphics = new GraphicsSettings();
     private Color _clearColor = new Color(0.2f, 0.3f, 0.3f);
     private string _contentRoot = "res://";
     private Scene? _startScene;
@@ -22,6 +23,13 @@ public sealed class GameBuilder
 
     public static GameBuilder Create(string title, int width, int height) =>
         Create(new WindowSettings(title, width, height));
+
+    public GameBuilder Graphics(GraphicsSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        _graphics = settings;
+        return this;
+    }
 
     public GameBuilder ClearColor(Color color)
     {
@@ -55,7 +63,7 @@ public sealed class GameBuilder
         CheckSnapshot();
         FrameSnapshot? snapshot = _snapshot is null ? null : _snapshot with { Path = Path.GetFullPath(_snapshot.Path) };
         string contentRoot = ContentLocation.IsGodotPath(_contentRoot) ? _contentRoot : Path.GetFullPath(_contentRoot);
-        return new GameHost(new GameOptions(_window, _clearColor, contentRoot, start, snapshot));
+        return new GameHost(new GameOptions(_window, _graphics, _clearColor, contentRoot, start, snapshot));
     }
 
     private void CheckWindow()

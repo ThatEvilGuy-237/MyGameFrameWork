@@ -371,3 +371,10 @@ The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits
   the plates, the panel and the command ring stayed where they were. `WindowSettings.ScalesWithWindow` keeps the
   size a game was made for and scales the finished picture to the window, with bars at the sides for another
   shape. Off by default, so the demo and its resize check are as before. 125 Godot tests.
+- 2026-11-19 R30: **Smoothing, and room for a side panel (0.4.5).** The owner: "it feels a bit pixelated ... can we
+  improve that and make different settings for that", and a debug menu "on the right side" that "shifts the view
+  to the left so that the screen is still correct". `Game.Graphics` has three settings (`Edges`, `Picture`,
+  `RenderScale`); the picture above the table in [[Screen]] shows nine combinations on small figures.
+  `Display.SideRoom` widens the picture's canvas and shifts each scene's lens, so a game's screen keeps its size
+  and its positions while a panel stands beside it. Godot's own click ray ignores a shifted lens (a test showed a
+  click 27 units off), so the camera works the ray out itself then. 128 Godot tests. ![[r30-smoothing.png]]

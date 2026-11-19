@@ -6,6 +6,7 @@ namespace Evil.Engine.Hosting;
 
 internal sealed record GameOptions(
     WindowSettings Window,
+    GraphicsSettings Graphics,
     Color ClearColor,
     string ContentRoot,
     Scene StartScene,
