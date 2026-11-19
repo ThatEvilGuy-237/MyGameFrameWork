@@ -44,7 +44,7 @@ dotnet new evil-game -n MyGame --feed "$feed" -o "$game" --debug:custom-hive "$w
   || { cat "$work/new.log"; echo "dotnet new evil-game failed" >&2; exit 1; }
 build || { tail -20 "$work/build.log"; echo "the new game does not build" >&2; exit 1; }
 copied="$(ls "$game/.godot/mono/temp/bin/Debug" | grep -c '^Evil\.Engine.*\.dll$')"
-[ "$copied" = 11 ] || { echo "expected the 11 Evil.Engine libraries next to the game, found $copied" >&2; exit 1; }
+[ "$copied" = 12 ] || { echo "expected the 12 Evil.Engine libraries next to the game, found $copied" >&2; exit 1; }
 
 cat > "$game/Planted.cs" <<'CS'
 namespace MyGame;
