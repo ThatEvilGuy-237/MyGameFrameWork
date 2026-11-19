@@ -63,6 +63,8 @@ piece is worn, and undoes both when it comes off.
 |---|---|
 | `Names`, `Has(name)` | the clips of this character |
 | `Play(name)` | crosses over to a clip and drops anything that was waiting. A clip loops when its package says so; otherwise it stops on its last pose |
+| `Play(name, from)` | the same, starting that many seconds into the clip: several characters with the same standing loop need not move in step |
+| `Hold(name, at)` | shows one moment of a clip and stays there, until `Play` runs a clip again: someone who must lie still |
 | `Then(name)` | plays this clip when the current one ends: `Play("guard-enter")`, `Then("guard")` |
 | `Current` | the clip that plays, `null` when none does |
 | `Seconds(name)`, `Loops(name)` | what the package says about a clip |

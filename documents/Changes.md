@@ -1,12 +1,21 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.4.5, 0.4.4, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
+aliases: [Release notes, What changed, 0.4.6, 0.4.5, 0.4.4, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.6 (November 2026)
+
+**New**
+
+| What | Where |
+|---|---|
+| `CharacterClips.Play(name, from)`: a clip started some seconds in | [[Characters]] |
+| `CharacterClips.Hold(name, at)`: one moment of a clip, held still | [[Characters]] |
 
 ## 0.4.5 (November 2026)
 

@@ -162,6 +162,27 @@ internal static class CharacterTests
     }
 
     [Test]
+    public static void AClipStartsAtAMomentOrHoldsOne()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        Godot.AnimationPlayer player = new NodeSearch(puppet).First<Godot.AnimationPlayer>();
+        puppet.Clips.Play("stand", 1.5f);
+        Check.True(player.IsPlaying(), "it plays");
+        Check.Near(1.5f, (float)player.CurrentAnimationPosition, "from the moment it was given");
+        puppet.Clips.Hold("wave", 0.5f);
+        Check.True(!player.IsPlaying(), "a held clip does not run");
+        Check.True(puppet.Clips.Current is null, "so no clip is the one that plays");
+        Check.Near(0.5f, (float)player.CurrentAnimationPosition, "at the moment it was given");
+        puppet.Clips.Play("stand");
+        Check.True(player.IsPlaying(), "and another clip plays again");
+        void PastTheEnd() => puppet.Clips.Play("wave", 3f);
+        Check.Throws<ArgumentOutOfRangeException>(PastTheEnd, "between 0 and that");
+        content.Close();
+    }
+
+    [Test]
     public static void AClipThatIsNotAsLongAsItsDescriptionSaysIsRefused()
     {
         PuppetPackage package = new PuppetPackage();
