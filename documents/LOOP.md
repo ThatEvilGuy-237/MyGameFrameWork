@@ -378,3 +378,6 @@ The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits
   `Display.SideRoom` widens the picture's canvas and shifts each scene's lens, so a game's screen keeps its size
   and its positions while a panel stands beside it. Godot's own click ray ignores a shifted lens (a test showed a
   click 27 units off), so the camera works the ray out itself then. 128 Godot tests. ![[r30-smoothing.png]]
+- 2026-11-19 R31: **A clip from a moment, and a clip held still (0.4.6).** In the turn-based game four heroes from
+  one package breathed and blinked in step, and a fallen fighter swayed where it lay. `Clips.Play(name, from)`
+  starts a clip some seconds in; `Clips.Hold(name, at)` shows one moment and stays there. 129 Godot tests.

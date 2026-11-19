@@ -11,6 +11,7 @@ public sealed class CharacterClips
     private readonly IReadOnlyDictionary<string, ClipDescription> _told;
     private readonly AnimationPlayer? _player;
     private readonly string _source;
+    private string? _held;
 
     internal CharacterClips(AnimationPlayer? player, IReadOnlyDictionary<string, ClipDescription> told, string source)
     {
@@ -50,7 +51,7 @@ public sealed class CharacterClips
 
     public float Blend { get; set; } = 0.25f;
 
-    internal string Face => Current is string clip ? _faces[clip].At((float)Player.CurrentAnimationPosition) : FaceTrack.Neutral;
+    internal string Face => (Current ?? _held) is string clip ? _faces[clip].At((float)Player.CurrentAnimationPosition) : FaceTrack.Neutral;
 
     private AnimationPlayer Player => _player ?? throw new InvalidOperationException($"Character: {_source} came without animations.");
 
@@ -60,17 +61,42 @@ public sealed class CharacterClips
 
     public bool Loops(string name) => Told(name).Loops;
 
-    public void Play(string name)
+    public void Play(string name) => Play(name, 0f);
+
+    public void Play(string name, float from)
     {
-        Told(name);
+        float start = Moment(name, from);
+        _held = null;
         Player.ClearQueue();
         Player.Play(name, Math.Max(0f, Blend));
+        Player.Seek(start, true);
+    }
+
+    public void Hold(string name, float at = 0f)
+    {
+        float moment = Moment(name, at);
+        Player.ClearQueue();
+        Player.Play(name, 0f);
+        Player.Seek(moment, true);
+        Player.Pause();
+        _held = name;
     }
 
     public void Then(string name)
     {
         Told(name);
         Player.Queue(name);
+    }
+
+    private float Moment(string name, float seconds)
+    {
+        float length = Told(name).Seconds;
+        if (!(seconds >= 0f && seconds <= length))
+        {
+            throw new ArgumentOutOfRangeException(nameof(seconds), seconds, $"The clip '{name}' of {_source} is {length} s long: a moment in it lies between 0 and that.");
+        }
+
+        return seconds;
     }
 
     private ClipDescription Told(string name) =>
