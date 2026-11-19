@@ -124,6 +124,21 @@ internal static class ScreenTests
     }
 
     [Test]
+    public static void AWindowThatScalesKeepsTheSizeTheGameWasMadeFor()
+    {
+        Godot.Window scaled = new Godot.Window();
+        WindowSetup.Apply(new WindowSettings("Scaled", 640, 360, ScalesWithWindow: true), scaled);
+        Check.Equal(new Godot.Vector2I(640, 360), scaled.ContentScaleSize, "the size the picture was made for");
+        Check.Equal(Godot.Window.ContentScaleModeEnum.CanvasItems, scaled.ContentScaleMode, "the overlay is scaled to the window");
+        Check.Equal(Godot.Window.ContentScaleAspectEnum.Keep, scaled.ContentScaleAspect, "and keeps its shape");
+        Godot.Window plain = new Godot.Window();
+        WindowSetup.Apply(new WindowSettings("Plain", 640, 360), plain);
+        Check.Equal(Godot.Window.ContentScaleModeEnum.Disabled, plain.ContentScaleMode, "a window that does not scale is left alone");
+        scaled.Free();
+        plain.Free();
+    }
+
+    [Test]
     public static void DisplayChecksWhatItIsGiven()
     {
         Display display = new Display(new WindowSettings("Start"));

@@ -37,7 +37,7 @@ Godot 4.7.2 .NET. One command makes it.
    ```
 
    The first line the game prints says it started, before the first scene enters, for example
-   `Evil Engine 0.4.3: "Tile Skirmish" 1280x720, first scene MapScene, content res://content`. No line means the
+   `Evil Engine 0.4.4: "Tile Skirmish" 1280x720, first scene MapScene, content res://content`. No line means the
    engine never started. The import is needed once, and again after new content. To take screenshots
    or click with `xdotool`, see "Driving a game on the server" in [[Testing]].
 
@@ -117,7 +117,7 @@ internal sealed class MapScene : Scene
   </PropertyGroup>
   <Import Project="CodeStyle.targets" />
   <ItemGroup>
-    <PackageReference Include="Evil.Engine" Version="0.4.3" />
+    <PackageReference Include="Evil.Engine" Version="0.4.4" />
   </ItemGroup>
 </Project>
 ```
