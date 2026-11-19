@@ -70,6 +70,14 @@ public sealed class SceneStack
 
     internal void Update(GameTime time) => Current?.RunUpdate(time);
 
+    internal void KeepRoom(float sideRoom)
+    {
+        foreach (Scene scene in _scenes)
+        {
+            scene.View?.KeepRoom(sideRoom);
+        }
+    }
+
     internal void Draw(Canvas canvas)
     {
         for (int i = FirstVisible(); i < _scenes.Count; i++)
@@ -107,6 +115,7 @@ public sealed class SceneStack
         Camera camera = new Camera();
         camera.Name = "Camera";
         world.Add(camera);
+        camera.KeepRoom(_game?.Display.SideRoom ?? 0f);
         scene.Attach(_game, world, camera, new Atmosphere());
         _scenes.Add(scene);
         RefreshViews();

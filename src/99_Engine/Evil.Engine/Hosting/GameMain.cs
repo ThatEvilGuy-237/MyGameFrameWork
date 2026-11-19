@@ -49,7 +49,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         layer.AddChild(_overlay);
         _canvas = new Canvas(_overlay.Target);
         _mouse.Place(GetViewport().GetMousePosition().ToEvil());
-        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot), new AudioMixer(audio));
+        _game = new GameContext(worlds, _keyboard, _mouse, new Display(_options.Window, GetTree().Root), new ContentLibrary(_options.ContentRoot), new AudioMixer(audio), new Graphics(_options.Graphics, GetViewport()));
         _game.ScreenSize = ScreenSize();
         RenderingServer.FramePostDraw += OnFrameDrawn;
         AnnounceStart(_options);
@@ -98,6 +98,7 @@ public abstract partial class GameMain : Node, IOverlayPainter
         float seconds = (float)delta;
         _totalSeconds += delta;
         game.ScreenSize = ScreenSize();
+        game.Scenes.KeepRoom(game.Display.SideRoom);
         game.Time = new GameTime(seconds, _totalSeconds, _frame);
         game.Scenes.Update(game.Time);
         game.Scenes.ApplyChanges();
@@ -207,5 +208,9 @@ public abstract partial class GameMain : Node, IOverlayPainter
         _game?.Audio.StopAll();
     }
 
-    private System.Numerics.Vector2 ScreenSize() => GetViewport().GetVisibleRect().Size.ToEvil();
+    private System.Numerics.Vector2 ScreenSize()
+    {
+        System.Numerics.Vector2 whole = GetViewport().GetVisibleRect().Size.ToEvil();
+        return new System.Numerics.Vector2(MathF.Max(1f, whole.X - (_game?.Display.SideRoom ?? 0f)), whole.Y);
+    }
 }

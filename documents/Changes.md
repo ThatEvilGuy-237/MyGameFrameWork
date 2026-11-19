@@ -1,12 +1,24 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.4.4, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
+aliases: [Release notes, What changed, 0.4.5, 0.4.4, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.5 (November 2026)
+
+**New**
+
+| What | Where |
+|---|---|
+| `Game.Graphics` and `GameBuilder.Graphics(new GraphicsSettings(...))`: smoothing of edges (`Edges`), of the finished picture (`Picture`) and the size the world is drawn at (`RenderScale`) | [[Screen]] |
+| `Game.Display.SideRoom`: a strip kept free at the right of the window for a panel; the picture moves over and every scene's camera with it | [[Screen]] |
+
+**Unchanged for games**: everything is off until a game asks. `Camera.Projection`, `FieldOfView`, `Near` and
+`OrthographicSize` read and write as before.
 
 ## 0.4.4 (November 2026)
 

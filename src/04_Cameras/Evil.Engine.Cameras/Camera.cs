@@ -11,6 +11,10 @@ public class Camera : WorldObject
 {
     private const float BreathingRoom = 1.05f;
 
+    private CameraProjection _projection = CameraProjection.Perspective;
+    private float _orthographicSize = 1f;
+    private float _sideRoom;
+
     public Camera()
         : base(new Camera3D())
     {
@@ -18,28 +22,42 @@ public class Camera : WorldObject
 
     public CameraProjection Projection
     {
-        get => Lens.Projection == Camera3D.ProjectionType.Orthogonal ? CameraProjection.Orthographic : CameraProjection.Perspective;
-        set => Lens.Projection = value == CameraProjection.Orthographic
-            ? Camera3D.ProjectionType.Orthogonal
-            : Camera3D.ProjectionType.Perspective;
+        get => _projection;
+        set
+        {
+            _projection = value;
+            FitLens();
+        }
     }
 
     public float FieldOfView
     {
         get => Lens.Fov;
-        set => Lens.Fov = value;
+        set
+        {
+            Lens.Fov = value;
+            FitLens();
+        }
     }
 
     public float OrthographicSize
     {
-        get => Lens.Size;
-        set => Lens.Size = value;
+        get => _orthographicSize;
+        set
+        {
+            _orthographicSize = value;
+            FitLens();
+        }
     }
 
     public float Near
     {
         get => Lens.Near;
-        set => Lens.Near = value;
+        set
+        {
+            Lens.Near = value;
+            FitLens();
+        }
     }
 
     public float Far
@@ -55,6 +73,11 @@ public class Camera : WorldObject
     public Ray3 ScreenToRay(Vector2 screenPoint)
     {
         RequireInWorld(nameof(ScreenToRay));
+        if (Lens.Projection == Camera3D.ProjectionType.Frustum)
+        {
+            return ShiftedRay(screenPoint);
+        }
+
         Godot.Vector2 point = screenPoint.ToGodot();
         return new Ray3(Lens.ProjectRayOrigin(point).ToEvil(), Lens.ProjectRayNormal(point).ToEvil());
     }
@@ -95,6 +118,48 @@ public class Camera : WorldObject
 
     internal void MakeCurrent() => Lens.Current = true;
 
+    internal void KeepRoom(float sideRoom)
+    {
+        _sideRoom = MathF.Max(0f, sideRoom);
+        FitLens();
+    }
+
+    private Ray3 ShiftedRay(Vector2 screenPoint)
+    {
+        Godot.Vector2 screen = Lens.GetViewport().GetVisibleRect().Size;
+        float height = Lens.Size;
+        float width = height * screen.X / MathF.Max(1f, screen.Y);
+        float across = ((screenPoint.X / screen.X) - 0.5f) * width;
+        float up = (0.5f - (screenPoint.Y / screen.Y)) * height;
+        Godot.Transform3D view = Lens.GlobalTransform;
+        Godot.Vector3 along = view.Basis * new Godot.Vector3(across + Lens.FrustumOffset.X, up, -Lens.Near);
+        return new Ray3(view.Origin.ToEvil(), along.Normalized().ToEvil());
+    }
+
+    private void FitLens()
+    {
+        float shift = Lens.IsInsideTree() ? _sideRoom / 2f / MathF.Max(1f, Lens.GetViewport().GetVisibleRect().Size.Y) : 0f;
+        if (_projection == CameraProjection.Orthographic)
+        {
+            Lens.Projection = Camera3D.ProjectionType.Orthogonal;
+            Lens.Size = _orthographicSize;
+            Lens.HOffset = shift * _orthographicSize;
+            return;
+        }
+
+        Lens.HOffset = 0f;
+        if (shift <= 0f)
+        {
+            Lens.Projection = Camera3D.ProjectionType.Perspective;
+            return;
+        }
+
+        float height = 2f * Lens.Near * MathF.Tan(Angle.ToRadians(Lens.Fov) / 2f);
+        Lens.Projection = Camera3D.ProjectionType.Frustum;
+        Lens.Size = height;
+        Lens.FrustumOffset = new Godot.Vector2(shift * height, 0f);
+    }
+
     private float DistanceToFit(float radius)
     {
         if (Projection == CameraProjection.Orthographic)
@@ -110,7 +175,7 @@ public class Camera : WorldObject
     private float ScreenAspect()
     {
         Godot.Vector2 screen = Lens.GetViewport().GetVisibleRect().Size;
-        return screen.X / MathF.Max(1f, screen.Y);
+        return MathF.Max(1f, screen.X - _sideRoom) / MathF.Max(1f, screen.Y);
     }
 
     private void RequireInWorld(string call)

@@ -17,6 +17,25 @@ internal static class CameraTests
     }
 
     [Test]
+    public static void RoomAtTheSideMovesTheMiddleOfThePicture()
+    {
+        using Stage stage = Stage.Open();
+        Camera camera = stage.AddCamera(new Vector3(0f, 5f, 10f));
+        Vector2 middle = Stage.ScreenMiddle;
+        Vector2 shifted = middle - new Vector2(100f, 0f);
+        camera.KeepRoom(200f);
+        Check.Near(shifted, camera.WorldToScreen(Vector3.Zero), "what the camera looks at lies in the middle of what is left", 0.5f);
+        Check.Near(Vector3.Zero, camera.PointOnGround(shifted) ?? new Vector3(99f), "and a click there finds it", 0.01f);
+        Check.Equal(CameraProjection.Perspective, camera.Projection, "still a perspective camera");
+        camera.Projection = CameraProjection.Orthographic;
+        camera.OrthographicSize = 10f;
+        Check.Near(shifted, camera.WorldToScreen(Vector3.Zero), "the same for a camera without perspective", 0.5f);
+        camera.KeepRoom(0f);
+        Check.Near(middle, camera.WorldToScreen(Vector3.Zero), "without room it is the middle again", 0.5f);
+        Check.Near(10f, camera.OrthographicSize, "and its size is what it was given");
+    }
+
+    [Test]
     public static void CanSeeWhatIsInFront()
     {
         using Stage stage = Stage.Open();
