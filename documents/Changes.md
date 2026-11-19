@@ -1,12 +1,30 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.3.0]
+aliases: [Release notes, What changed, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.0 (November 2026)
+
+**New**
+
+| What | Where |
+|---|---|
+| `Game.Content.Character(folder)`: a character made in Blender, loaded with its rig, its look and its clips | [[Characters]], [[Content]] |
+| `CharacterModel`: `Wear`, `WearOutfit`, `TakeOff` (clothing as separate files on the character's own rig, the covered skin hidden), `Wash`, `Height` | [[Characters]] |
+| `CharacterClips`: `Play`, `Then`, `Current`, `Blend`; a clip also shows the faces it names | [[Characters]] |
+| `KeyLight`: the light that decides which side of a character is lit, and falls on characters only | [[Characters]] |
+| a twelfth library and package, `Evil.Engine.Characters` | [[Architecture Overview]] |
+
+**Unchanged for games**: every namespace and every public type from 0.3.0. A game that shows no characters only
+changes its version number.
+
+**For the engine's own code**: 92 plain and 124 Godot tests; the character tests build their own small character
+in code, so the engine carries no art.
 
 ## 0.3.0 (November 2026)
 

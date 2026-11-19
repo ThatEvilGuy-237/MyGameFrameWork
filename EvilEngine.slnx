@@ -10,6 +10,7 @@
     <Project Path="src/07_Screen/Evil.Engine.Screen/Evil.Engine.Screen.csproj" />
     <Project Path="src/08_Motion/Evil.Engine.Motion/Evil.Engine.Motion.csproj" />
     <Project Path="src/09_Audio/Evil.Engine.Audio/Evil.Engine.Audio.csproj" />
+    <Project Path="src/10_Characters/Evil.Engine.Characters/Evil.Engine.Characters.csproj" />
     <Project Path="src/99_Engine/Evil.Engine/Evil.Engine.csproj" />
   </Folder>
   <Folder Name="/samples/">

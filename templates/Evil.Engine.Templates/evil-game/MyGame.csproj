@@ -8,6 +8,6 @@
   </PropertyGroup>
   <Import Project="CodeStyle.targets" />
   <ItemGroup>
-    <PackageReference Include="Evil.Engine" Version="0.3.0" />
+    <PackageReference Include="Evil.Engine" Version="0.4.0" />
   </ItemGroup>
 </Project>

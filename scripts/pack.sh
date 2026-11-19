@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 feed="${EVIL_FEED:-/mnt/hdd/projects/MyGameFrameWork-data/feed}"
 version="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props)"
-packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Input Evil.Engine.Screen Evil.Engine.Motion Evil.Engine.Audio Evil.Engine Evil.Engine.Templates)
+packages=(Evil.Engine.Core Evil.Engine.Mathematics Evil.Engine.Platform Evil.Engine.World Evil.Engine.Cameras Evil.Engine.Lighting Evil.Engine.Input Evil.Engine.Screen Evil.Engine.Motion Evil.Engine.Audio Evil.Engine.Characters Evil.Engine Evil.Engine.Templates)
 template_engine="$(sed -n 's:.*Include="Evil.Engine" Version="\([^"]*\)".*:\1:p' templates/Evil.Engine.Templates/evil-game/MyGame.csproj)"
 if [ "$template_engine" != "$version" ]; then
   echo "refused: the game template asks for Evil.Engine $template_engine but this is $version; change MyGame.csproj in the template" >&2

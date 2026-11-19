@@ -1,0 +1,202 @@
+namespace Evil.Engine.GodotTests.Characters;
+
+internal static class CharacterTests
+{
+    [Test]
+    public static void ACharacterLoadsAsItsPackageDescribesIt()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        CharacterModel puppet = content.Character("puppet");
+        Check.Equal("puppet", puppet.Name, "name");
+        Check.Near(1f, puppet.Height, "two metres tall, shown at half size");
+        Check.Equal("hat cap scarf", string.Join(' ', puppet.Clothing), "clothing");
+        Check.Equal("dressed", string.Join(' ', puppet.Outfits), "outfits");
+        Check.Equal("stand wave", string.Join(' ', puppet.Clips.Names), "clips");
+        Check.Equal(0, puppet.Worn.Count, "bare at first");
+        Check.True(puppet.Clips.Current is null, "still at first");
+        puppet.Destroy();
+        content.Close();
+    }
+
+    [Test]
+    public static void ClothingGoesOnTheCharactersOwnRig()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        NodeSearch search = new NodeSearch(puppet);
+        puppet.Wear("hat");
+        Check.Equal("hat", string.Join(' ', puppet.Worn), "worn");
+        Godot.MeshInstance3D hat = search.Mesh("hat") ?? throw new CheckFailed("the hat does not hang on the character's rig");
+        Check.Equal("Head", hat.Skin.GetBindName(1).ToString(), "bound to the bone by its name");
+        Check.Equal(1, search.Count<Godot.Skeleton3D>(), "the hat's own rig is gone");
+        Check.True(search.Material("hat").NextPass is Godot.ShaderMaterial, "an outlined part gets the line");
+        puppet.TakeOff("hat");
+        Check.True(search.Mesh("hat") is null && puppet.Worn.Count == 0, "taken off");
+        content.Close();
+    }
+
+    [Test]
+    public static void ClothingHidesTheSkinItCovers()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        Check.Equal(4, puppet.SkinTriangles, "the whole skin");
+        puppet.Wear("scarf");
+        Check.Equal(2, puppet.SkinTriangles, "the scarf hides one patch");
+        puppet.Wear("hat");
+        Check.Equal(0, puppet.SkinTriangles, "the hat hides the other");
+        puppet.TakeOff("scarf");
+        Check.Equal(2, puppet.SkinTriangles, "its patch shows again");
+        puppet.TakeOff("hat");
+        Check.Equal(4, puppet.SkinTriangles, "bare again");
+        content.Close();
+    }
+
+    [Test]
+    public static void ClothingSetsTheShapesItNeeds()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        Godot.MeshInstance3D face = new NodeSearch(puppet).Mesh("face") ?? throw new CheckFailed("no face");
+        int blink = face.FindBlendShapeByName("eyes-blink");
+        puppet.Wear("hat");
+        Check.Near(0.5f, face.GetBlendShapeValue(blink), "the hat presses the shape it names");
+        puppet.TakeOff("hat");
+        Check.Near(0f, face.GetBlendShapeValue(blink), "and lets go of it");
+        content.Close();
+    }
+
+    [Test]
+    public static void OnePieceToASlotAndAnOutfitAtOnce()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        NodeSearch search = new NodeSearch(puppet);
+        puppet.WearOutfit("dressed");
+        Check.Equal("hat scarf", string.Join(' ', puppet.Worn), "the outfit's pieces");
+        puppet.Wear("cap");
+        Check.Equal("cap scarf", string.Join(' ', puppet.Worn), "the cap takes the hat's slot");
+        Check.Equal(Godot.GeometryInstance3D.ShadowCastingSetting.ShadowsOnly, search.Mesh("hat")!.CastShadow, "a part that only throws a shadow");
+        void WearMissing() => puppet.Wear("crown");
+        Check.Throws<ArgumentException>(WearMissing, "hat, cap, scarf");
+        void DressMissing() => puppet.WearOutfit("royal");
+        Check.Throws<ArgumentException>(DressMissing, "dressed");
+        void DropMissing() => puppet.TakeOff("hat");
+        Check.Throws<ArgumentException>(DropMissing, "not wearing 'hat'");
+        content.Close();
+    }
+
+    [Test]
+    public static void ClipsPlayByNameAndLoopAsThePackageSays()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        Godot.AnimationPlayer player = new NodeSearch(puppet).First<Godot.AnimationPlayer>();
+        puppet.Clips.Play("stand");
+        Check.Equal("stand", puppet.Clips.Current, "playing");
+        Check.True(puppet.Clips.Has("wave") && !puppet.Clips.Has("dance"), "what it has");
+        Check.True(puppet.Clips.Loops("stand") && !puppet.Clips.Loops("wave"), "which clips loop");
+        Check.Near(2f, puppet.Clips.Seconds("stand"), "how long");
+        Check.Equal(Godot.Animation.LoopModeEnum.Linear, player.GetAnimation("stand").LoopMode, "Godot was told to loop it");
+        puppet.Clips.Then("wave");
+        Check.Equal("wave", string.Join(' ', player.GetQueue()), "waiting for its turn");
+        puppet.Clips.Play("wave");
+        Check.Equal(0, player.GetQueue().Count, "a new clip clears what was waiting");
+        void PlayMissing() => puppet.Clips.Play("dance");
+        Check.Throws<ArgumentException>(PlayMissing, "stand, wave");
+        content.Close();
+    }
+
+    [Test]
+    public static void AClipShowsTheFacesItNames()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        NodeSearch search = new NodeSearch(puppet);
+        puppet.Clips.Play("stand");
+        search.First<Godot.AnimationPlayer>().Seek(1.5, true);
+        puppet.ShowFaceNow();
+        Check.Equal(content.Texture("puppet/pictures/face-blink.png").Native.GetInstanceId(), Shown(search), "the blink picture from second 1 on");
+        search.First<Godot.AnimationPlayer>().Seek(0.5, true);
+        puppet.ShowFaceNow();
+        Check.Equal(content.Texture("puppet/pictures/face-paint.png").Native.GetInstanceId(), Shown(search), "the plain picture before it");
+        content.Close();
+    }
+
+    [Test]
+    public static void AWashReachesEverySurfaceAlsoWhatIsPutOnLater()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        NodeSearch search = new NodeSearch(puppet);
+        puppet.Wash(Color.Gray, 0.75f);
+        Check.Near(0.75f, search.Material("body").GetShaderParameter("wash").AsSingle(), "the skin");
+        puppet.Wear("hat");
+        Check.Near(0.75f, search.Material("hat").GetShaderParameter("wash").AsSingle(), "the hat put on afterwards");
+        puppet.Wash(Color.Gray, 0f);
+        Check.Near(0f, search.Material("hat").GetShaderParameter("wash").AsSingle(), "and off again");
+        content.Close();
+    }
+
+    [Test]
+    public static void TheKeyLightLightsCharactersAndNothingElse()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
+        KeyLight light = stage.Root.Add(new KeyLight(new Vector3(0f, -1f, -1f)));
+        Box crate = stage.Root.Add(new Box(Vector3.One, Color.White));
+        Godot.DirectionalLight3D native = (Godot.DirectionalLight3D)light.Node;
+        uint body = new NodeSearch(puppet).Mesh("body")!.Layers;
+        Check.True((native.LightCullMask & body) != 0, "the light reaches the character");
+        Check.True((native.LightCullMask & crate.Instance.Layers) == 0, "and passes a plain shape by");
+        Check.Equal(native.LightCullMask, native.ShadowCasterMask, "only characters shade each other in it");
+        Check.Near(Vector3.Normalize(new Vector3(0f, -1f, -1f)), light.Direction, "falls the way it was told");
+        light.ShadowDistance = 12f;
+        Check.Near(12f, light.ShadowDistance, "how far its shadows reach");
+        void PointNowhere() => light.Direction = Vector3.Zero;
+        Check.Throws<ArgumentException>(PointNowhere, "direction");
+        content.Close();
+    }
+
+    [Test]
+    public static void TwoCharactersFromOnePackageAreTheirOwn()
+    {
+        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
+        using Stage stage = Stage.Open();
+        CharacterModel first = stage.Root.Add(content.Character("puppet"));
+        CharacterModel second = stage.Root.Add(content.Character("puppet"));
+        first.WearOutfit("dressed");
+        Check.Equal(0, first.SkinTriangles, "the dressed one");
+        Check.Equal(4, second.SkinTriangles, "the other keeps its skin");
+        Check.Equal(0, second.Worn.Count, "and wears nothing");
+        first.Destroy();
+        Check.True(first.IsDestroyed && !second.IsDestroyed, "one can go, the other stays");
+        content.Close();
+    }
+
+    [Test]
+    public static void AMissingOrBrokenPackageSaysWhatIsWrong()
+    {
+        PuppetPackage package = new PuppetPackage();
+        ContentLibrary content = new ContentLibrary(package.Root);
+        void LoadMissing() => content.Character("nobody");
+        Check.Throws<FileNotFoundException>(LoadMissing, "nobody/character.json");
+        File.WriteAllText(Path.Combine(package.Folder, "character.json"), "{ \"format\": 2 }");
+        void LoadNewer() => content.Character("puppet");
+        Check.Throws<InvalidDataException>(LoadNewer, "format 2");
+        File.WriteAllText(Path.Combine(package.Folder, "character.json"), "{ \"format\": 1 }");
+        void LoadEmpty() => content.Character("puppet");
+        Check.Throws<InvalidDataException>(LoadEmpty, "has no 'outline'");
+        content.Close();
+    }
+
+    private static ulong Shown(NodeSearch search) => search.Material("face").GetShaderParameter("paint_a").As<Godot.Texture2D>().GetInstanceId();
+}
