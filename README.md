@@ -1,8 +1,9 @@
 # Evil Engine
 
-Our own game engine SDK for C#, for a full 3D game: eleven clean class libraries on top of
+Our own game engine SDK for C#, for a full 3D game: twelve clean class libraries on top of
 [Godot 4.7.2](https://godotengine.org/) (.NET). Godot renders, plays sound and runs the window; a game talks only to
-our API: world objects, models, cameras, lights, input, the screen overlay, motion, audio and scenes.
+our API: world objects, models, characters made in Blender, cameras, lights, input, the screen overlay, motion,
+audio and scenes.
 
 It started as **MyGameFrameWork**, a small OpenGL project to learn how rendering works before the internship at
 AZTEQ, inspired by [MonoGame](https://monogame.net/). What I did not like in MonoGame was that every draw puts the
@@ -85,7 +86,7 @@ A library only uses lower numbers. A game references the `Evil.Engine` package a
 ```bash
 ./scripts/check.sh                          # style, build, tests, the demo rendered and driven with real input
 bash scripts/godot.sh samples/OrbitDemo     # the demo on a machine without a screen
-./scripts/pack.sh                           # pack all eleven packages into the folder feed
+./scripts/pack.sh                           # pack all twelve packages into the folder feed
 ./scripts/make-a-game-check.sh              # dotnet new evil-game from the feed: built, style-checked and run
 ```
 

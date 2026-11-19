@@ -1,5 +1,6 @@
 global using System.Numerics;
 global using Evil.Engine.Cameras;
+global using Evil.Engine.Characters;
 global using Evil.Engine.Core;
 global using Evil.Engine.Hosting;
 global using Evil.Engine.Lighting;

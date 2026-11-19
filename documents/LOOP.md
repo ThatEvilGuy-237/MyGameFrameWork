@@ -30,6 +30,7 @@ src/06_Input/Evil.Engine.Input              keyboard, mouse, picking objects und
 src/07_Screen/Evil.Engine.Screen            window, capture, 2D overlay (our Group() canvas) and text
 src/08_Motion/Evil.Engine.Motion            tweens queued per object (added in R9)
 src/09_Audio/Evil.Engine.Audio              sounds, music, volume groups (added in R10)
+src/10_Characters/Evil.Engine.Characters    characters made in Blender: clothing, clips, the toon look and its light (added in R25)
 src/99_Engine/Evil.Engine                   GameBuilder, GameHost, GameContext, scenes (the composition root, always last)
 samples/OrbitDemo                           Godot project: the orbit demo in 3D
 tests/Evil.Engine.Tests                     pure tests (Core, Mathematics)
@@ -333,3 +334,17 @@ types, and repeated code in Keyboard/Mouse, ContentLibrary's loaders, GodotKeys'
   `v0.2.0` (574e6cc) and `v0.3.0` (b65b868) pushed. ![[make-a-game.png]]
 
 The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits for the owner's OK).
+
+## After the loops
+
+- 2026-11-19 R25: **Characters made in Blender (0.4.0).** The owner: the 3D models go into the turn-based game;
+  "Blender is designer and code is the using", different clothing files are fine, the animation and the rig are
+  built in Blender. New library `10_Characters` ([[Characters]]): `Game.Content.Character(folder)` reads a package
+  (a `character.json` written by the export step, a body file with rig and clips, one file per clothing piece,
+  pictures) and gives a `CharacterModel` that wears pieces and outfits on its own rig, plays its clips and shows
+  the faces they name. What Godot lacks is ours: the toon shader (two tones picked by one light, rim, inside
+  colour, two painted layers), the outline pass, binding clothing by bone name, skin patches hidden under
+  clothing, and `KeyLight`, a light for characters only. Found on the way: the outline's one-pixel floor blew up
+  to metres inside shadow maps and shaded whole characters, so the outline now leaves shadow maps alone. 11 new
+  Godot tests on a small character built in code (124 in all); zero style and clean-code findings.
+  ![[r25-characters.png]]

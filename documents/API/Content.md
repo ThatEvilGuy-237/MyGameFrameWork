@@ -5,7 +5,7 @@ aliases: [Models, Textures, Fonts, Loading]
 
 # Content
 
-`Game.Content` loads models, textures and fonts. Paths are relative to the content folder set with
+`Game.Content` loads models, characters, textures, fonts and sounds. Paths are relative to the content folder set with
 `GameBuilder.Content(...)`. The default is the game project itself (`res://`).
 
 ```csharp
@@ -23,6 +23,7 @@ _title = Game.Content.Font("fonts/Lato-Bold.ttf");
 | Call | Gives | Files |
 |---|---|---|
 | `Model(path)` | a new `Model` each call (see [[World]]) | `.glb`, `.gltf` |
+| `Character(path)` | a new `CharacterModel` each call (see [[Characters]]) | a folder with `character.json` |
 | `Texture(path)` | a shared `Texture`, loaded once | `.png`, `.jpg`, `.webp`, ... |
 | `Font(path)` | a shared `Font`, loaded once (see [[Screen]]) | `.ttf`, `.otf` |
 | `Sound(path)` | a shared `Sound`, loaded once (see [[Audio]]) | `.wav`, `.ogg` |

@@ -159,14 +159,6 @@ internal static class ContentTests
         body.Owner = root;
         arm.Owner = root;
         hand.Owner = root;
-        Godot.GltfDocument document = new Godot.GltfDocument();
-        Godot.GltfState state = new Godot.GltfState();
-        Godot.Error appended = document.AppendFromScene(root, state);
-        Godot.Error written = document.WriteToFilesystem(state, path);
-        root.Free();
-        if (appended != Godot.Error.Ok || written != Godot.Error.Ok)
-        {
-            throw new CheckFailed($"could not write the test model: {appended}, {written}");
-        }
+        new ModelFile(path).Write(root);
     }
 }

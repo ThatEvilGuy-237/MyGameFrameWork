@@ -25,6 +25,8 @@ internal sealed record ContentLocation(string Path, string Full)
         return new ContentLocation(path, full);
     }
 
+    public ContentLocation Inside(string file) => new ContentLocation($"{Path.TrimEnd('/')}/{file}", $"{Full.TrimEnd('/')}/{file}");
+
     public void RequireFile()
     {
         if (!Godot.FileAccess.FileExists(Full))

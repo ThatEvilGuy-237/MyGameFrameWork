@@ -5,14 +5,14 @@ aliases: [Start here, Index]
 
 # Evil Engine
 
-Our own game engine SDK for C#, version **0.3.0**: eleven class libraries over **Godot 4.7.2 (.NET)** for a full 3D
+Our own game engine SDK for C#, version **0.4.0**: twelve class libraries over **Godot 4.7.2 (.NET)** for a full 3D
 game. Godot renders, plays sound and runs the window; a game talks only to our API. It sees Evil Engine types and
 `System.Numerics` vectors, never Godot's. The idea it started from is still at the heart: things in a **group**
 move, turn and scale together ([[Grouped Transforms]]).
 
 > [!tip] New here?
 > `dotnet new evil-game` makes a game in one command: [[Make a Game]]. [[Run the Sample]] shows everything the engine
-> does; [[Changes]] says what is new in 0.3.0.
+> does; [[Changes]] says what is new in 0.4.0.
 
 ![[r10-audio.png]]
 
@@ -23,6 +23,7 @@ move, turn and scale together ([[Grouped Transforms]]).
 | Getting started | [[Make a Game]] · [[Run the Sample]] |
 | Architecture | [[Architecture Overview]] · [[Grouped Transforms]] · [[Testing]] |
 | The 3D world | [[World]] · [[Content]] · [[Cameras]] · [[Lighting]] |
+| Characters made in Blender | [[Characters]] (clothing, clips, the toon look and its light) |
 | A game | [[Scenes]] (the scene's life and `Game`) |
 | Play | [[Input]] · [[Screen]] · [[Motion]] · [[Audio]] |
 | Maths without Godot | [[Mathematics]] |

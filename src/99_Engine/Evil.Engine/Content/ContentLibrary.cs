@@ -1,3 +1,4 @@
+using Evil.Engine.Characters;
 using EvilFont = Evil.Engine.Screen.Font;
 using EvilModel = Evil.Engine.World.Model;
 using EvilSound = Evil.Engine.Audio.Sound;
@@ -11,8 +12,13 @@ public sealed class ContentLibrary
     private readonly TextureLoader _textures = new TextureLoader();
     private readonly FontLoader _fonts = new FontLoader();
     private readonly SoundLoader _sounds = new SoundLoader();
+    private readonly CharacterLoader _characters;
 
-    internal ContentLibrary(string root) => Root = root;
+    internal ContentLibrary(string root)
+    {
+        Root = root;
+        _characters = new CharacterLoader(_textures);
+    }
 
     public string Root { get; }
 
@@ -24,8 +30,11 @@ public sealed class ContentLibrary
 
     public EvilSound Sound(string path) => _sounds.Load(Locate(path));
 
+    public CharacterModel Character(string path) => _characters.Load(Locate(path));
+
     internal void Close()
     {
+        _characters.Close();
         _sounds.Close();
         _textures.Close();
         _fonts.Close();
