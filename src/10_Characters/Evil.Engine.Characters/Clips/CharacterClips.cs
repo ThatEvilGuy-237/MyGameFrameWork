@@ -1,9 +1,12 @@
+using System.Globalization;
 using Godot;
 
 namespace Evil.Engine.Characters;
 
 public sealed class CharacterClips
 {
+    private const float Slack = 0.05f;
+
     private readonly Dictionary<string, FaceTrack> _faces = new Dictionary<string, FaceTrack>(StringComparer.Ordinal);
     private readonly IReadOnlyDictionary<string, ClipDescription> _told;
     private readonly AnimationPlayer? _player;
@@ -19,6 +22,11 @@ public sealed class CharacterClips
             Animation animation = Player.HasAnimation(clip.Key)
                 ? Player.GetAnimation(clip.Key)
                 : throw new InvalidDataException($"Character: {source} describes the clip '{clip.Key}', but its body file has no such animation.");
+            if (Math.Abs(animation.Length - clip.Value.Seconds) > Slack)
+            {
+                throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"Character: the clip '{clip.Key}' of {source} is {animation.Length:0.00} s long in its body file, its description says {clip.Value.Seconds:0.00} s."));
+            }
+
             animation.LoopMode = clip.Value.Loops ? Animation.LoopModeEnum.Linear : Animation.LoopModeEnum.None;
             _faces[clip.Key] = new FaceTrack(clip.Value.Faces);
         }

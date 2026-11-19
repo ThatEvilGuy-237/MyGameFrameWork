@@ -1,12 +1,25 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
+aliases: [Release notes, What changed, 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.3 (November 2026)
+
+**Changed behaviour**
+
+| What | Before | Now |
+|---|---|---|
+| a character whose clip is shorter or longer in its body file than its description says | loaded, and played what the file held | refused when it is loaded: the clip's name, its length in the file, the length described |
+| a character or a clothing piece that is refused | left its loaded nodes behind | leaves nothing behind |
+| `Wear` of a piece that is refused | had already taken off what was in its slot | the character stays as it was |
+
+The turn-based game's first packages held one pose per clip: an export fault that nothing measured. A package that
+loaded before and is refused now has that fault; export it again. Everything else is as in 0.4.2.
 
 ## 0.4.2 (November 2026)
 

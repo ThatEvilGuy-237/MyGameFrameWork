@@ -18,24 +18,26 @@ public sealed class CharacterModel : WorldObject
         _told = told;
         Source = files.Source;
         Node.Name = told.Name;
-        LoadedScene body = new LoadedScene(files.Scene(told.Body.File), files.Source);
-        Node3D pivot = new Node3D();
-        pivot.Name = "Pivot";
-        pivot.RotationDegrees = new Vector3(0f, FacingForward, 0f);
-        pivot.Scale = new Vector3(told.Scale, told.Scale, told.Scale);
-        Node.AddChild(pivot);
-        pivot.AddChild(body.Root);
-        _look = new CharacterLook(shader, new PictureBook(told.Pictures, files));
-        foreach (PartDescription part in told.Body.Parts)
+        LoadedScene body = Hung(files.Scene(told.Body.File));
+        try
         {
-            _look.Paint(body.Mesh(part.Name), part);
-        }
+            _look = new CharacterLook(shader, new PictureBook(told.Pictures, files));
+            foreach (PartDescription part in told.Body.Parts)
+            {
+                _look.Paint(body.Mesh(part.Name), part);
+            }
 
-        _wardrobe = new Wardrobe(told, files, body, _look);
-        Clips = new CharacterClips(body.Player, told.Clips, files.Source);
-        _faces = new FaceTicker(Clips, _look, told.Expressions);
-        _faces.Name = "Faces";
-        Node.AddChild(_faces);
+            _wardrobe = new Wardrobe(told, files, body, _look);
+            Clips = new CharacterClips(body.Player, told.Clips, files.Source);
+            _faces = new FaceTicker(Clips, _look, told.Expressions);
+            _faces.Name = "Faces";
+            Node.AddChild(_faces);
+        }
+        catch
+        {
+            Node.Free();
+            throw;
+        }
     }
 
     public string Source { get; }
@@ -80,5 +82,16 @@ public sealed class CharacterModel : WorldObject
         ArgumentException.ThrowIfNullOrWhiteSpace(piece);
         RequireAlive();
         _wardrobe.TakeOff(piece);
+    }
+
+    private LoadedScene Hung(Node3D body)
+    {
+        Node3D pivot = new Node3D();
+        pivot.Name = "Pivot";
+        pivot.RotationDegrees = new Vector3(0f, FacingForward, 0f);
+        pivot.Scale = new Vector3(_told.Scale, _told.Scale, _told.Scale);
+        Node.AddChild(pivot);
+        pivot.AddChild(body);
+        return new LoadedScene(body, Source);
     }
 }
