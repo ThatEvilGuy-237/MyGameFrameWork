@@ -30,7 +30,7 @@ src/06_Input/Evil.Engine.Input              keyboard, mouse, picking objects und
 src/07_Screen/Evil.Engine.Screen            window, capture, 2D overlay (our Group() canvas) and text
 src/08_Motion/Evil.Engine.Motion            tweens queued per object (added in R9)
 src/09_Audio/Evil.Engine.Audio              sounds, music, volume groups (added in R10)
-src/10_Characters/Evil.Engine.Characters    characters made in Blender: clothing, clips, the toon look and its light (added in R25)
+src/10_Characters/Evil.Engine.Characters    characters made in Blender: clothing, clips, colours and pictures (added in R25)
 src/99_Engine/Evil.Engine                   GameBuilder, GameHost, GameContext, scenes (the composition root, always last)
 samples/OrbitDemo                           Godot project: the orbit demo in 3D
 tests/Evil.Engine.Tests                     pure tests (Core, Mathematics)
@@ -347,4 +347,9 @@ The second loop is done: R13 to R24 all ticked. Left: R12 (the owner's PC, waits
   clothing, and `KeyLight`, a light for characters only. Found on the way: the outline's one-pixel floor blew up
   to metres inside shadow maps and shaded whole characters, so the outline now leaves shadow maps alone. 11 new
   Godot tests on a small character built in code (124 in all); zero style and clean-code findings.
+  ![[r25-characters.png]]
+- 2026-11-19 R26: **No shading for now (0.4.1).** The owner, while R25 was being finished: "Don't add any shading,
+  just load model, shading is for later." The toon shader, the outline pass and `KeyLight` are out; a character is
+  drawn in the plain colours and pictures of its package, the same on all three renderers (compared side by side).
+  Packages, clothing, clips, faces and `Wash` are as in 0.4.0. 123 Godot tests. The shading is at tag `v0.4.0`.
   ![[r25-characters.png]]

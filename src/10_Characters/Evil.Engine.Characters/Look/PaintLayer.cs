@@ -1,25 +1,22 @@
-using Evil.Engine.Platform;
 using Godot;
 using Vector4 = System.Numerics.Vector4;
 
 namespace Evil.Engine.Characters;
 
-internal sealed class ToonPaint
+internal sealed class PaintLayer
 {
     private readonly ShaderMaterial _material;
     private readonly string _slot;
     private readonly PaintDescription _paint;
     private readonly PictureBook _pictures;
 
-    public ToonPaint(ShaderMaterial material, string slot, PaintDescription paint, PictureBook pictures)
+    public PaintLayer(ShaderMaterial material, string slot, PaintDescription paint, PictureBook pictures)
     {
         _material = material;
         _slot = slot;
         _paint = paint;
         _pictures = pictures;
-        _material.SetShaderParameter($"{slot}_shade_tint", paint.ShadeTint.ToGodot());
         _material.SetShaderParameter($"{slot}_weight", Channel(paint.Weight));
-        _material.SetShaderParameter($"{slot}_lit_only", paint.LitOnly ? 1f : 0f);
         _material.SetShaderParameter($"{slot}_amount", 1f);
         Show(paint.Picture);
     }
@@ -29,7 +26,7 @@ internal sealed class ToonPaint
 
     private void Show(string name)
     {
-        ToonPicture picture = _pictures.Of(name);
+        LookPicture picture = _pictures.Of(name);
         Vector4 region = picture.Region;
         _material.SetShaderParameter(_slot, picture.Texture);
         _material.SetShaderParameter($"{_slot}_region", new Godot.Vector4(region.X, region.Y, region.Z, region.W));

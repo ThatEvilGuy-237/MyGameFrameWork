@@ -30,7 +30,7 @@ internal static class CharacterTests
         Godot.MeshInstance3D hat = search.Mesh("hat") ?? throw new CheckFailed("the hat does not hang on the character's rig");
         Check.Equal("Head", hat.Skin.GetBindName(1).ToString(), "bound to the bone by its name");
         Check.Equal(1, search.Count<Godot.Skeleton3D>(), "the hat's own rig is gone");
-        Check.True(search.Material("hat").NextPass is Godot.ShaderMaterial, "an outlined part gets the line");
+        Check.Near(0.2f, search.Material("hat").GetShaderParameter("base_color").AsVector3().X, "painted in the colour its package gives");
         puppet.TakeOff("hat");
         Check.True(search.Mesh("hat") is null && puppet.Worn.Count == 0, "taken off");
         content.Close();
@@ -80,7 +80,7 @@ internal static class CharacterTests
         Check.Equal("hat scarf", string.Join(' ', puppet.Worn), "the outfit's pieces");
         puppet.Wear("cap");
         Check.Equal("cap scarf", string.Join(' ', puppet.Worn), "the cap takes the hat's slot");
-        Check.Equal(Godot.GeometryInstance3D.ShadowCastingSetting.ShadowsOnly, search.Mesh("hat")!.CastShadow, "a part that only throws a shadow");
+        Check.True(!search.Mesh("hat")!.Visible, "a part that is only there to throw a shadow is not drawn");
         void WearMissing() => puppet.Wear("crown");
         Check.Throws<ArgumentException>(WearMissing, "hat, cap, scarf");
         void DressMissing() => puppet.WearOutfit("royal");
@@ -142,27 +142,6 @@ internal static class CharacterTests
         Check.Near(0.75f, search.Material("hat").GetShaderParameter("wash").AsSingle(), "the hat put on afterwards");
         puppet.Wash(Color.Gray, 0f);
         Check.Near(0f, search.Material("hat").GetShaderParameter("wash").AsSingle(), "and off again");
-        content.Close();
-    }
-
-    [Test]
-    public static void TheKeyLightLightsCharactersAndNothingElse()
-    {
-        ContentLibrary content = new ContentLibrary(new PuppetPackage().Root);
-        using Stage stage = Stage.Open();
-        CharacterModel puppet = stage.Root.Add(content.Character("puppet"));
-        KeyLight light = stage.Root.Add(new KeyLight(new Vector3(0f, -1f, -1f)));
-        Box crate = stage.Root.Add(new Box(Vector3.One, Color.White));
-        Godot.DirectionalLight3D native = (Godot.DirectionalLight3D)light.Node;
-        uint body = new NodeSearch(puppet).Mesh("body")!.Layers;
-        Check.True((native.LightCullMask & body) != 0, "the light reaches the character");
-        Check.True((native.LightCullMask & crate.Instance.Layers) == 0, "and passes a plain shape by");
-        Check.Equal(native.LightCullMask, native.ShadowCasterMask, "only characters shade each other in it");
-        Check.Near(Vector3.Normalize(new Vector3(0f, -1f, -1f)), light.Direction, "falls the way it was told");
-        light.ShadowDistance = 12f;
-        Check.Near(12f, light.ShadowDistance, "how far its shadows reach");
-        void PointNowhere() => light.Direction = Vector3.Zero;
-        Check.Throws<ArgumentException>(PointNowhere, "direction");
         content.Close();
     }
 
