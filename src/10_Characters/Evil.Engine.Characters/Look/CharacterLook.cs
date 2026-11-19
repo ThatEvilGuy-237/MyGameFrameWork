@@ -1,5 +1,4 @@
 using Godot;
-using Vector3 = System.Numerics.Vector3;
 
 namespace Evil.Engine.Characters;
 
@@ -11,8 +10,6 @@ internal sealed class CharacterLook
     private readonly SurfaceShader _shader;
     private readonly PictureBook _pictures;
     private IReadOnlyDictionary<string, string> _swaps = NoSwaps;
-    private Vector3 _washColour;
-    private float _wash;
 
     public CharacterLook(SurfaceShader shader, PictureBook pictures)
     {
@@ -39,7 +36,6 @@ internal sealed class CharacterLook
         {
             SurfaceLook surface = new SurfaceLook(part.Surfaces[index], _shader.Native, _pictures);
             surface.Show(_swaps);
-            surface.Wash(_washColour, _wash);
             mesh.SetSurfaceOverrideMaterial(index, surface.Material);
             surfaces.Add(surface);
         }
@@ -57,19 +53,6 @@ internal sealed class CharacterLook
             foreach (SurfaceLook surface in surfaces)
             {
                 surface.Show(swaps);
-            }
-        }
-    }
-
-    public void Wash(Vector3 colour, float amount)
-    {
-        _washColour = colour;
-        _wash = amount;
-        foreach (List<SurfaceLook> surfaces in _painted.Values)
-        {
-            foreach (SurfaceLook surface in surfaces)
-            {
-                surface.Wash(colour, amount);
             }
         }
     }

@@ -1,7 +1,5 @@
-using Evil.Engine.Platform;
 using Evil.Engine.World;
 using Godot;
-using Color = Evil.Engine.Core.Color;
 
 namespace Evil.Engine.Characters;
 
@@ -82,11 +80,5 @@ public sealed class CharacterModel : WorldObject
         ArgumentException.ThrowIfNullOrWhiteSpace(piece);
         RequireAlive();
         _wardrobe.TakeOff(piece);
-    }
-
-    public void Wash(Color colour, float amount)
-    {
-        Godot.Color linear = colour.ToGodot().SrgbToLinear();
-        _look.Wash(new System.Numerics.Vector3(linear.R, linear.G, linear.B), Math.Clamp(amount, 0f, 1f));
     }
 }

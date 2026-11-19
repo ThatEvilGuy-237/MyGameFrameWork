@@ -17,15 +17,21 @@ detective.Clips.Play("guard-enter");
 detective.Clips.Then("guard");
 ```
 
-![[r25-characters.png]]
+![[r27-characters.png]]
 
-Seven looks from four packages: three stances from the clips (guarding, standing, sheltered), one washed grey.
+Seven looks from four packages, three stances from the clips (guarding, standing, sheltered). Every colour is the
+package's own.
 
-> [!note] No shading yet
-> Since 0.4.1 a character is drawn in the plain colours and pictures of its package: no light and shade on it, no
-> outline. The owner: "just load model, shading is for later". The package already carries what shading needs
-> (a shade colour per surface, the rim, the outline's colour and width), and the engine reads and checks it. The
-> shading that 0.4.0 had (two tones, an outline, a light of its own for characters) is at tag `v0.4.0`.
+> [!note] Only what Blender made
+> The owner: "I just want the original models we made in Blender load in, that's all. Not any extra effects."
+> A character is drawn in the plain colours and pictures of its package. No light changes it, and since 0.4.2 no
+> code can either: `Wash`, which faded a character toward a colour, is gone. A game that wants a character to look
+> different asks for it in Blender.
+>
+> No shading and no outline yet (owner: "just load model, shading is for later"). The package already carries what
+> shading needs (a shade colour per surface, the rim, the outline's colour and width), and the engine reads and
+> checks it. The shading that 0.4.0 had (two tones, an outline, a light of its own for characters) is at tag
+> `v0.4.0`.
 
 ## CharacterModel
 
@@ -41,7 +47,6 @@ character of its own; two from one package share the files, not the clothing or 
 | `WearOutfit(outfit)` | puts on every piece of a named outfit |
 | `TakeOff(piece)`, `Worn` | takes a piece off; what it wears now |
 | `Clips` | the animations on its rig, see below |
-| `Wash(colour, amount)` | fades the whole character toward a colour, 0 to 1: a fallen fighter turns grey |
 | `Source` | where it was loaded from |
 
 Clothing is not a paint job and not part of the body. Each piece is its own file, skinned to the same bones, and
@@ -93,9 +98,13 @@ project, from the Blender files of the saved models.
 | material for a colour with painted layers | a small shader of its own: one colour, an inside colour, two painted layers with their weights; no light in it |
 | face pictures that follow an animation | reads the clip's faces and swaps the pictures |
 
-The colours come out the same on Godot's three renderers (Forward+, Mobile, Compatibility); compared side by side.
-A character still throws its shadow on the ground in the scene's `Sun`. Parts that exist only to throw a shadow
-onto the character itself are not drawn.
+A pixel of a surface is the colour its package names, whatever the scene's light, fog or time of day. Measured on
+the strongman in the picture above: the leotard is `#BF3438` on screen and `#BE3438` in Blender's own picture of
+him, the skin `#F9E4D4` in both. A scene that changes the whole picture afterwards (a tone mapping other than
+`Linear`, glow, fog) still changes a character with it, so a scene that must show the colours as made uses none of
+those. The colours come out the same on Godot's three renderers (Forward+, Mobile, Compatibility); compared side by
+side. A character still throws its shadow on the ground in the scene's `Sun`. Parts that exist only to throw a
+shadow onto the character itself are not drawn.
 
-Not built: shading and the outline, showing an expression on demand (the packages carry them, only clips use
+Not built: shading and the outline, effects on a character, showing an expression on demand (the packages carry them, only clips use
 them), physics on hair or cloth, weapons in the hand.

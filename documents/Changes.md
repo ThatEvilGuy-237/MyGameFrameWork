@@ -1,12 +1,23 @@
 ---
 tags: [release, changes]
-aliases: [Release notes, What changed, 0.4.1, 0.4.0, 0.3.0]
+aliases: [Release notes, What changed, 0.4.2, 0.4.1, 0.4.0, 0.3.0]
 ---
 
 # Changes
 
 What a game author needs to know between versions. The why behind each change is in [[Decisions]], the rounds that
 made them in [[LOOP]].
+
+## 0.4.2 (November 2026)
+
+**Removed**
+
+| What | Instead |
+|---|---|
+| `CharacterModel.Wash(colour, amount)` | nothing: a character shows what its package holds. A different look is made in Blender |
+
+The owner saw a character greyed by `Wash` and asked for the models as made in Blender, "not any extra effects".
+Everything else is as in 0.4.1.
 
 ## 0.4.1 (November 2026)
 

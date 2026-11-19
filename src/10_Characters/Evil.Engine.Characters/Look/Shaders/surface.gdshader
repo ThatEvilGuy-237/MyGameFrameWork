@@ -12,8 +12,6 @@ uniform sampler2D paint_b : source_color, repeat_disable, filter_linear_mipmap;
 uniform vec4 paint_b_region = vec4(0.0, 0.0, 1.0, 1.0);
 uniform vec4 paint_b_weight = vec4(0.0);
 uniform float paint_b_amount = 0.0;
-uniform vec3 wash_color = vec3(0.3);
-uniform float wash = 0.0;
 
 varying vec4 weights;
 
@@ -39,7 +37,6 @@ void fragment() {
 	vec4 second = painted(paint_b, paint_b_region, UV);
 	colour = mix(colour, second.rgb, second.a * weighed(paint_b_weight) * paint_b_amount);
 	colour = mix(colour, inside_color, FRONT_FACING ? 0.0 : inside_amount);
-	colour = mix(colour, wash_color, wash);
 #if CURRENT_RENDERER == RENDERER_COMPATIBILITY
 	ALBEDO = mix(colour * 12.92, 1.055 * pow(max(colour, vec3(0.0)), vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), colour));
 #else
